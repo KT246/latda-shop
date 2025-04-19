@@ -1,0 +1,38 @@
+import api from "../lib/constants";
+
+///////////////// get /////////////////////////
+export const apiProductByCode = (key: string) => {
+  return api.get("/api/cashier/productcode?code=" + key);
+};
+export const apiProductByTitle = (key: string) => {
+  return api.get("/api/cashier/producttitle?title=" + key);
+};
+export const apiProductByPage = (key: string) => {
+  return api.get("/api/cashier/productpage?page=" + key);
+};
+export const apiProductByNo = (key: string) => {
+  return api.get("/api/cashier/productno?No=" + key);
+};
+export const apiProductByBarcode = (key: string) => {
+  return api.get("/api/cashier/findretail?barcode=" + key);
+};
+export const apiGetCart = (id: string) => {
+  return api.get("/api/cashier/cart?cart_name=" + id);
+};
+
+/////////////////// post //////////////////
+export const apiAddToCart = (product: object) => {
+  return api.post("/api/cashier/addtocart", product);
+};
+export const apiIncrease = (product: object) => {
+  return api.post("/api/cashier/cart/increase", product);
+};
+export const apiDecrease = (product: object) => {
+  return api.post("/api/cashier/cart/decrease", product);
+};
+
+////////////////////////////// delete /////////////////////////////////
+
+export const apiDeleteCart = (id: number) => {
+  return api.delete("/api/cashier/cart/clear?id=" + id);
+};

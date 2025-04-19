@@ -1,0 +1,67 @@
+"use client";
+import Link from "next/link";
+import React from "react";
+import { MdOutlinePointOfSale } from "react-icons/md";
+import { CiViewList, CiLogout } from "react-icons/ci";
+import { FaFileInvoice } from "react-icons/fa";
+import { Tooltip } from "@heroui/react";
+import { FaRegUserCircle } from "react-icons/fa";
+import useAuthStore from "@/app/store/authStores";
+import { useRouter } from "next/navigation";
+
+const Sidebar = () => {
+  const { logout } = useAuthStore();
+  const router = useRouter();
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+  return (
+    <div className="py-10 w-full overflow-hidden flex flex-col">
+      <Tooltip content="ຂາຍຍ່ອຍ">
+        <Link
+          href={"/cashier"}
+          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+        >
+          <MdOutlinePointOfSale size={40} color="white" />
+        </Link>
+      </Tooltip>
+      <Tooltip content="ໃບບິນ">
+        <Link
+          href={"/cashier/list-invoice"}
+          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+        >
+          <FaFileInvoice size={40} color="white" />
+        </Link>
+      </Tooltip>
+      <Tooltip content="ລາຍງານການຂາຍ">
+        <Link
+          href={"/cashier/sell-list"}
+          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+        >
+          <CiViewList size={40} color="white" />
+        </Link>
+      </Tooltip>
+      <Tooltip content="ຂໍ້ມູນສ່ວນຕົວ">
+        <Link
+          href={"/cashier/account"}
+          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+        >
+          <FaRegUserCircle size={40} color="white" />
+        </Link>
+      </Tooltip>
+      <div className="mt-32">
+        <Tooltip content="ອອກລະບົບ">
+          <button
+            onClick={handleLogout}
+            className="text-white font-bold px-2 py-5 flex hover:bg-red-500 ease-in-out duration-300 "
+          >
+            <CiLogout size={40} />
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
