@@ -11,8 +11,8 @@ interface User {
 interface AuthState {
   token: string | null;
   user: User | null;
-  exchang: string | null;
-  login: (token: string, user: User, exchang: string) => void;
+
+  login: (token: string, user: User) => void;
   logout: () => void;
 }
 
@@ -22,7 +22,7 @@ const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       exchang: null,
-      login: (token, user, exchang) => set({ token, user, exchang }),
+      login: (token, user) => set({ token, user }),
       logout: () => set({ token: null, user: null }),
     }),
     {
