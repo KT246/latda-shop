@@ -211,7 +211,7 @@ function ListsEmployees() {
               </span>
               <span className="w-36 flex justify-center gap-3 py-1 px-2">
                 <Link
-                  href={`/admin/employees/${it.id}`}
+                  href={`/admin/employees/edit/${it.id}`}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold  px-4 rounded"
                 >
                   ແກ້ໄຂ
