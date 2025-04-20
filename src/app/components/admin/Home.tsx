@@ -30,9 +30,19 @@ function Home() {
         nameCreate=""
         nameList=""
       />
-      <div className="flex flex-col gap-5 h-[81vh]">
-        <div className=" h-[15vh] flex gap-2">
-          {/* order */}
+      <div className="grid grid-cols-2 gap-3 h-[81vh]">
+        <div className="grid grid-rows-3 gap-2 bg-black">
+          <div className="bg-red-500">fs</div>
+          <div className="bg-red-500">fs</div>
+          <div className="bg-red-500">fs</div>
+        </div>
+
+        <div className=" grid grid-rows-2 gap-2 bg-black">
+          <div className="bg-red-500">fs</div>
+          <div className="bg-red-500">fs</div>
+        </div>
+
+        {/* order
           <div className="flex-1 gap-1">
             <div className="flex border-blue-500 border-b-5 border-r-5 rounded-sm overflow-hidden">
               <div className="bg-blue-700 h-[15vh] w-14 flex items-center justify-center font-semibold ">
@@ -73,9 +83,9 @@ function Home() {
                 </div>
               </div>
             </div>
-          </div>
-          {/* thu nhap */}
-          <div className="flex-1 gap-1">
+          </div> */}
+        {/* thu nhap */}
+        {/* <div className="flex-1 gap-1">
             <div className="flex border-green-600 border-b-5 border-r-5 rounded-sm overflow-hidden">
               <div className="bg-green-600 h-[15vh] w-14 flex items-center justify-center font-semibold ">
                 <p className="-rotate-90 text-white">ລາຍຮັບ</p>
@@ -115,9 +125,9 @@ function Home() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className=" flex gap-2">
+          </div> */}
+
+        {/* <div className=" flex gap-2">
           <div className=" flex-1 p-2">
             <div className="grid grid-cols-4 place-items-center gap-5 h-full">
               {cards.map((card, index) => (
@@ -146,7 +156,7 @@ function Home() {
             </div>
           </div>
           <div className="bg-green-400 flex-1 p-2">chart</div>
-        </div>
+        </div> */}
       </div>
     </>
   );
