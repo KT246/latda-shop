@@ -1,8 +1,8 @@
-import Historys from "@/app/components/admin/Historys";
+import ListsHistorys from "@/app/components/admin/ListsHistorys";
 import React from "react";
 
 const page = () => {
-  return <Historys />;
+  return <ListsHistorys />;
 };
 
 export default page;

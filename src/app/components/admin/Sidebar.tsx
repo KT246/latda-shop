@@ -28,7 +28,7 @@ const Sidebar = () => {
     { label: "ພາບລວມ", href: "/admin" },
     { label: "ຈັດການສິນຄ້າ", href: "/admin/products" },
     { label: "ຈັດການພະນັກງານ", href: "/admin/employees" },
-    { label: "ປະຫວັດ", href: "/admin/history" },
+    { label: "ປະຫວັດການຂາຍ", href: "/admin/history" },
     { label: "ຜູ້ໃຊ້", href: "/admin/profile" },
   ];
   return (

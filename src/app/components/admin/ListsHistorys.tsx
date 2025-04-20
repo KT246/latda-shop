@@ -1,10 +1,10 @@
 import React from "react";
 import HeaderLinks from "./HeaderLinks";
-function Historys() {
+function ListsHistorys() {
   return (
     <div>
       <HeaderLinks
-        name="ປະຫວັດ"
+        name="ປະຫວັດການຂາຍ"
         linkCreate=""
         linkLists=""
         nameCreate=""
@@ -14,4 +14,4 @@ function Historys() {
   );
 }
 
-export default Historys;
+export default ListsHistorys;
