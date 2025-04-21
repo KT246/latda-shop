@@ -1,5 +1,5 @@
 import React from "react";
-import ListInvoice from "../../components/cashier/listInvoice/ListInvoice";
+import ListInvoice from "../../components/cashier/ListInvoice";
 
 export default function page() {
   return <ListInvoice />;

@@ -1,5 +1,5 @@
 import React from "react";
-import Account from "@/app/components/cashier/account/Account";
+import Account from "@/app/components/cashier/Account";
 
 function page() {
   return <Account />;

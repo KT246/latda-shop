@@ -1,6 +1,6 @@
 import React from "react";
 import { Tooltip } from "@heroui/react";
-import ContainerLink from "../ContainerLinkC";
+import ContainerLink from "./ContainerLinkC";
 import { LuEye } from "react-icons/lu";
 import { MdDeleteForever } from "react-icons/md";
 import Link from "next/link";

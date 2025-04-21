@@ -1,5 +1,5 @@
 import React from "react";
-import ContainerLinkC from "../ContainerLinkC";
+import ContainerLinkC from "./ContainerLinkC";
 import { useParams, useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
 export default function Detail() {

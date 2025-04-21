@@ -30,16 +30,107 @@ function Home() {
         nameCreate=""
         nameList=""
       />
-      <div className="grid grid-cols-2 gap-3 h-[81vh]">
-        <div className="grid grid-rows-3 gap-2 bg-black">
-          <div className="bg-red-500">fs</div>
-          <div className="bg-red-500">fs</div>
-          <div className="bg-red-500">fs</div>
+      <div className="grid grid-cols-2 gap-3 h-[81vh] ">
+        <div className="grid grid-rows-3 gap-2 ">
+          <div className="bg-blue-500 bg-opacity-60 shadow-sm  p-2 rounded ">
+            <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2 text-white">
+              ລາຍຮັບ - ຈ່າຍ
+            </h3>
+            <div className="flex justify-center items-center gap-3 pt-5 h-[20vh]">
+              <div className="bg-white bg-opacity-70 grid grid-rows-3 shadow-sm w-52 h-full rounded py-1 px-3 ">
+                <p className="text-center font-semibold text-xl text-blue-700">
+                  ອາທິດ
+                </p>
+                <p className="text-left flex text-green-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+                <p className="text-left flex text-red-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-70 grid grid-rows-3 shadow-sm w-52 h-full rounded py-1 px-3 ">
+                <p className="text-center font-semibold text-xl text-blue-700">
+                  ອາທິດ
+                </p>
+                <p className="text-left flex text-green-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+                <p className="text-left flex text-red-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+              </div>
+              <div className="bg-white bg-opacity-70 grid grid-rows-3 shadow-sm w-52 h-full rounded py-1 px-3 ">
+                <p className="text-center font-semibold text-xl text-blue-700">
+                  ອາທິດ
+                </p>
+                <p className="text-left flex text-green-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+                <p className="text-left flex text-red-500">
+                  <span className=" font-semibold">+</span>
+                  <span className="text-xl text-center font-semibold px-1">
+                    500.000
+                  </span>
+                  <span className="">.ກີບ</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-blue-300  shadow-sm  p-2 rounded">
+            <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2">
+              ຍອດບິນ
+            </h3>
+          </div>
+          <div className="bg-blue-300  shadow-sm  p-2 rounded">
+            <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2">
+              ອື່ນໆ
+            </h3>
+          </div>
         </div>
 
-        <div className=" grid grid-rows-2 gap-2 bg-black">
-          <div className="bg-red-500">fs</div>
-          <div className="bg-red-500">fs</div>
+        <div className=" grid grid-rows-2 gap-2 ">
+          <div className="bg-blue-300  shadow-sm  p-2 rounded">
+            <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 uppercase">
+              top ສິນຄ້າ
+            </h3>
+            <div className="grid grid-cols-2 place-items-start h-full p-5 ">
+              <p>fd</p>
+              <p>ffdduyiuyuyuyyd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+              <p>fd</p>
+            </div>
+          </div>
+          <div className="bg-blue-300  shadow-sm text-whit  p-2 rounded">
+            <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 uppercase">
+              top ລາຄາ
+            </h3>
+          </div>
         </div>
 
         {/* order
