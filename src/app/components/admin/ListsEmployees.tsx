@@ -182,7 +182,7 @@ function ListsEmployees() {
       <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
         ລາຍຊື່ພະນັກງານ
       </h1>
-      <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5">
+      <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
         <span className="py-1 px-2  w-12">ລຳດັບ</span>
         <span className="py-1 px-2 border-l-1 w-48">ຊື່ແລະນາມສະກຸນ</span>
         <span className="py-1 px-2 border-l-1 w-28">ວັນເດືອນປີເກີດ</span>

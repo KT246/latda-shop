@@ -28,7 +28,7 @@ const Sidebar = () => {
       </Tooltip>
       <Tooltip content="ໃບບິນ">
         <Link
-          href={"/cashier/list-invoice"}
+          href={"/cashier/invoice"}
           className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
         >
           <FaFileInvoice size={40} color="white" />

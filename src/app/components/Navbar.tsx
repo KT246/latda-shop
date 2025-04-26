@@ -13,6 +13,15 @@ const Navbar = () => {
           Power by SKV-GROUP
         </h1>
       </div>
+      <div className="overflow-hidden whitespace-nowrap">
+        <p className="animate-marquee text-medium text-gray-50 pb-1 font-semibold">
+          ອັບເດດລ່າສຸດ 20/06/202
+          <span className="text-yellow-200 px-2">ອັດຕາແລກປ່ຽນ ລາວ - ໄທ:</span>
+          <span className="text-gray-50 text-lg rounded-b-full border-b-2 border-gray-200">
+            650
+          </span>
+        </p>
+      </div>
 
       <div className="flex gap-2 items-center text-gray-50 font-semibold uppercase">
         <p className="text-sm text-gray-200 lowercase">hello! </p>

@@ -174,7 +174,7 @@ const FindProduct = () => {
 
   return (
     <>
-      <div className=" w-full p-2  rounded-lg shadow-lg bg-white uppercase">
+      <div className=" w-full p-2  rounded-lg shadow-lg bg-white uppercase ">
         <form onSubmit={handleSubmit}>
           <Input
             type="text"

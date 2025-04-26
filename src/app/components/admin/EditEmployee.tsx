@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
+import { formattedNumber } from "@/app/helpers/funtions";
 function EditEmployee() {
   const [formData, setFormData] = useState({
     name: "ສຸກສົມ ແລະ ສຸກທຸມ",
@@ -122,6 +123,9 @@ function EditEmployee() {
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
             />
+            <span className=" block">
+              {formattedNumber(formData.salary)}. ກີບ
+            </span>
           </div>
           <div className="flex-1">
             <label className="block font-semibold">ທີ່ຢູ່</label>

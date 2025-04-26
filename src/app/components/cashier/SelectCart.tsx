@@ -25,15 +25,13 @@ const SelectCart = () => {
         return;
       }
       updateCart(res.data);
-      console.log(res.data);
-      // console.log(res.data);
     } catch (e) {
       console.error(e);
     }
   };
 
   return (
-    <div className="mb-3 flex justify-start gap-3">
+    <div className="mb-3 flex justify-start gap-3 font-semibold">
       <Button
         onPress={() => handleCart("1")}
         color={`${cartName === "1" ? "primary" : "default"}`}
@@ -52,7 +50,7 @@ const SelectCart = () => {
       >
         ກະຕ່າ 3
       </Button>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-end ">
         <div className="w-32">
           <select
             value={maxMinqty}

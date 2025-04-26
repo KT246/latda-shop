@@ -1,132 +1,197 @@
 "use client";
 import React, { useState } from "react";
-import { Input, Button } from "@heroui/react";
+import { useRouter } from "next/navigation";
+import { IoChevronBackOutline } from "react-icons/io5";
+import { formattedNumber } from "@/app/helpers/funtions";
 
-import Image from "next/image";
+import HeaderLinks from "../HeaderLinks";
 
 export default function Account() {
   const [changes, setChanges] = React.useState(false);
-  const [names, setNames] = React.useState("khamtay");
-  const handleChanges = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    dob: "",
+    gender: "ຊາຍ",
+    phone: "",
+    workDate: "",
+    position: "",
+    salary: 0,
+    address: "",
+  });
+
+  const router = useRouter();
+  const handleChangeSelect = () => {
     setChanges(!changes);
   };
-  const handleChangesInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNames(e.target.value);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
-  // alert(changes);
-  console.log(changes);
-  return (
-    <div className="ms-9 mt-7 w-[89vw] h-[84vh] bg-gray-100 rounded-medium px-4 py-2">
-      <div className="grid grid-cols-3 p-3">
-        <div className="pt-5">
-          <div className="w-[400px] h-[500px] relative rounded-lg overflow-hidden ">
-            <Image
-              src={"/CV.jpg"}
-              alt="User Profile"
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-        </div>
-        <div className=" col-span-2 flex flex-col ">
-          <h3 className="text-lg font-semibold border-l-3 border-blue-500 pl-2 mb-5">
-            ຂໍ້ມູນຜູ້ໃຊ້
-          </h3>
-          <div className="grid grid-cols-2 gap-5">
-            <Input
-              type="text"
-              color="secondary"
-              size="md"
-              label="ຊື່ຜູ້ໃຊ້"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
-            <Input
-              type="text"
-              color="default"
-              size="md"
-              label="ເບີຕິດຕໍ່"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
-            <Input
-              type="text"
-              color="default"
-              size="md"
-              label="ວັນເດຶອນປີເກີດ"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
 
-            <Input
-              type="text"
-              color="default"
-              size="md"
-              label="ວັນເລີ່ມວຽກ"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
-            <Input
-              type="text"
-              color="default"
-              size="md"
-              label="ໜ້າທີ່"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-              className="col-span-2"
-            />
-            <Input
-              type="text"
-              color="default"
-              size="md"
-              label="ທີ່ຢູ່"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-              className="col-span-2"
-            />
-            <h3 className="text-lg font-semibold border-l-3 border-blue-500 pl-2 col-span-2">
-              ປ່ຽນລະຫັດ
-            </h3>
-            <Input
-              type="password"
-              color="default"
-              size="md"
-              label="ລະຫັດເກົ່າ"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
-            <Input
-              type="password"
-              color="default"
-              size="md"
-              label="ລະຫັດໃໝ່"
-              value={names}
-              onChange={handleChangesInput}
-              readOnly={!changes}
-            />
-          </div>
-          <div className="flex justify-end items-center mt-10">
-            <div>
-              {changes ? (
-                <Button color="primary" onPress={handleChanges}>
-                  ບັນທືກ
-                </Button>
-              ) : (
-                <Button color="warning" onPress={handleChanges}>
-                  ແກ້ໄຂ
-                </Button>
-              )}
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+  return (
+    <>
+      <HeaderLinks
+        name="ຂໍ້ມູນສ່ວນຕົວ"
+        linkCreate=""
+        linkLists=""
+        nameCreate=""
+        nameList=""
+      />
+      <div>
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+          ລາຍລະອຽດຜູ້ໃຊ້
+        </h1>
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block font-semibold">ຊື່ແລະນາມສະກຸນ</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                disabled={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block font-semibold">ວັນເດືອນປີເກີດ</label>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                disabled={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
             </div>
           </div>
-        </div>
+
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block font-semibold">ເພດ</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                disabled={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              >
+                <option disabled={!changes} value="ຊາຍ">
+                  ຊາຍ
+                </option>
+                <option disabled={!changes} value="ຍິງ">
+                  ຍິງ
+                </option>
+                <option disabled={!changes} value="ອື່ນ">
+                  ອື່ນ (Khác)
+                </option>
+              </select>
+            </div>
+            <div className="flex-1">
+              <label className="block font-semibold">ເບີໂທ</label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                readOnly={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block font-semibold">ວັນທີເຂົົ້າເຮັດວຽກ</label>
+              <input
+                type="date"
+                name="workDate"
+                value={formData.workDate}
+                onChange={handleChange}
+                readOnly={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block font-semibold">ຕຳແຫນ່ງ</label>
+              <input
+                type="text"
+                name="position"
+                value={formData.position}
+                onChange={handleChange}
+                readOnly={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block font-semibold">ເງິນເດືອນ</label>
+              <input
+                type="number"
+                name="salary"
+                value={formData.salary}
+                onChange={handleChange}
+                readOnly
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+              <span className=" sticky top-0">
+                {formattedNumber(formData.salary)}. ກີບ
+              </span>
+            </div>
+            <div className="flex-1">
+              <label className="block font-semibold">ທີ່ຢູ່</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                readOnly={!changes}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              onClick={() => router.back()}
+              type="button"
+              className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
+            >
+              <IoChevronBackOutline />
+              ກັບຄືນ
+            </button>
+
+            {changes ? (
+              <button
+                type="submit"
+                onClick={handleChangeSelect}
+                className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-green-500"
+              >
+                ບັນທືກ
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-red-500"
+                onClick={handleChangeSelect}
+              >
+                ແກ້ໄຂ
+              </button>
+            )}
+          </div>
+        </form>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,83 +1,136 @@
+"use client";
 import React from "react";
-import { Tooltip } from "@heroui/react";
-import ContainerLink from "./ContainerLinkC";
-import { LuEye } from "react-icons/lu";
-import { MdDeleteForever } from "react-icons/md";
+import { Details } from "@/app/lib/interface";
 import Link from "next/link";
+import { formattedNumber } from "@/app/helpers/funtions";
+import HeaderLinks from "../HeaderLinks";
 
 export default function ListInvoice() {
-  const duLieuHoaDon = [
-    ["1", "2023-10-01", "1", "100,000"],
-    ["2", "2023-10-02", "1", "200,000"],
-    ["3", "2023-10-03", "1", "150,000"],
-    ["4", "2023-10-04", "1", "300,000"],
-    ["5", "2023-10-05", "1", "250,000"],
-    ["6", "2023-10-06", "1", "120,000"],
-    ["7", "2023-10-07", "1", "180,000"],
-    ["8", "2023-10-08", "1", "220,000"],
-    ["9", "2023-10-09", "1", "270,000"],
-    ["10", "2023-10-10", "1", "130,000"],
-    ["11", "2023-10-11", "1", "160,000"],
-    ["12", "2023-10-12", "1", "140,000"],
-    ["13", "2023-10-13", "1", "190,000"],
-    ["14", "2023-10-14", "1", "210,000"],
-    ["15", "2023-10-15", "1", "175,000"],
-    ["16", "2023-10-16", "1", "230,000"],
-    ["17", "2023-10-17", "1", "260,000"],
-    ["18", "2023-10-18", "1", "240,000"],
-    ["19", "2023-10-19", "1", "170,000"],
-    ["20", "2023-10-20", "1", "110,000"],
+  const products: Details[] = [
+    {
+      id: 1,
+      cart_id: 101,
+      barcode: "1234567890123",
+      title: "ຜະລິດຕະພັນຕົວຢ່າງ",
+      cost_thb: 50,
+      size: "500ml",
+      category: "category",
+      use_for: "ສຳລັບສະອາດຜົມ dfssfafggfsgfaergaghg",
+      unit: "ຂວດ",
+      cost_lak: 95000000,
+      wholesale_thb: 45,
+      wholesale_lak: 8500,
+      retail_thb: 55,
+      retail_lak: 10000,
+      discount: 5,
+      qty: 2,
+      total_unit_lak: 9500,
+      total_lak: 19000,
+    },
+    {
+      id: 1,
+      cart_id: 101,
+      barcode: "1234567890123",
+      title: "ຜະລິດຕະພັນຕົວຢ່າງ",
+      cost_thb: 50,
+      size: "500ml",
+      category: "category",
+      use_for: "ສຳລັບສະອາດຜົມ dfssfafggfsgfaergaghg",
+      unit: "ຂວດ",
+      cost_lak: 95000000,
+      wholesale_thb: 45,
+      wholesale_lak: 8500,
+      retail_thb: 55,
+      retail_lak: 10000,
+      discount: 5,
+      qty: 2,
+      total_unit_lak: 9500,
+      total_lak: 19000,
+    },
+    {
+      id: 1,
+      cart_id: 101,
+      barcode: "1234567890123",
+      title: "ຜະລິດຕະພັນຕົວຢ່າງ",
+      cost_thb: 50,
+      size: "500ml",
+      category: "category",
+      use_for: "ສຳລັບສະອາດຜົມ dfssfafggfsgfaergaghg",
+      unit: "ຂວດ",
+      cost_lak: 95000000,
+      wholesale_thb: 45,
+      wholesale_lak: 8500,
+      retail_thb: 55,
+      retail_lak: 10000,
+      discount: 5,
+      qty: 2,
+      total_unit_lak: 9500,
+      total_lak: 19000,
+    },
   ];
-
   return (
-    <ContainerLink>
-      <div className="py-3 px-4">
-        <div className="border-b-2 border-gray-300 flex items-center justify-between px-3 py-2">
-          <h3 className="text-lg font-semibold">ໃບບິນ</h3>
-        </div>
+    <>
+      <HeaderLinks
+        name="ໃບບິນ"
+        linkCreate=""
+        linkLists=""
+        nameCreate=""
+        nameList=""
+      />{" "}
+      <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
+        <span className="py-1 px-2  w-12">ລຳດັບ</span>
+        <span className="py-1 px-2 border-l-1 w-40">ລະຫັດບິນ</span>
+        <span className="py-1 px-2 border-l-1 w-48">ວັນທີສ້າງ</span>
+        <span className="py-1 px-2 border-l-1 w-48">ຊື່ກະຕ່າ</span>
+        <span className="py-1 px-2 border-l-1 w-20">ຂະຫນາດ</span>
+        <span className="py-1 px-2 border-l-1 w-20">ຫົວໜ່ວຍ</span>
+        <span className="py-1 px-2 border-l-1 w-32">ລະຫັດຜູ້ຂາຍ</span>
+        <span className="py-1 px-2 border-l-1 w-24 ">ຈໍານວນສິນຄ້າ</span>
+        <span className="py-1 px-2 border-l-1 w-16 ">ສ່ວນຫຼຸດ</span>
+        <span className="py-1 px-2 border-l-1 w-32 ">ລາຄາລວມ (LAK)</span>
+        <span className="py-1 px-2 border-l-1 w-32 text-center">ດຳເນີນການ</span>
+      </p>
+      <div className="overflow-y-auto h-[71vh] scroll-smooth pb-5">
+        {products.length > 0 ? (
+          products.map((it, index) => (
+            <p className="flex border-b-1" key={index}>
+              <span className="py-1 px-2  w-12 ">{it.id}</span>
+              <span className="py-1 px-2 border-l-1 w-40 uppercase">
+                {it.barcode} fd
+              </span>
+              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
+                {it.title}
+              </span>
+              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
+                {it.use_for}
+              </span>
+              <span className="py-1 px-2 border-l-1 w-20">{it.size}</span>
+              <span className="py-1 px-2 border-l-1 w-20">{it.unit}</span>
+              <span className="py-1 px-2 border-l-1 w-32">{it.category}</span>
+              <span className="py-1 px-2 border-l-1 w-24 ">{it.qty}</span>
+              <span className="py-1 px-2 border-l-1 w-16 text-red-500">
+                {it.discount}%
+              </span>
+              <span className="py-1 px-2 border-l-1 w-32 ">
+                {formattedNumber(it.cost_lak)}. ກີບ
+              </span>
 
-        <div className=" h-[75vh] overflow-auto px-3 mt-3">
-          <table className="w-full relative text-left">
-            <thead className="sticky -top-1  z-10">
-              <tr className="bg-gray-300">
-                <th className="pt-3 pb-2 px-3">ລະຫັດ</th>
-                <th className="pt-3 pb-2 px-3">ວັນທີ</th>
-                <th className="pt-3 pb-2 px-3">ຊື່ກະຕ່າ</th>
-                <th className="pt-3 pb-2 px-3 ">ລາຄາ</th>
-                <th className="pt-3 pb-2 px-3 text-center">ດຳເນີນການ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {duLieuHoaDon.map((item, index) => {
-                return (
-                  <tr
-                    key={index}
-                    className={`border-b-2 border-gray-200 hover:bg-gray-100 `}
-                  >
-                    <td className="py-2 px-3">{item[0]}</td>
-                    <td className="py-2 px-3">{item[1]}</td>
-                    <td className="py-2 px-3">{item[2]}</td>
-                    <td className="py-2 px-3">{item[3]}</td>
-                    <td
-                      className="py-2 px-3  cursor-pointer flex gap-3 text-lg justify-center items-center"
-                      colSpan={2}
-                    >
-                      <Tooltip content="ເບິ່ງລາຍລະອຽດ">
-                        <Link href={`list-invoice/${item[0]}`}>
-                          <LuEye />
-                        </Link>
-                      </Tooltip>
-                      <Tooltip content="ລຶບ">
-                        <MdDeleteForever className="text-red-500" />
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+              <span className="flex justify-center gap-3 p-1 border-l-1 w-48 text-center text-sm">
+                <Link
+                  href={`/cashier/invoice/detail/${it.id}`}
+                  className="bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
+                >
+                  ລາຍລະອຽດ
+                </Link>
+              </span>
+            </p>
+          ))
+        ) : (
+          <div className="h-[400px] flex justify-center items-center">
+            <p>ບໍ່ທັນມີລາຍຊື່</p>
+          </div>
+        )}
       </div>
-    </ContainerLink>
+    </>
   );
 }

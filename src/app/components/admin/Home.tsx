@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import HeaderLinks from "./HeaderLinks";
+import HeaderLinks from "../HeaderLinks";
 import { div } from "framer-motion/client";
 
 function Home() {
@@ -101,6 +101,9 @@ function Home() {
                 profit={0}
                 qyt={1}
               />
+              <button className="hover:bg-green-500 bg-blue-700 text-gray-50  px-6 py-2 rounded duration-500 ">
+                ປ່ຽນເປັນ PDF
+              </button>
             </div>
           </div>
         </div>
@@ -110,7 +113,7 @@ function Home() {
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500 uppercase">
               top ສິນຄ້າ
             </h3>
-            <div className="flex gap-3 h-full p-5 ">
+            <div className="flex gap-2 h-full p-5 ">
               <Crads
                 type_crad={0}
                 title="ຂາຍດີ"
@@ -131,7 +134,7 @@ function Home() {
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500 uppercase">
               top ລາຄາ
             </h3>
-            <div className="flex gap-3 h-full p-5 ">
+            <div className="flex gap-2 h-full p-5 ">
               <Crads type_crad={0} title="ແພງ" invest={0} profit={0} qyt={1} />
               <Crads type_crad={0} title="ຖືກ" invest={0} profit={0} qyt={1} />
             </div>

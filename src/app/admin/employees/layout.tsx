@@ -1,4 +1,4 @@
-import HeaderLinks from "@/app/components/admin/HeaderLinks";
+import HeaderLinks from "@/app/components/HeaderLinks";
 import React from "react";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
