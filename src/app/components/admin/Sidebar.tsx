@@ -19,6 +19,12 @@ const Sidebar = () => {
 
   const { logout } = useAuthStore();
   const router = useRouter();
+  const isActive = (path: string) => {
+    if (pathname === path) return true;
+    if (pathname.startsWith(path) && path !== "/admin") return true;
+    return false;
+  };
+
   const handleLogout = () => {
     logout();
     router.push("/login");
@@ -29,12 +35,12 @@ const Sidebar = () => {
     { label: "ຈັດການສິນຄ້າ", href: "/admin/products" },
     { label: "ຈັດການພະນັກງານ", href: "/admin/employees" },
     { label: "ປະຫວັດການຂາຍ", href: "/admin/history" },
-    { label: "ຜູ້ໃຊ້", href: "/admin/profile" },
+    { label: "ຈັດການລະບົບ", href: "/admin/profile" },
   ];
   return (
     <div className="w-full overflow-hidden flex flex-col border-r">
       <div className="flex items-center py-5 px-2  gap-2 border-b border-gray-500 mb-3">
-        <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden bg-white">
+        {/* <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden bg-white">
           <Image
             src="/CV.jpg"
             alt="CV"
@@ -42,10 +48,18 @@ const Sidebar = () => {
             sizes="(max-width: 50px) 50px, 50px"
             className="object-cover object-center"
           />
-        </div>
-        <div className="text-left text-white leading-3">
+        </div> */}
+        {/* <div className="text-left text-white leading-3">
           <p className="text-sm">Khamtay</p>
           <p className="text-gray-300 text-[12px]">admin</p>
+        </div> */}
+        <div className="w-full text-center uppercase ">
+          <p className="text-yellow-400 tracking-widest font-bold text-2xl">
+            latda
+          </p>
+          <p className="text-gray-300 text-xl font-semibold border-b-5 pb-3">
+            Shop
+          </p>
         </div>
       </div>
       {Links.map((link, index) => (
@@ -53,7 +67,7 @@ const Sidebar = () => {
           key={index}
           href={link.href}
           className={`${
-            pathname === link.href
+            isActive(link.href)
               ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
               : "text-white"
           } flex items-center  hover:text-blue-500 gap-2 p-2  transition duration-300`}

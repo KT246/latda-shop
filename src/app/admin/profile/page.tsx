@@ -1,7 +1,8 @@
+import Profile from "@/app/components/admin/Profile";
 import React from "react";
 
 const page = () => {
-  return <div>chao</div>;
+  return <Profile />;
 };
 
 export default page;
