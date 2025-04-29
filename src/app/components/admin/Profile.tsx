@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { formattedNumber } from "@/app/helpers/funtions";
 import HeaderLinks from "../HeaderLinks";
+import Swal from "sweetalert2";
 function Profile() {
   const [changes, setChanges] = React.useState(false);
   const [formData, setFormData] = useState({
@@ -14,6 +15,53 @@ function Profile() {
     salary: 0,
     address: "",
   });
+
+  const handleAlert = () => {
+    Swal.fire({
+      title: "ສ້າງຜູ້ໃຊ້ລະບົບ",
+      showConfirmButton: true,
+      confirmButtonText: "ສ້າງ",
+      confirmButtonColor: "#3085d6",
+      showCancelButton: true,
+      cancelButtonText: "ຍົກເລີກ",
+      cancelButtonColor: "#d33",
+      html: `
+      <input id="name" class="swal2-input" placeholder="ຊື່ໃຊ້ລະບົບ" />
+      <input id="pass" class="swal2-input" placeholder="ລະຫັດ" />
+   `,
+
+      preConfirm: () => {
+        const name = document.getElementById("name") as HTMLInputElement;
+        const pass = document.getElementById("pass") as HTMLInputElement;
+
+        if (pass && pass.value === "") {
+          Swal.showValidationMessage("ກະລຸນາໃສ່ລະຫັດ");
+        }
+        if (name && name.value === "") {
+          Swal.showValidationMessage("ກະລຸນາໃສ່ຊື່ໃຊ້ລະບົບ");
+        }
+
+        return {
+          name: name?.value,
+          pass: pass?.value,
+        };
+      },
+    }).then((res) => {
+      if (res.isConfirmed) {
+        const { name, pass } = res.value as { name: string; pass: string };
+        if (name && pass) {
+          Swal.fire({
+            title: "ສໍາເລັດ",
+            text: "ສ້າງໃຊ້ລະບົບໃຫມ່ສໍາເລັດ",
+            icon: "success",
+            iconColor: "#3085d6",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+          });
+        }
+      }
+    });
+  };
   const handleChangeSelect = () => {
     setChanges(!changes);
   };
@@ -176,99 +224,174 @@ function Profile() {
         <div>
           <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
             ຜູ້ໃຊ້ລະບົບ
-          </h1>{" "}
-          <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
+          </h1>
+          <p className="w-[60vw] font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
             <span className="py-1 px-2  w-12">ລຳດັບ</span>
-            <span className="py-1 px-2 border-l-1 w-40">ລະຫັດບິນ</span>
-            <span className="py-1 px-2 border-l-1 w-48">ວັນທີສ້າງ</span>
-            <span className="py-1 px-2 border-l-1 w-48">ຊື່ກະຕ່າ</span>
-            <span className="py-1 px-2 border-l-1 w-20">ຂະຫນາດ</span>
-            <span className="py-1 px-2 border-l-1 w-20">ຫົວໜ່ວຍ</span>
-            <span className="py-1 px-2 border-l-1 w-32">ລະຫັດຜູ້ຂາຍ</span>
-            <span className="py-1 px-2 border-l-1 w-24 ">ຈໍານວນສິນຄ້າ</span>
-            <span className="py-1 px-2 border-l-1 w-16 ">ສ່ວນຫຼຸດ</span>
-            <span className="py-1 px-2 border-l-1 w-32 ">ລາຄາລວມ (LAK)</span>
-            <span className="py-1 px-2 border-l-1 w-32 text-center">
+            <span className="py-1 px-2 border-l-1 w-40">ຊື່ໃຊ້ລະບົບ</span>
+            <span className="py-1 px-2 border-l-1 w-48">ລະຫັດ</span>
+            <span className="py-1 px-2 border-l-1 w-48">ສະຖານະ</span>
+            <span className="py-1 px-2 border-l-1 w-72 text-center">
               ດຳເນີນການ
             </span>
           </p>
-          <div className="overflow-y-auto h-[71vh] scroll-smooth pb-5">
+          <div className="overflow-y-auto w-[60vw] h-[40vh] scroll-smooth pb-5">
             <p className="flex border-b-1">
-              <span className="py-1 px-2  w-12 ">gfdgfd</span>
-              <span className="py-1 px-2 border-l-1 w-40 uppercase">
-                fdgfdg
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
               </span>
-              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                gfdgdfg
-              </span>
-              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                gdfgf
-              </span>
-              <span className="py-1 px-2 border-l-1 w-20">sdfds</span>
-              <span className="py-1 px-2 border-l-1 w-20">fsdf</span>
-              <span className="py-1 px-2 border-l-1 w-32">fsdds</span>
-              <span className="py-1 px-2 border-l-1 w-24 ">fssdfsd</span>
-              <span className="py-1 px-2 border-l-1 w-16 text-red-500">
-                gfdg
-              </span>
-              <span className="py-1 px-2 border-l-1 w-32 ">
-                {formattedNumber(45645)}. ກີບ
-              </span>
-
-              <span className="flex justify-center gap-3 p-1 border-l-1 w-48 text-center text-sm">
-                {/* <Link
-                      href={`/cashier/invoice/detail/${it.id}`}
-                      className="bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
-                    >
-                      ລາຍລະອຽດ
-                    </Link> */}
-                dsds
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
               </span>
             </p>
-            {/* {products.length > 0 ? (
-              products.map((it, index) => (
-                <p className="flex border-b-1" key={index}>
-                  <span className="py-1 px-2  w-12 ">{it.id}</span>
-                  <span className="py-1 px-2 border-l-1 w-40 uppercase">
-                    {it.barcode} fd
-                  </span>
-                  <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                    {it.title}
-                  </span>
-                  <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                    {it.use_for}
-                  </span>
-                  <span className="py-1 px-2 border-l-1 w-20">{it.size}</span>
-                  <span className="py-1 px-2 border-l-1 w-20">{it.unit}</span>
-                  <span className="py-1 px-2 border-l-1 w-32">
-                    {it.category}
-                  </span>
-                  <span className="py-1 px-2 border-l-1 w-24 ">{it.qty}</span>
-                  <span className="py-1 px-2 border-l-1 w-16 text-red-500">
-                    {it.discount}%
-                  </span>
-                  <span className="py-1 px-2 border-l-1 w-32 ">
-                    {formattedNumber(it.cost_lak)}. ກີບ
-                  </span>
-
-                  <span className="flex justify-center gap-3 p-1 border-l-1 w-48 text-center text-sm">
-                    {/* <Link
-                      href={`/cashier/invoice/detail/${it.id}`}
-                      className="bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
-                    >
-                      ລາຍລະອຽດ
-                    </Link> */}
-            {/* </span>
-                </p>
-              ))
-            ) : ( */}
-            {/* <div className="h-[400px] flex justify-center items-center">
-                <p>ບໍ່ທັນມີລາຍຊື່</p>
-              </div> */}
-            {/* )} */}
-            {/* } */}
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-green-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ເປີດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
+            <p className="flex border-b-1">
+              <span className="py-1 px-2  w-12 ">1</span>
+              <span className="py-1 px-2 border-l-1 w-40 ">john doe</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">544564FFGY</span>
+              <span className="py-1 px-2 border-l-1 w-48 ">
+                <span className="bg-yellow-300 text-gray-700 py-px px-5 leading-5 rounded-xl">
+                  ປິດການໃຊ້ງານ
+                </span>
+              </span>
+              <span className="py-1 px-2 border-l-1 w-72 text-white flex gap-2 justify-center items-center">
+                <button className="bg-yellow-600 hover:bg-yellow-500 px-5 leading-5 rounded-xl">
+                  ປິດ
+                </button>
+                <button className="bg-green-600 hover:bg-green-500 px-5 leading-5 rounded-xl">
+                  ເປີດ
+                </button>
+                <button className="bg-red-600 px-5 hover:bg-red-500 leading-5 rounded-xl">
+                  ລົບ
+                </button>
+              </span>
+            </p>
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-20 right-40 bg-blue-500 hover:bg-green-400 w-40 h-40 flex justify-center items-center rounded-full shadow-lg shadow-gray-500 duration-1000">
+        <button
+          onClick={handleAlert}
+          className=" bg-blue-700 hover:bg-green-600 text-white rounded-full w-20 h-20 text-xl font-semibold duration-300"
+        >
+          ສ້າງ
+        </button>
       </div>
     </>
   );
