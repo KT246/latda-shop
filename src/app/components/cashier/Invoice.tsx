@@ -7,16 +7,23 @@ import { formattedNumber } from "@/app/helpers/funtions";
 import { apiDecrease, apiIncrease, apiDeleteCart } from "@/app/api/products";
 import axios from "axios";
 import { toast } from "react-toastify";
-
 import Image from "next/image";
 import Swal from "sweetalert2";
 import { SwalNotification } from "@/app/helpers/alers";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+} from "@heroui/table";
 
 const Invoice = () => {
   const { cartName, updateCart, cart } = useCartStore();
 
   const handleAddToCart = async (barcode: string, id: number) => {
-    console.log("add: " + barcode);
+    // console.log("add: " + barcode);
     if (id === 1) {
       try {
         const res = await apiIncrease({
@@ -84,14 +91,14 @@ const Invoice = () => {
 
   return (
     <div>
-      <div className=" w-full p-2 border border-black rounded-lg shadow-lg h-[74vh] bg-white">
-        <div className="w-full h-[52vh] overflow-y-scroll mb-2">
-          <table className="w-full relative">
+      <div className=" w-full p-2 border border-black rounded-lg shadow-lg h-[74vh] bg-white shadow-gray-400">
+        <div className="w-full  mb-2 overflow-auto h-[53vh]">
+          <table className="w-full relative ">
             <thead className=" sticky top-0 left-0 z-10">
               <tr className="bg-green-200  w-full">
                 <th className="py-1 px-2 text-left ">ຊື່ສິນຄ້າ</th>
                 <th className="py-1 px-2  text-center">ຈຳນວນ</th>
-                <th className="py-1 px-2 text-center">ໜ່ວຍ</th>
+                <th className="py-1 px-2 text-center">ຈຳນວນ</th>
 
                 <th className="py-1 px-2 text-left">ລາຄາ</th>
                 <th className="py-1 px-2 text-left">ລວມ</th>
@@ -106,7 +113,7 @@ const Invoice = () => {
                       <td className="py-1 px-2 ">
                         {item.title + " " + item.size + " " + item.use_for}
                       </td>
-                      <td className="py-1 px-2 grid grid-cols-3 items-center h-14">
+                      <td className="py-1 px-2 grid grid-cols-3 place-content-center gap-2 h-14">
                         <Tooltip content="ເພີ່ມ">
                           <span
                             className="flex justify-center items-center cursor-pointer  "

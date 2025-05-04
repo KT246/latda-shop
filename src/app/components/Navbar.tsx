@@ -1,10 +1,11 @@
 "use client";
 import React from "react";
 import useAuthStore from "@/app/store/authStores";
+import { useCartStore } from "../store/cartStore";
 
 const Navbar = () => {
   const { user } = useAuthStore();
-
+  const { cart } = useCartStore();
   return (
     <div className=" h-full flex items-center justify-between ps-5 pe-20">
       <div className="">
@@ -18,7 +19,7 @@ const Navbar = () => {
           ອັບເດດລ່າສຸດ 20/06/202
           <span className="text-yellow-200 px-2">ອັດຕາແລກປ່ຽນ ລາວ - ໄທ:</span>
           <span className="text-gray-50 text-lg rounded-b-full border-b-2 border-gray-200">
-            650
+            {cart?.rate}
           </span>
         </p>
       </div>
