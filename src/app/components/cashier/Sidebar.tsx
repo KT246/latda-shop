@@ -17,11 +17,11 @@ const Sidebar = () => {
     router.push("/login");
   };
   return (
-    <div className="py-10 w-full overflow-hidden flex flex-col">
+    <div className="py-10 w-full overflow-hidden flex flex-col items-center">
       <Tooltip content="ຂາຍຍ່ອຍ">
         <Link
           href={"/cashier"}
-          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+          className="px-4 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
         >
           <MdOutlinePointOfSale size={40} color="white" />
         </Link>
@@ -29,33 +29,23 @@ const Sidebar = () => {
       <Tooltip content="ໃບບິນ">
         <Link
           href={"/cashier/invoice"}
-          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
-        >
-          <FaFileInvoice size={40} color="white" />
-        </Link>
-      </Tooltip>
-      <Tooltip content="ລາຍງານການຂາຍ">
-        <Link
-          href={"/cashier/sell-list"}
-          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+          className="px-4 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
         >
           <CiViewList size={40} color="white" />
         </Link>
       </Tooltip>
+
       <Tooltip content="ຂໍ້ມູນສ່ວນຕົວ">
         <Link
           href={"/cashier/account"}
-          className="px-2 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
+          className="px-4 py-5 flex hover:bg-blue-800 ease-in-out duration-300"
         >
           <FaRegUserCircle size={40} color="white" />
         </Link>
       </Tooltip>
-      <div className="mt-32">
+      <div className="mt-32  w-full flex justify-center py-5 hover:bg-red-500 duration-300">
         <Tooltip content="ອອກລະບົບ">
-          <button
-            onClick={handleLogout}
-            className="text-white font-bold px-2 py-5 flex hover:bg-red-500 ease-in-out duration-300 "
-          >
+          <button onClick={handleLogout} className="text-white font-bold flex ">
             <CiLogout size={40} />
           </button>
         </Tooltip>

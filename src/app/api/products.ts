@@ -30,9 +30,24 @@ export const apiIncrease = (product: object) => {
 export const apiDecrease = (product: object) => {
   return api.post("/api/cashier/cart/decrease", product);
 };
+export const apiRetail = (product: object) => {
+  return api.post("/api/cashier/checkout/retail", product);
+};
 
+export const apiPostInvoice = (data: object) => {
+  return api.post("/api/cashier/invoice", data);
+};
 ////////////////////////////// delete /////////////////////////////////
 
 export const apiDeleteCart = (id: number) => {
   return api.delete("/api/cashier/cart/clear?id=" + id);
+};
+export const apiDeleteProduct = (
+  cashier_id: string,
+  barcode: string,
+  cart_name: number
+) => {
+  return api.delete(
+    `/api/cashier/cart/delete?cashier_id=${cashier_id}&barcode=${barcode}&cart_name=${cart_name}`
+  );
 };

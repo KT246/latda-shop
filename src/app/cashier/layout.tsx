@@ -11,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col">
       <div className="bg-blue-500 h-[8vh]">
         <Navbar />
+        fs
       </div>
       <div className="h-[92vh] flex">
         <div className=" bg-blue-950">

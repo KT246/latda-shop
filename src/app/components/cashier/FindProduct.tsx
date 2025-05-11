@@ -1,9 +1,9 @@
 "use client";
-// import { useCart } from "@/app/lib/cartRetailContext";
+
 import { Input, Spinner } from "@heroui/react";
 import React from "react";
 import Highlighter from "react-highlight-words";
-import { toast } from "react-toastify";
+
 import { useCartStore } from "@/app/store/cartStore";
 import Swal, { SweetAlertOptions } from "sweetalert2";
 import {
@@ -11,7 +11,6 @@ import {
   apiProductByNo,
   apiProductByPage,
   apiProductByTitle,
-  apiProductByBarcode,
   apiAddToCart,
 } from "@/app/api/products";
 import { SwalNotification } from "@/app/helpers/alers";
@@ -358,13 +357,15 @@ const FindProduct = () => {
                   );
                 })
               ) : (
-                <div className="fixed bottom-40 right-80">
-                  <Spinner
-                    classNames={{ label: "text-foreground mt-4" }}
-                    label="ກຳລັງໂຫລດ"
-                    variant="simple"
-                  />
-                </div>
+                <tr>
+                  <td className="fixed bottom-40 right-80">
+                    <Spinner
+                      classNames={{ label: "text-foreground mt-4" }}
+                      label="ກຳລັງໂຫລດ"
+                      variant="simple"
+                    />
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
