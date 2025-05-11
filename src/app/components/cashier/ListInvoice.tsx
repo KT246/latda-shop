@@ -4,41 +4,64 @@ import { Details, Cart, InvoiceResponse, Invoice } from "@/app/lib/interface";
 import Link from "next/link";
 import { formattedNumber, formatDate } from "@/app/helpers/funtions";
 import { Pagination } from "@heroui/react";
-import { apiPostInvoice } from "@/app/api/products";
+import { apiPostInvoice, apiGetInvoiceById } from "@/app/api/products";
 
 import { useInvoiceStore } from "@/app/store/Invoice";
 
 export default function ListInvoice() {
-  const [page, setPage] = useState(1);
-  const { updateInvoices, invoices } = useInvoiceStore();
+  const [change, setChange] = useState(false);
+  const {
+    updateInvoices,
+    updateInvoice,
+    updateCurrentPage,
+    updateSize,
+    invoices,
+    invoice,
+    currentPage,
+    size,
+  } = useInvoiceStore();
 
-  const pageSize = 6;
+  const pageSize = 10;
   const date_start = "2025-05-06";
   const date_end = "2025-05-08";
 
-  const fetchInvoices = async (pageNum: number) => {
+  const fetchInvoices = async (page: number) => {
     try {
       const res = await apiPostInvoice({
-        page: pageNum,
+        page: currentPage,
         size: pageSize,
         date_start: date_start,
         date_end: date_end,
       });
       if (res.status === 200) {
         updateInvoices(res.data);
+        updateCurrentPage(page);
       }
     } catch (error) {
       console.error("Error fetching invoices:", error);
     }
   };
 
-  console.log("invoices", invoices);
+  // console.log("invoices", invoices);
   useEffect(() => {
-    fetchInvoices(page);
-  }, []);
+    fetchInvoices(currentPage);
+  }, [currentPage]);
 
-  const handleFilter = (e: any) => {
+  const handleChangePage = (page: number) => {
+    // console.log("page", page);
+    fetchInvoices(page);
+  };
+
+  const handleFilter = async (e: any) => {
     e.preventDefault();
+    const id = e.target[0].value;
+    try {
+      const res = await apiGetInvoiceById(id);
+      console.log("res", res.data);
+      // updateInvoices(res.data);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+    }
   };
   return (
     <>
@@ -86,7 +109,9 @@ export default function ListInvoice() {
         <span className="py-1 px-2 border-l-1 w-72 text-center">ດຳເນີນການ</span>
       </p>
       <div className="overflow-y-auto h-[71vh] scroll-smooth pb-5">
-        {invoices ? (
+        {change ? (
+          <p></p>
+        ) : invoices ? (
           <>
             {invoices?.invoices.map((invoice: Invoice, index: number) => (
               <p className="flex border-b-1">
@@ -124,7 +149,7 @@ export default function ListInvoice() {
                     ລາຍລະອຽດ
                   </Link>
                   <button className="flex-1 bg-blue-500 hover:bg-blue-700 text-white  font-bold  px-2 rounded">
-                    copy
+                    Print
                   </button>
                   <button className="flex-1 bg-red-500 hover:bg-red-700 text-white  font-bold  px-2 rounded">
                     ຍົກເລີກ
@@ -141,9 +166,9 @@ export default function ListInvoice() {
         <div className="flex justify-center items-center mt-10 w-full">
           <Pagination
             showControls
-            initialPage={page}
+            initialPage={currentPage}
             total={invoices?.totalPages ?? 0}
-            onChange={(page) => setPage(page)}
+            onChange={handleChangePage}
           />
           {/* <p className="bg-red-500">{invoices?.</p> */}
         </div>

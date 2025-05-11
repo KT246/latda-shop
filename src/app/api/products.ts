@@ -34,9 +34,6 @@ export const apiRetail = (product: object) => {
   return api.post("/api/cashier/checkout/retail", product);
 };
 
-export const apiPostInvoice = (data: object) => {
-  return api.post("/api/cashier/invoice", data);
-};
 ////////////////////////////// delete /////////////////////////////////
 
 export const apiDeleteCart = (id: number) => {
@@ -50,4 +47,13 @@ export const apiDeleteProduct = (
   return api.delete(
     `/api/cashier/cart/delete?cashier_id=${cashier_id}&barcode=${barcode}&cart_name=${cart_name}`
   );
+};
+
+// {Invoices}
+
+export const apiPostInvoice = (data: object) => {
+  return api.post("/api/cashier/invoice", data);
+};
+export const apiGetInvoiceById = (key: string) => {
+  return api.get("/api/cashier/invoice?id=" + key);
 };
