@@ -54,6 +54,9 @@ export const apiDeleteProduct = (
 export const apiPostInvoice = (data: object) => {
   return api.post("/api/cashier/invoice", data);
 };
+export const apiPostInvoiceCancle = (key: number) => {
+  return api.post("/api/cashier/invoice/cancel", key);
+};
 export const apiGetInvoiceById = (key: string) => {
   return api.get("/api/cashier/invoice?id=" + key);
 };

@@ -1,12 +1,35 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
 import HeaderLinks from "../HeaderLinks";
+import { useInvoiceStore } from "@/app/store/Invoice";
+import { apiGetInvoiceById } from "@/app/api/products";
+import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 export default function Detail() {
   const params = useParams();
   const router = useRouter();
-  const id = params.id;
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const { invoice, updateInvoice } = useInvoiceStore();
+
+  const getInvoice = async () => {
+    if (!id) {
+      console.error("Invalid invoice ID");
+      return;
+    }
+    const res = await apiGetInvoiceById(id);
+    if (res.status === 200) {
+      updateInvoice(res.data);
+    } else {
+      console.log("Error fetching invoice data");
+    }
+  };
+
+  useEffect(() => {
+    getInvoice();
+  }, [id]);
+
   return (
     <>
       <HeaderLinks
@@ -26,39 +49,49 @@ export default function Detail() {
           <div className="grid grid-cols-9 gap-3 border-1 p-3  rounded text-center">
             <div className="space-y-1 ">
               <p className="font-semibold">ລະຫັດບິນ</p>
-              <p className="text-gray-500 uppercase">fstrata65</p>
+              <p className="text-gray-500 uppercase">{invoice?.id}</p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ວັນທີສ້າງ</p>
-              <p className="text-gray-500 uppercase">15/02/2025</p>
+              <p className="text-gray-500 uppercase">
+                {formatDate(invoice?.date_create ?? "")}
+              </p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ລະຫັດຜູ້ຂາຍ</p>
-              <p className="text-gray-500 uppercase">LD0001</p>
+              <p className="text-gray-500 uppercase">{invoice?.cashier_id}</p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ຊື່ກະຕ່າ</p>
-              <p className="text-gray-500 uppercase">2</p>
+              <p className="text-gray-500 uppercase">{invoice?.cart_type}</p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ອັດຕາແລກປ່ຽນ</p>
-              <p className="text-gray-500 uppercase">606</p>
+              <p className="text-gray-500 uppercase">{invoice?.rate}</p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ຈໍານວນສິນຄ້າ</p>
-              <p className="text-gray-500 uppercase">5</p>
+              <p className="text-gray-500 uppercase">
+                {invoice?.details?.length}
+              </p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ສ່ວນຫຼຸດ</p>
-              <p className="text-gray-500 uppercase">10%</p>
+              <p className="text-gray-500 uppercase">
+                {formattedNumber(invoice?.m_discount ?? 0)} ກີບ
+              </p>
             </div>
             <div className="space-y-1 ">
               <p className="font-semibold">ລາຄາລວມ (LAK)</p>
-              <p className="text-gray-500 uppercase">1.250.000 ກີບ</p>
+              <p className="text-gray-500 uppercase">
+                {formattedNumber(invoice?.total_checkout_lak ?? 0)} ກີບ
+              </p>
             </div>
             <div className="space-y-1 ">
-              <p className="font-semibold">ປະເພດການຈ່ານຍ</p>
-              <p className="text-gray-500 uppercase">ເງິນສົດ</p>
+              <p className="font-semibold">ປະເພດການຈ່າຍ</p>
+              <p className="text-gray-500 uppercase">
+                {invoice?.pay_type === "cash" ? "ເງິນສົດ" : "ເງິນໂອນ"}
+              </p>
             </div>
           </div>
         </div>
@@ -71,198 +104,56 @@ export default function Detail() {
           <div className="border-1 rounded h-[40vh] overflow-hidden">
             <p className="font-semibold flex bg-blue-500 text-gray-100 sticky top-0 z-10 text-sm">
               <span className="py-1 px-2  w-12">ລຳດັບ</span>
-              <span className="py-1 px-2 border-l-1 w-40 text-center">
+              <span className="py-1 px-2 border-l-1 w-1/12 text-center">
                 ບາໂຄດ
               </span>
-              <span className="py-1 px-2 border-l-1 w-96 text-center">
+              <span className="py-1 px-2 border-l-1 w-1/3 text-center">
                 ຫົວຂໍ້
               </span>
-              <span className="py-1 px-2 border-l-1 w-28 text-center">
+              <span className="py-1 px-2 border-l-1 w-1/12 text-center">
                 ຫົວໜ່ວຍ
               </span>
-              <span className="py-1 px-2 border-l-1 w-40 text-center">
+              <span className="py-1 px-2 border-l-1 w-1/12 text-center">
                 ໝວດຫມູ່
               </span>
-              <span className="py-1 px-2 border-l-1 w-28 text-center">
-                ຈໍານວນສິນຄ້າ
+              <span className="py-1 px-2 border-l-1 w-1/12 text-center">
+                ຈໍານວນ
               </span>
-              <span className="py-1 px-2 border-l-1 w-48 text-center ">
+              <span className="py-1 px-2 border-l-1 w-1/12 text-center ">
                 ລາຄາ (LAK)
               </span>
-              <span className="py-1 px-2 border-l-1 w-48 text-center">
+              <span className="py-1 px-2 border-l-1 w-1/6 text-center">
                 ລາຄາລວມ (LAK)
               </span>
             </p>
             <div className="overflow-y-auto h-[35vh] scroll-smooth pb-5">
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
-
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-12 ">1</span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 uppercase">
-                  1234567890123
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-96 ">
-                  ຜະລິດຕະພັນຕົວຢ່າງ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28">
-                  ຂວດ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-40 ">
-                  cataetry
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-28 ">
-                  650
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-48 ">
-                  655473. ກີບ
-                </span>
-              </p>
+              {invoice &&
+                invoice?.details.map((it, i) => (
+                  <p className="flex border-b-1" key={i}>
+                    <span className="py-1 px-2  w-12 ">{i + 1}</span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/12 uppercase">
+                      {it?.barcode}
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/3 ">
+                      {it?.title}
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/12">
+                      {it?.unit}
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
+                      {it?.category}
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
+                      {it?.qty}
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
+                      {formattedNumber(it?.retail_lak ?? 0)} ກີບ
+                    </span>
+                    <span className="text-center py-1 px-2 border-l-1 w-1/6 ">
+                      {formattedNumber(it?.total_lak ?? 0)} ກີບ
+                    </span>
+                  </p>
+                ))}
             </div>
           </div>
         </div>
