@@ -14,6 +14,7 @@ import {
   apiAddToCart,
 } from "@/app/api/products";
 import { SwalNotification } from "@/app/helpers/alers";
+import { toast } from "react-toastify";
 
 const FindProduct = () => {
   const { cartName, updateCart, searchType, updateSearchType, maxMinqty } =
@@ -33,8 +34,12 @@ const FindProduct = () => {
         cart_name: cartName,
       });
       if (res.data.status !== "error") {
-        SwalNotification("ເພີ່ມສຳເລັດ", "success");
         updateCart(res.data);
+        setBarcode("");
+        toast.success("ເພີ່ມສຳເລັດ", {
+          position: "top-center",
+        });
+        PlaySound();
       }
     } catch (error) {
       SwalNotification("ເກີດຂໍ້ຜິດພາດ", "error");
@@ -91,7 +96,7 @@ const FindProduct = () => {
   }, [key]);
 
   const PlaySound = () => {
-    const audio = new Audio("/sound/wrong.mp3");
+    const audio = new Audio("/successed.mp3");
     audio.play();
   };
 
@@ -109,6 +114,11 @@ const FindProduct = () => {
         });
         if (res.data.status !== "error") {
           updateCart(res.data);
+          setBarcode("");
+          toast.success("ເພີ່ມສຳເລັດ", {
+            position: "top-center",
+          });
+          PlaySound();
         }
       } catch (error) {
         throw error;
@@ -130,8 +140,12 @@ const FindProduct = () => {
         cart_name: cartName,
       });
       if (res.data.status !== "error") {
-        SwalNotification("ເພີ່ມສຳເລັດ", "success");
         updateCart(res.data);
+        setBarcode("");
+        toast.success("ເພີ່ມສຳເລັດ", {
+          position: "top-center",
+        });
+        PlaySound();
       }
     } catch (error) {
       throw error;
@@ -182,6 +196,10 @@ const FindProduct = () => {
             onChange={(e) => setBarcode(e.target.value)}
             color="success"
             size="md"
+            variant="bordered"
+            classNames={{
+              label: "text-#000 font-semibold",
+            }}
           />
           {message && (
             <span className="ps-2 text-sm mt-2 text-red-500">{message}</span>
@@ -264,6 +282,10 @@ const FindProduct = () => {
             }
             color="success"
             size="md"
+            variant="bordered"
+            classNames={{
+              label: "text-#000 font-semibold",
+            }}
           />
         </div>
         <div className=" w-full mt-2 h-[70%] overflow-auto border">
@@ -305,7 +327,7 @@ const FindProduct = () => {
                           textToHighlight={product.barcode}
                         />
                       </td>
-                      <td className="py-2 border  border-gray-300">
+                      <td className="py-2 border  border-gray-300 w-1/4 break-all whitespace-normal">
                         {searchType === "title" ? (
                           <Highlighter
                             highlightClassName="bg-yellow-300"
@@ -358,12 +380,10 @@ const FindProduct = () => {
                 })
               ) : (
                 <tr>
-                  <td className="fixed bottom-40 right-80">
-                    <Spinner
-                      classNames={{ label: "text-foreground mt-4" }}
-                      label="ກຳລັງໂຫລດ"
-                      variant="simple"
-                    />
+                  <td colSpan={6}>
+                    <div className="flex justify-center items-center h-52 w-full">
+                      <p className="text-center">ບໍ່ມີຂໍ້ມູນ</p>
+                    </div>
                   </td>
                 </tr>
               )}

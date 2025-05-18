@@ -56,3 +56,4 @@ export interface InvoiceResponse {
   totalPages: number;
   currentPage: number;
 }
+export const currenDate = new Date().toISOString().split("T")[0];

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, Tooltip } from "@heroui/react";
 
 import { useCartStore } from "@/app/store/cartStore";
@@ -13,14 +13,28 @@ import {
 } from "@/app/api/products";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Image from "next/image";
+
 import Swal from "sweetalert2";
 import { SwalNotification } from "@/app/helpers/alers";
 import { MdDeleteForever } from "react-icons/md";
 import { IoAddCircle } from "react-icons/io5";
 import { RiSubtractLine } from "react-icons/ri";
+import { div } from "framer-motion/client";
 const Invoice = () => {
-  const { cartName, updateCart, cart } = useCartStore();
+  const [dialog, setDialog] = useState(false);
+  const {
+    updateCart,
+    updateDisMuont,
+    updateMnBack,
+    updateMnCheckOut,
+    updateMnCustomer,
+    cart,
+    cartName,
+    mn_back,
+    mn_check_out,
+    mn_customer,
+    dis_muont,
+  } = useCartStore();
   const cartEndRef = useRef<HTMLDivElement>(null);
   console.log(cart, "cart");
 
@@ -97,127 +111,35 @@ const Invoice = () => {
     });
   };
 
-  const handleSell = async () => {
-    if (cart === null) return SwalNotification("ກະຕ່າບໍ່ມີສິນຄ້າ", "error");
-    const totalAmount = cart.total_lak; // Ví dụ tổng tiền
-
-    Swal.fire({
-      title: "ຂາຍ",
-      text: `ຢືນຢັນການຂາຍສິນຄ້າກະຕ່າ ${cartName} ບໍ່?`,
-      icon: "warning",
-      showCancelButton: true,
-      cancelButtonText: "ຍົກເລີກ",
-      confirmButtonText: "ຂາຍ",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "ເລືອກວິທີຈ່າຍເງິນ",
-          input: "radio",
-          inputOptions: {
-            cash: "ຈ່າຍເງິນສົດ",
-            transfer: "ໂອນເງິນ",
-          },
-          inputValidator: (value) => {
-            if (!value) {
-              return "ກະລຸນາເລືອກວິທີຈ່າຍເງິນ";
-            }
-          },
-          showCancelButton: true,
-          cancelButtonText: "ຍົກເລີກ",
-          confirmButtonText: "ຢືນຢັນ",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            const pay_type = result.value;
-            if (result.value === "cash") {
-              Swal.fire({
-                title: "ເງິນທີ່ຈ່າຍລູກຄ້າຈ່າຍ",
-                html: `
-                <input id="swal-input" type="number" class="swal2-input" placeholder="ຈໍານວນເງິນ">
-                <div style="margin-top: 5px;">ເງິນທີຕ້ອງຈ່າຍ: ${totalAmount.toLocaleString()} ₭</div>
-                <div id="swal-amount" style="margin-top: 10px; ;">ເງິນລູກຄ້າ: 0 ₭</div>
-                <div id="swal-change" style="margin-top: 10px; ;">ເງິນທອນ: 0 ₭</div>
-              `,
-                showCancelButton: true,
-                showDenyButton: true,
-                cancelButtonText: "ຍົກເລີກ",
-                confirmButtonText: "transfer",
-                denyButtonText: "cash",
-                didOpen: () => {
-                  const input = document.getElementById("swal-input");
-                  const amount = document.getElementById("swal-amount");
-                  const change = document.getElementById("swal-change");
-                  if (input) {
-                    input.addEventListener("input", () => {
-                      const value =
-                        parseFloat((input as HTMLInputElement).value) || 0;
-                      if (amount) {
-                        amount.textContent = `ຈໍານວນທີ່ທ່ານໃສ່: ${value.toLocaleString()} ₭`;
-                      }
-                      if (change) {
-                        const changeValue = value - totalAmount;
-                        change.textContent = `ເງິນທອນ: ${changeValue.toLocaleString()} ₭`;
-                      }
-                    });
-                  }
-                },
-                preConfirm: () => {
-                  const inputValue = (
-                    document.getElementById("swal-input") as HTMLInputElement
-                  ).value;
-                  if (!inputValue) {
-                    Swal.showValidationMessage("ກະລຸນາໃສ່ຈໍານວນເງິນ");
-                  }
-                  return inputValue;
-                },
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  const change = result.value;
-                  try {
-                    const res = await apiRetail({
-                      cart_name: cartName,
-                      m_discount: cart.m_discount,
-                      pay_type: pay_type,
-                    });
-                    console.log(res, "res");
-                    if (res.data.status !== "error") {
-                      updateCart(null);
-                      SwalNotification(`ສຳເລັດ ${pay_type}`, "success");
-                    } else {
-                      toast.error(res.data?.message);
-                    }
-                  } catch (error) {
-                    if (axios.isAxiosError(error) && error.response) {
-                      const errorMessage = error.response.data?.message;
-                      toast.error(errorMessage);
-                    }
-                  }
-                }
-              });
-            } else {
-              try {
-                const res = await apiRetail({
-                  cart_name: cartName,
-                  m_discount: cart.m_discount,
-                  pay_type: pay_type,
-                });
-
-                if (res.data.status !== "error") {
-                  updateCart(null);
-                  SwalNotification(`ສຳເລັດ ${pay_type}`, "success");
-                } else {
-                  toast.error(res.data?.message);
-                }
-              } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                  const errorMessage = error.response.data?.message;
-                  toast.error(errorMessage);
-                }
-              }
-            }
-          }
-        });
+  const reTail = async (s: string) => {
+    try {
+      const res = await apiRetail({
+        cart_name: cartName,
+        m_discount: dis_muont ?? 0,
+        member_id: "",
+        pay_type: s,
+      });
+      console.log(res.data);
+      if (res.data.status !== "error") {
+        updateCart(null);
+        setDialog(!dialog);
+        toast.success("ຂາຍສຳເລັດ");
       }
-    });
+    } catch (error) {
+      toast.error(String(error));
+    }
+  };
+
+  const handleSubmit = async (key: number) => {
+    if (cart === null) {
+      toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ");
+      return;
+    }
+    if (key === 1) {
+      await reTail("transfer");
+    } else {
+      await reTail("cash");
+    }
   };
 
   const handleDeleteProduct = async (
@@ -243,8 +165,8 @@ const Invoice = () => {
 
   return (
     <>
-      <div className=" w-full p-2 border border-black rounded-lg shadow-lg h-[74vh] bg-white shadow-gray-400">
-        <div className="w-full  mb-2 overflow-y-auto h-[53vh]">
+      <div className=" w-full h-full p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
+        <div className="w-full h-[70%]">
           <p className=" flex bg-green-200 w-full font-semibold text-sm">
             <span className="py-1 px-2 text-left w-40">ຊື່ສິນຄ້າ</span>
             <span className="py-1 px-2  text-center w-40">ຈຳນວນ</span>
@@ -253,7 +175,7 @@ const Invoice = () => {
             <span className="py-1 px-2 text-left w-40">ລວມ</span>
             <span className="py-1 px-2 text-center w-20">ລຶບ</span>
           </p>
-          <div className="overflow-y-auto h-[48vh] pb-5">
+          <div className="overflow-y-auto h-full pb-10">
             {cart !== null ? (
               cart.details?.map((item, index) => {
                 return (
@@ -319,43 +241,179 @@ const Invoice = () => {
             )}
           </div>
         </div>
-        <div className="w-full flex justify-between px-2 bg-blue-100 border-b border-gray-300">
-          <p>ລວມ</p>
-          <p className=" text-[20px] font-bold">
-            {formattedNumber(cart?.total_lak ?? 0)} ກີບ
-          </p>
+        <div className="h-1/5  flex items-center">
+          <div className="w-full">
+            <div className="w-full flex justify-between px-2 bg-blue-100 border-b border-gray-300">
+              <p>ລວມ</p>
+              <p className=" text-[20px] font-bold">
+                {formattedNumber(cart?.total_lak ?? 0)} ກີບ
+              </p>
+            </div>
+            <div className="w-full flex justify-between px-2 bg-blue-100">
+              <p>ສ່ວນຫຼຸດ</p>
+              <p className=" text-[20px] font-bold text-red-600">
+                {cart?.m_discount ?? 0}%
+              </p>
+            </div>
+            <div className="w-full flex justify-between items-center p-2 bg-green-200">
+              <p className=" text-[30px] font-bold">ລວມເງິນຕ້ອງຈ່າຍ</p>
+              <p className=" text-[30px] font-bold">
+                <span className="text-red-500 pe-2">
+                  {formattedNumber(cart?.total_lak ?? 0)}
+                </span>
+                ກີບ
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="w-full flex justify-between px-2 bg-blue-100">
-          <p>ສ່ວນຫຼຸດ</p>
-          <p className=" text-[20px] font-bold text-red-600">
-            {cart?.m_discount ?? 0}%
-          </p>
-        </div>
-        <div className="w-full flex justify-between items-center p-2 bg-green-200">
-          <p className=" text-[30px] font-bold">ລວມເງິນຕ້ອງຈ່າຍ</p>
-          <p className=" text-[30px] font-bold">
-            <span className="text-red-500 pe-2">
-              {formattedNumber(cart?.total_lak ?? 0)}
-            </span>
-            ກີບ
-          </p>
+        <div className=" flex gap-3 justify-between items-center h-[10%]">
+          <Button
+            radius="sm"
+            onPress={() => handleDeleteCart(cart?.id ?? 0)}
+            className="flex-1 h-full  text-gray-100 text-[40px] font-bold"
+            color="warning"
+          >
+            <p className="">ເຄຍກະຕ່າ</p>
+          </Button>
+          <Button
+            radius="sm"
+            onPress={() => {
+              cart !== null
+                ? setDialog(!dialog)
+                : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
+                    position: "top-center",
+                  });
+              updateMnCheckOut(cart?.total_lak ?? 0);
+            }}
+            color="primary"
+            className="flex-1 h-full text-[40px] font-bold"
+          >
+            ຂາຍ
+          </Button>
         </div>
       </div>
-      <div className="mt-3 flex justify-between">
-        <Button
-          onPress={() => handleDeleteCart(cart?.id ?? 0)}
-          className="w-[300px] h-[80px] bg-red-500 text-gray-100"
-        >
-          <p className="text-[40px] font-bold">ເຄຍກະຕ່າ</p>
-        </Button>
-        <Button
-          onPress={handleSell}
-          color="primary"
-          className="w-[300px] h-[80px]"
-        >
-          <p className=" text-[40px] font-bold text-gray-100">ຂາຍ</p>
-        </Button>
-      </div>
+
+      {/* Dialog */}
+
+      {dialog && (
+        <div className=" fixed z-20 bg-gray-900 bg-opacity-70 left-0 right-0 top-0 bottom-0 flex  justify-center items-center h-screen ">
+          <div className="bg-gray-100 rounded-lg p-2">
+            <div className="w-full h-full flex flex-col p-2">
+              <div className="flex gap-5">
+                <div className="flex flex-col justify-center gap-3">
+                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                    ເງິນລູກຄ້າ
+                  </label>
+                  <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2">
+                    <input
+                      type="number"
+                      min={0}
+                      onChange={(e) => {
+                        updateMnCustomer(Number(e.target.value));
+                        updateMnBack(
+                          mn_check_out > Number(e.target.value)
+                            ? 0
+                            : Number(e.target.value) - mn_check_out
+                        );
+                      }}
+                      className="w-full outline-none p-1"
+                    />
+                  </div>
+                  <p className="text-sm text-right leading-3">
+                    {formattedNumber(mn_customer)} ກີບ
+                  </p>
+                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                    ສ່ວນຫຼຸດ
+                  </label>
+                  <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2">
+                    <input
+                      type="number"
+                      min={0}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        const newDis = value;
+                        const newCheckOut = (cart?.total_lak ?? 0) - newDis;
+                        const newBack = mn_customer - newCheckOut;
+
+                        updateDisMuont(newDis);
+                        updateMnCheckOut(newCheckOut);
+                        updateMnBack(newBack);
+                      }}
+                      className="w-full outline-none p-1"
+                    />
+                  </div>
+                  <p className="text-sm text-right text-red-400 leading-3">
+                    {formattedNumber(dis_muont)} ກີບ
+                  </p>
+                </div>
+                <div className="flex flex-col justify-center gap-3">
+                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                    ເງິນທອນ
+                  </label>
+                  <div className="rounded overflow-hidden border-gray-300 border-2">
+                    <input
+                      type="number"
+                      min={0}
+                      value={mn_back}
+                      onChange={(e) => updateMnBack(Number(e.target.value))}
+                      className="w-full outline-none p-1"
+                      readOnly
+                    />
+                  </div>
+                  <p className="text-sm text-right leading-3">
+                    {formattedNumber(mn_back)} ກີບ
+                  </p>
+                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                    ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ
+                  </label>
+                  <div className="rounded overflow-hidden border-gray-300 border-2">
+                    <input
+                      type="number"
+                      min={0}
+                      value={mn_check_out}
+                      onChange={(e) => updateMnCheckOut(Number(e.target.value))}
+                      className="w-full outline-none p-1"
+                      readOnly
+                    />
+                  </div>
+                  <p className="text-sm text-right leading-3">
+                    {formattedNumber(mn_check_out)} ກີບ
+                  </p>
+                </div>
+              </div>
+              <div className=" flex items-center justify-center gap-5 mt-10">
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(0)}
+                  className="px-3 py-2 bg-blue-700 rounded-lg text-white hover:bg-blue-500 duration-300"
+                >
+                  ເງິນສົດ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(1)}
+                  className="px-3 py-2 bg-green-700 rounded-lg text-white hover:bg-green-500 duration-300"
+                >
+                  ເງິນໂອນ
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDialog(!dialog);
+                    updateDisMuont(0);
+                    updateMnBack(0);
+                    updateMnCheckOut(cart?.total_lak ?? 0);
+                    updateMnCustomer(0);
+                  }}
+                  className="px-3 py-2 bg-red-700 rounded-lg text-white hover:bg-red-500 duration-300"
+                >
+                  ຍົກເລີກ
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
