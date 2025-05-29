@@ -60,14 +60,8 @@ export default function ListInvoice() {
   useEffect(() => {
     fetchInvoices(currentPage);
   }, [currentPage]);
-  useEffect(() => {
-    if (size === 10) {
-      fetchInvoices(currentPage);
-    }
-  }, [size]);
 
   const handleChangePage = (page: number) => {
-    // console.log("page", page);
     fetchInvoices(page);
   };
 
@@ -143,13 +137,16 @@ export default function ListInvoice() {
   };
 
   const handleReset = () => {
+    const reset_start_date = "2025-05-06";
+    const reset_size = 10;
+    const reset_page = 1;
     setIdVoice("");
     setChange(false);
     updateInvoice(null);
-    updateDateStart("2025-05-06");
+    updateDateStart(reset_start_date);
     updateDateEnd(currenDate);
-    updateSize(10);
-    updateCurrentPage(1);
+    updateSize(reset_size);
+    updateCurrentPage(reset_page);
   };
   console.log(invoices);
   return (
@@ -344,15 +341,23 @@ export default function ListInvoice() {
                   >
                     ລາຍລະອຽດ
                   </Link>
-                  <button className="flex-1 bg-blue-500 hover:bg-blue-700 text-white  font-bold  px-2 rounded">
-                    Print
-                  </button>
-                  <button
-                    onClick={handleCanle(invoice?.id)}
-                    className="flex-1 bg-red-500 hover:bg-red-700 text-white  font-bold  px-2 rounded"
-                  >
-                    ຍົກເລີກ
-                  </button>
+                  {invoice.status === "" ? (
+                    <>
+                      <button className="flex-1 bg-blue-500 hover:bg-blue-700 text-white  font-bold  px-2 rounded">
+                        Print
+                      </button>
+                      <button
+                        onClick={handleCanle(invoice?.id)}
+                        className="flex-1 bg-red-500 hover:bg-red-700 text-white  font-bold  px-2 rounded"
+                      >
+                        ຍົກເລີກ
+                      </button>
+                    </>
+                  ) : (
+                    <div className=" flex-1 bg-red-300 text-white  font-bold  px-2 rounded">
+                      ບິນຖືກຍົກເລີກ
+                    </div>
+                  )}
                 </span>
               </p>
             ))}
@@ -360,7 +365,7 @@ export default function ListInvoice() {
               <Pagination
                 showControls
                 page={currentPage}
-                total={invoices?.totalPages ?? 0}
+                total={(invoices?.totalPages ?? 0) - 1}
                 onChange={handleChangePage}
               />
             </div>

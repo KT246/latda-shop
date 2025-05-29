@@ -1,5 +1,5 @@
 "use client";
-// import {NextUIProvider} from '@nextui-org/react'
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/cashier/Sidebar";
 import { protectRoute } from "../middleware/authMiddleware";

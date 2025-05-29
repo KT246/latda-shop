@@ -20,8 +20,11 @@ import { MdDeleteForever } from "react-icons/md";
 import { IoAddCircle } from "react-icons/io5";
 import { RiSubtractLine } from "react-icons/ri";
 import { div } from "framer-motion/client";
+import { useReactToPrint } from "react-to-print";
+import PrintBill from "./PrintBill";
 const Invoice = () => {
   const [dialog, setDialog] = useState(false);
+  const [bill, setBill] = useState<any>(null);
   const {
     updateCart,
     updateDisMuont,
@@ -110,6 +113,8 @@ const Invoice = () => {
       }
     });
   };
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   const reTail = async (s: string) => {
     try {
@@ -119,10 +124,12 @@ const Invoice = () => {
         member_id: "",
         pay_type: s,
       });
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.status !== "error") {
+        const data = res.data;
         updateCart(null);
         setDialog(!dialog);
+        setBill(data);
         toast.success("ຂາຍສຳເລັດ");
       }
     } catch (error) {
@@ -166,7 +173,7 @@ const Invoice = () => {
   return (
     <>
       <div className=" w-full h-full p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
-        <div className="w-full h-[70%]">
+        <div className="w-full h-[55vh]">
           <p className=" flex bg-green-200 w-full font-semibold text-sm">
             <span className="py-1 px-2 text-left w-40">ຊື່ສິນຄ້າ</span>
             <span className="py-1 px-2  text-center w-40">ຈຳນວນ</span>
@@ -241,7 +248,7 @@ const Invoice = () => {
             )}
           </div>
         </div>
-        <div className="h-1/5  flex items-center">
+        <div className="h-[20vh]  flex items-center">
           <div className="w-full">
             <div className="w-full flex justify-between px-2 bg-blue-100 border-b border-gray-300">
               <p>ລວມ</p>
@@ -251,7 +258,7 @@ const Invoice = () => {
             </div>
             <div className="w-full flex justify-between px-2 bg-blue-100">
               <p>ສ່ວນຫຼຸດ</p>
-              <p className=" text-[20px] font-bold text-red-600">
+              <p className="text-[20px] font-bold text-red-600">
                 {cart?.m_discount ?? 0}%
               </p>
             </div>
@@ -266,11 +273,11 @@ const Invoice = () => {
             </div>
           </div>
         </div>
-        <div className=" flex gap-3 justify-between items-center h-[10%]">
+        <div className=" flex gap-3 justify-between items-center">
           <Button
             radius="sm"
             onPress={() => handleDeleteCart(cart?.id ?? 0)}
-            className="flex-1 h-full  text-gray-100 text-[40px] font-bold"
+            className="flex-1  h-[80px] text-gray-100 text-[40px] font-bold"
             color="warning"
           >
             <p className="">ເຄຍກະຕ່າ</p>
@@ -286,7 +293,7 @@ const Invoice = () => {
               updateMnCheckOut(cart?.total_lak ?? 0);
             }}
             color="primary"
-            className="flex-1 h-full text-[40px] font-bold"
+            className="flex-1 h-[80px] text-[40px] font-bold"
           >
             ຂາຍ
           </Button>
@@ -296,7 +303,7 @@ const Invoice = () => {
       {/* Dialog */}
 
       {dialog && (
-        <div className=" fixed z-20 bg-gray-900 bg-opacity-70 left-0 right-0 top-0 bottom-0 flex  justify-center items-center h-screen ">
+        <div className=" fixed z-30 bg-gray-900 bg-opacity-70 left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
           <div className="bg-gray-100 rounded-lg p-2">
             <div className="w-full h-full flex flex-col p-2">
               <div className="flex gap-5">
@@ -414,6 +421,7 @@ const Invoice = () => {
           </div>
         </div>
       )}
+      <PrintBill data={bill} clearData={() => setBill(null)} />
     </>
   );
 };

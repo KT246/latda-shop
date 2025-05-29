@@ -148,7 +148,10 @@ const FindProduct = () => {
         PlaySound();
       }
     } catch (error) {
-      throw error;
+      // toast.error(String(error), {
+      //   position: "top-center",
+      // });
+      console.log(error);
     }
   };
 
