@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="bg-blue-500 h-[8vh]">
         <Navbar />
       </div>
-      <div className="h-[92vh] flex">
+      <div className="w-full h-[92vh] flex">
         <div className=" bg-blue-950">
           <Sidebar />
         </div>
