@@ -4,8 +4,17 @@ import useAuthStore from "@/app/store/authStores";
 import { useCartStore } from "../store/cartStore";
 
 const Navbar = () => {
-  const { user } = useAuthStore();
-  const { cart } = useCartStore();
+  const [user_name, setUserName] = React.useState<string>("");
+  const [idName, setIdName] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const user = useAuthStore.getState().user;
+    if (user) {
+      setUserName(user.username);
+      setIdName(user.name);
+    }
+  }, []);
+
   return (
     <div className=" h-full flex items-center justify-between ps-5 pe-20">
       <div className="">
@@ -19,16 +28,16 @@ const Navbar = () => {
           ອັບເດດລ່າສຸດ 20/06/202
           <span className="text-yellow-200 px-2">ອັດຕາແລກປ່ຽນ ລາວ - ໄທ:</span>
           <span className="text-gray-50 text-lg rounded-b-full border-b-2 border-gray-200">
-            {cart?.rate}
+            {/* {cart?.rate} */}
           </span>
         </p>
       </div>
 
       <div className="flex gap-2 items-center text-gray-50 font-semibold uppercase">
         <p className="text-sm text-gray-200 lowercase">hello! </p>
-        <p>{user?.username}</p>
+        <p>{user_name}</p>
         <p className="bg-gray-100 bg-opacity-50 px-3 py-1 rounded-sm">
-          {user?.name}
+          <span>{idName}</span>
         </p>
       </div>
     </div>

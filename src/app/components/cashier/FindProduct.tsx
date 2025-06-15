@@ -60,6 +60,7 @@ const FindProduct = () => {
       confirmButtonText: "ຕົກລົງ",
       cancelButtonText: "ຍົກເລີກ",
       showLoaderOnConfirm: true,
+      allowOutsideClick: false,
       preConfirm: async (value) => {
         if (!value || isNaN(value)) {
           Swal.showValidationMessage("ກະລຸນາປ້ອນຈຳນວນ");
@@ -283,7 +284,7 @@ const FindProduct = () => {
                 ? "no"
                 : "title"
             }
-            color="success"
+            color="primary"
             size="md"
             variant="bordered"
             classNames={{
