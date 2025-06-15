@@ -3,6 +3,36 @@ import React, { useState } from "react";
 import HeaderLinks from "../HeaderLinks";
 import { div } from "framer-motion/client";
 
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const data = {
+  labels: ["ອາທິດ", "ເດືອນ", "ທັງຫມົດ"],
+  datasets: [
+    {
+      label: "Tỷ lệ phần trăm",
+      data: [40, 10, 30],
+      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+      borderWidth: 1,
+    },
+  ],
+};
+
+const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom" as const,
+      labels: {
+        boxWidth: 20,
+        padding: 15,
+      },
+    },
+  },
+};
+
 function Home() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -12,16 +42,6 @@ function Home() {
     { label: "ພະນັກງານ", value: 2 },
   ];
 
-  const getRandomColor = () => {
-    const colors = [
-      // "bg-red-500 text-white bg-opacity-90 border-white",
-      // "bg-green-500 text-white bg-opacity-90 border-white",
-      // "bg-blue-500 text-white bg-opacity-90 border-white",
-      "",
-      "",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
   return (
     <>
       <HeaderLinks
@@ -37,28 +57,15 @@ function Home() {
             <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2  text-blue-500">
               ຕົ້ນທືນ - ກຳໄລ
             </h3>
-            <div className="flex items-center gap-3 pt-5 h-[20vh]">
-              <Crads
-                type_crad={1}
-                title="ອາທິດ"
-                invest={500000}
-                profit={200000}
-                qyt={0}
-              />
-              <Crads
-                type_crad={1}
-                title="ເດືອນ"
-                invest={500000}
-                profit={200000}
-                qyt={0}
-              />
-              <Crads
-                type_crad={1}
-                title="ທັງຫມົດ"
-                invest={500000}
-                profit={200000}
-                qyt={0}
-              />
+
+            <div
+              style={{
+                width: "300px",
+                margin: "0 auto",
+                // height: "150px"
+              }}
+            >
+              <Doughnut data={data} options={options} />
             </div>
           </div>
           <div className=" shadow-sm  p-2 rounded">
