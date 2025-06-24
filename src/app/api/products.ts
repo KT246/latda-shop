@@ -49,6 +49,10 @@ export const apiDeleteProduct = (
   );
 };
 
+export const apiDlPdruct = (barcode: string) => {
+  return api.delete("/api/admin/product/delete?barcode=" + barcode);
+};
+
 // {Invoices}
 
 export const apiPostInvoice = (data: object) => {

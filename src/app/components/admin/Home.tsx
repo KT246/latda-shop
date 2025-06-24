@@ -3,12 +3,31 @@ import React, { useState } from "react";
 import HeaderLinks from "../HeaderLinks";
 import { div } from "framer-motion/client";
 
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+} from "chart.js";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title
+);
 
-const data = {
+const data_pie = {
   labels: ["ອາທິດ", "ເດືອນ", "ທັງຫມົດ"],
   datasets: [
     {
@@ -20,15 +39,42 @@ const data = {
   ],
 };
 
-const options = {
+const options_pie = {
   responsive: true,
   plugins: {
     legend: {
       position: "bottom" as const,
       labels: {
-        boxWidth: 20,
-        padding: 15,
+        boxWidth: 10,
+        padding: 10,
       },
+    },
+  },
+};
+
+const data_line = {
+  labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
+  datasets: [
+    {
+      label: "Doanh thu",
+      data: [120, 190, 300, 250, 400],
+      borderColor: "#36A2EB",
+      backgroundColor: "rgba(54, 162, 235, 0.2)",
+      tension: 0.4,
+      fill: true,
+    },
+  ],
+};
+
+const options_line = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "top" as const,
+    },
+    title: {
+      display: true,
+      text: "Biểu đồ Doanh thu theo tháng",
     },
   },
 };
@@ -52,27 +98,28 @@ function Home() {
         nameList=""
       />
       <div className="grid grid-cols-2 gap-3 h-[81vh] shadow-2xl rounded">
-        <div className="grid grid-rows-3 gap-2 ">
+        <div className="flex flex-col ">
           <div className="  p-2 rounded ">
             <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2  text-blue-500">
               ຕົ້ນທືນ - ກຳໄລ
             </h3>
 
-            <div
-              style={{
-                width: "300px",
-                margin: "0 auto",
-                // height: "150px"
-              }}
-            >
-              <Doughnut data={data} options={options} />
+            <div className="flex justify-center w-full">
+              <div
+                style={{
+                  width: "200px",
+                  height: "250px",
+                }}
+              >
+                <Doughnut data={data_pie} options={options_pie} />
+              </div>
             </div>
           </div>
           <div className=" shadow-sm  p-2 rounded">
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
               ຍອດບິນ
             </h3>
-            <div className="flex items-center gap-3 pt-5 h-[20vh]">
+            {/* <div className="flex items-center gap-3 pt-5 h-[20vh]">
               <Crads
                 type_crad={1}
                 title="ອາທິດ"
@@ -94,9 +141,15 @@ function Home() {
                 profit={0}
                 qyt={20}
               />
+            </div> */}
+
+            <div className="flex justify-center w-full">
+              <div className="h-[250px]">
+                <Line data={data_line} options={options_line} />
+              </div>
             </div>
           </div>
-          <div className=" shadow-sm  p-2 rounded">
+          {/* <div className=" shadow-sm  p-2 rounded">
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
               ອື່ນໆ
             </h3>
@@ -112,10 +165,10 @@ function Home() {
                 ປ່ຽນເປັນ PDF
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
 
-        <div className=" grid grid-rows-2 gap-2 ">
+        <div className="flex flex-col gap-2 ">
           <div className=" shadow-sm  p-2 rounded">
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500 uppercase">
               top ສິນຄ້າ

@@ -39,7 +39,6 @@ const Invoice = () => {
     dis_muont,
   } = useCartStore();
   const cartEndRef = useRef<HTMLDivElement>(null);
-  console.log(cart, "cart");
 
   useEffect(() => {
     let lng = cart?.details.length ?? 0;

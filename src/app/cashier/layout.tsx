@@ -1,12 +1,9 @@
-"use client";
-
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/cashier/Sidebar";
-import { protectRoute } from "../middleware/authMiddleware";
-
+export const metadata = {
+  title: "SHOP - LATDA",
+};
 export default function Layout({ children }: { children: React.ReactNode }) {
-  // protectRoute();
-
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-blue-500 h-[8vh]">

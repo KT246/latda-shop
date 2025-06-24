@@ -5,7 +5,6 @@ import axios from "axios";
 import useAuthStore from "@/app/store/authStores";
 import { toast } from "react-toastify";
 import { useRouter, redirect } from "next/navigation";
-import { protectRoute } from "@/app/middleware/authMiddleware";
 
 export default function FormLogin() {
   const [username, setUsername] = React.useState("");
@@ -46,13 +45,13 @@ export default function FormLogin() {
           password,
         }
       );
-
-      if (res.data?.token) {
-        const token = res.data?.token;
+      const data = res.data;
+      if (data?.token) {
+        const token = data?.token;
         const user = {
-          username: res.data?.username,
-          name: res.data?.name,
-          path: res.data?.path,
+          username: data?.username,
+          name: data?.name,
+          path: data?.path,
         };
 
         Login(token, user);
@@ -93,7 +92,7 @@ export default function FormLogin() {
   return (
     <div className="grid grid-cols-1 h-screen bg-slate-300 lg:grid-cols-2">
       <div className="bg-[url('/skv.jpg')] bg-cover lg:block hidden" />
-      <div className="flex justify-center items-center px-20">
+      <div className="flex justify-center items-center px-5 md:px-10 lg:px-20">
         <div className="w-full bg-white bg-opacity-50 rounded-3xl px-10 ">
           <form
             onSubmit={handleSubmit}
