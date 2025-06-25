@@ -3,23 +3,48 @@ import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { formattedNumber } from "@/app/helpers/funtions";
+import { GetIdUsers, UpdateUsers } from "@/app/api/admin.product";
+import { toast } from "react-toastify";
+
 function EditEmployee() {
   const [formData, setFormData] = useState({
-    name: "ສຸກສົມ ແລະ ສຸກທຸມ",
-    dob: "1990-01-01",
-    gender: "ຊາຍ",
-    phone: "54564878797",
-    workDate: "2015-01-01",
-    position: "ຫົົວໜ້າງານ",
-    salary: 10000000,
-    address: "ຫົົວໜ້າເມືອງ ວຽງຈັນ",
+    id: "",
+    username: "",
+    password: "",
+    name: "",
+    phone: "",
+    address: "",
+    role: 2,
   });
   const param = useParams();
-  const id = param.id;
+  const idUser = param.id;
   const router = useRouter();
-  console.log(id);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const fetchData = async (id: string) => {
+    const res: any = await GetIdUsers(id);
+    const data = res?.data;
+    setFormData({
+      id: data.id || "",
+      username: data.username || "",
+      password: data.password || "",
+      name: data.name || "",
+      phone: data.phone || "",
+      address: data.address || "",
+      role: data.role ?? 2,
+    });
+  };
+
+  React.useEffect(() => {
+    if (typeof idUser === "string") {
+      fetchData(idUser);
+    } else if (Array.isArray(idUser) && idUser.length > 0) {
+      fetchData(idUser[0]);
+    }
+  }, [idUser]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -27,10 +52,27 @@ function EditEmployee() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission (e.g., save data or call API)
-    console.log("Form submitted", formData);
+
+    try {
+      const userId =
+        typeof idUser === "string"
+          ? idUser
+          : Array.isArray(idUser) && idUser.length > 0
+          ? idUser[0]
+          : "";
+      const res: any = await UpdateUsers(userId, formData);
+
+      if (res.data.status !== "error") {
+        router.push("/admin/employees");
+        toast.success(res.data.message);
+      } else {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -38,47 +80,39 @@ function EditEmployee() {
         ແກ້ໄຂພະນັກງານ
       </h1>
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ຊື່ແລະນາມສະກຸນ</label>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold">ຊື່ເຂົ້າລະບົບ</label>
+            <input
+              type="text"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold">ລະຫັດ</label>
+            <input
+              type="text"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold">ຊື່ຜູ້ໃຊ້</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none "
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ວັນເດືອນປີເກີດ</label>
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
             />
           </div>
-        </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ເພດ</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={() => handleChange}
-              className="w-full p-2 border border-gray-300 cursor-pointer rounded focus:border-blue-900 focus:outline-none"
-            >
-              <option className="cursor-pointer" value="ຊາຍ">
-                ຊາຍ
-              </option>
-              <option className="cursor-pointer" value="ຍິງ">
-                ຍິງ
-              </option>
-            </select>
-          </div>
-          <div className="flex-1">
+          <div>
             <label className="block font-semibold">ເບີໂທ</label>
             <input
               type="tel"
@@ -88,46 +122,20 @@ function EditEmployee() {
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
             />
           </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ວັນທີເຂົົ້າເຮັດວຽກ</label>
-            <input
-              type="date"
-              name="workDate"
-              value={formData.workDate}
+          <div>
+            <label className="block font-semibold">ໜ້າທີ່</label>
+            <select
+              name="role"
+              value={formData.role}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
+            >
+              {/* "ຈັດການສິນຄ້າ" : "ຜູ້ຂາຍ" */}
+              <option value={1}>ຈັດການສິນຄ້າ </option>
+              <option value={2}>ຜູ້ຂາຍ</option>
+            </select>
           </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ຕຳແຫນ່ງ</label>
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ເງິນເດືອນ</label>
-            <input
-              type="text"
-              name="salary"
-              value={formData.salary}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.salary)}. ກີບ
-            </span>
-          </div>
-          <div className="flex-1">
+          <div>
             <label className="block font-semibold">ທີ່ຢູ່</label>
             <input
               type="text"

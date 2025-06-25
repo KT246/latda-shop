@@ -7,19 +7,11 @@ interface CartStoreState {
   cartName: string;
   searchType: string;
   maxMinqty: number;
-  dis_muont: number;
-  mn_customer: number;
-  mn_check_out: number;
-  mn_back: number;
 
   updateCart: (cart: Cart | null) => void;
   updateCartName: (cartName: string) => void;
   updateSearchType: (searchType: string) => void;
   updateMaxMinqty: (maxMinqty: number) => void;
-  updateDisMuont: (dis_muont: number) => void;
-  updateMnCustomer: (mn_customer: number) => void;
-  updateMnCheckOut: (mn_check_out: number) => void;
-  updateMnBack: (mn_back: number) => void;
 }
 
 export const useCartStore = create<CartStoreState>()(
@@ -38,10 +30,6 @@ export const useCartStore = create<CartStoreState>()(
       updateCartName: (cartName) => set({ cartName }),
       updateSearchType: (searchType) => set({ searchType }),
       updateMaxMinqty: (maxMinqty) => set({ maxMinqty }),
-      updateDisMuont: (dis_muont) => set({ dis_muont }),
-      updateMnCustomer: (mn_customer) => set({ mn_customer }),
-      updateMnCheckOut: (mn_check_out) => set({ mn_check_out }),
-      updateMnBack: (mn_back) => set({ mn_back }),
     }),
     {
       name: "cart-latda",

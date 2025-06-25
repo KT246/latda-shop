@@ -12,6 +12,7 @@ function CreateProduct() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [IMB, setIMG] = useState<string | null>(null);
   const [flieImg, setFileImg] = useState<File | null>(null);
   const [formData, setFormData] = useState({
@@ -172,11 +173,18 @@ function CreateProduct() {
     }
 
     if (validateForm()) {
+      setIsLoading(true);
       const res: any = await CreateProducts(form);
-      if (res.status === 200) {
+
+      if (res.data.status !== "error") {
         const data = res.data;
         router.push("/admin/products");
         toast.success(data.message);
+        setIsLoading(!isLoading);
+      } else {
+        const data = res.data;
+        toast.warning(data.message);
+        setIsLoading(false);
       }
       try {
       } catch (error) {
@@ -504,6 +512,7 @@ function CreateProduct() {
             ກັບຄືນ
           </button>
           <button
+            disabled={isLoading}
             type="submit"
             className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-green-500"
           >

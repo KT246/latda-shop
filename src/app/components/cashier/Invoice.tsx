@@ -25,19 +25,13 @@ import PrintBill from "./PrintBill";
 const Invoice = () => {
   const [dialog, setDialog] = useState(false);
   const [bill, setBill] = useState<any>(null);
-  const {
-    updateCart,
-    updateDisMuont,
-    updateMnBack,
-    updateMnCheckOut,
-    updateMnCustomer,
-    cart,
-    cartName,
-    mn_back,
-    mn_check_out,
-    mn_customer,
-    dis_muont,
-  } = useCartStore();
+  const [disMount, setDisMount] = useState<number>(0);
+  const [moneyCustomer, setMoneyCustomer] = useState<number>(0);
+  const [checkout, setCheckout] = useState<number>(0);
+  const [moneyChange, setMoneyChange] = useState<number>(0);
+  const [check, setCheck] = useState<boolean>(false);
+
+  const { updateCart, cart, cartName } = useCartStore();
   const cartEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -115,24 +109,29 @@ const Invoice = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
 
-  const reTail = async (s: string) => {
+  const reTail = async (pay: string) => {
     try {
       const res = await apiRetail({
         cart_name: cartName,
-        m_discount: dis_muont ?? 0,
+        // m_discount: dis_muont ?? 0,
         member_id: "",
-        pay_type: s,
+        pay_type: pay,
       });
-      // console.log(res.data);
-      if (res.data.status !== "error") {
-        const data = res.data;
+
+      const data = res.data;
+      if (data.status !== "error") {
         updateCart(null);
         setDialog(!dialog);
         setBill(data);
-        toast.success("ຂາຍສຳເລັດ");
+        toast.success(data.message);
+      } else {
+        toast.warning(data.message);
       }
     } catch (error) {
-      toast.error(String(error));
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.message;
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -143,6 +142,10 @@ const Invoice = () => {
     }
     if (key === 1) {
       await reTail("transfer");
+    } else if (key === 2) {
+      await reTail("cash");
+    } else if (key === 3) {
+      await reTail("cash");
     } else {
       await reTail("cash");
     }
@@ -289,7 +292,7 @@ const Invoice = () => {
                 : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
                     position: "top-center",
                   });
-              updateMnCheckOut(cart?.total_lak ?? 0);
+              // updateMnCheckOut(cart?.total_lak ?? 0);
             }}
             color="primary"
             className="flex-1 h-[80px] text-[40px] font-bold"
@@ -302,103 +305,70 @@ const Invoice = () => {
       {/* Dialog */}
 
       {dialog && (
-        <div className=" fixed z-30 bg-gray-900 bg-opacity-70 left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
-          <div className="bg-gray-100 rounded-lg p-2">
-            <div className="w-full h-full flex flex-col p-2">
-              <div className="flex gap-5">
-                <div className="flex flex-col justify-center gap-3">
-                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                    ເງິນລູກຄ້າ
-                  </label>
-                  <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2">
-                    <input
-                      type="number"
-                      min={0}
-                      onChange={(e) => {
-                        updateMnCustomer(Number(e.target.value));
-                        updateMnBack(
-                          mn_check_out > Number(e.target.value)
-                            ? 0
-                            : Number(e.target.value) - mn_check_out
-                        );
-                      }}
-                      className="w-full outline-none p-1"
-                    />
-                  </div>
-                  <p className="text-sm text-right leading-3">
-                    {formattedNumber(mn_customer)} ກີບ
-                  </p>
-                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                    ສ່ວນຫຼຸດ
-                  </label>
-                  <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2">
-                    <input
-                      type="number"
-                      min={0}
-                      onChange={(e) => {
-                        const value = Number(e.target.value);
-                        const newDis = value;
-                        const newCheckOut = (cart?.total_lak ?? 0) - newDis;
-                        const newBack = mn_customer - newCheckOut;
-
-                        updateDisMuont(newDis);
-                        updateMnCheckOut(newCheckOut);
-                        updateMnBack(newBack);
-                      }}
-                      className="w-full outline-none p-1"
-                    />
-                  </div>
-                  <p className="text-sm text-right text-red-400 leading-3">
-                    {formattedNumber(dis_muont)} ກີບ
-                  </p>
+        <div className=" fixed z-30 bg-gray-900 bg-opacity-70  left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
+          <div className="bg-gray-100 w-[600px] h-[500px] flex flex-col justify-between rounded-lg shadow-sm px-5 py-10">
+            <div className="grid grid-cols-1 gap-5">
+              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                ເງິນລູກຄ້າ
+              </label>
+              <div className="flex">
+                <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+                  <input
+                    type="number"
+                    min={0}
+                    className="w-full h-full outline-none p-1"
+                  />
                 </div>
-                <div className="flex flex-col justify-center gap-3">
-                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                    ເງິນທອນ
-                  </label>
-                  <div className="rounded overflow-hidden border-gray-300 border-2">
-                    <input
-                      type="number"
-                      min={0}
-                      value={mn_back}
-                      onChange={(e) => updateMnBack(Number(e.target.value))}
-                      className="w-full outline-none p-1"
-                      readOnly
-                    />
-                  </div>
-                  <p className="text-sm text-right leading-3">
-                    {formattedNumber(mn_back)} ກີບ
-                  </p>
-                  <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                    ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ
-                  </label>
-                  <div className="rounded overflow-hidden border-gray-300 border-2">
-                    <input
-                      type="number"
-                      min={0}
-                      value={mn_check_out}
-                      onChange={(e) => updateMnCheckOut(Number(e.target.value))}
-                      className="w-full outline-none p-1"
-                      readOnly
-                    />
-                  </div>
-                  <p className="text-sm text-right leading-3">
-                    {formattedNumber(mn_check_out)} ກີບ
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  disabled
+                  onClick={() => handleSubmit(2)}
+                  className="px-3 py-2 bg-blue-500 rounded-lg text-white hover:bg-blue-400 duration-300"
+                >
+                  ພໍດີ
+                </button>
               </div>
-              <div className=" flex items-center justify-center gap-5 mt-10">
+              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                ເງິນທອນ
+              </label>
+              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+                {formattedNumber(cart?.total_lak || 0)} ກີບ
+              </div>
+              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                ສ່ວນຫຼຸດ
+              </label>
+              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+                <input
+                  type="number"
+                  min={0}
+                  className="w-full h-full outline-none p-1"
+                />
+              </div>
+              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
+                ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ
+              </label>
+              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+                {formattedNumber(cart?.total_lak || 0)} ກີບ
+              </div>
+              <div className=" flex items-center justify-center gap-5">
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(3)}
+                  className="px-3 py-2 bg-yellow-600 rounded-lg text-white hover:bg-yellow-600 duration-300"
+                >
+                  ຕິດໜີ້
+                </button>
                 <button
                   type="button"
                   onClick={() => handleSubmit(0)}
-                  className="px-3 py-2 bg-blue-700 rounded-lg text-white hover:bg-blue-500 duration-300"
+                  className="px-3 py-2 bg-blue-500 rounded-lg text-white hover:bg-blue-400 duration-300"
                 >
                   ເງິນສົດ
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSubmit(1)}
-                  className="px-3 py-2 bg-green-700 rounded-lg text-white hover:bg-green-500 duration-300"
+                  className="px-3 py-2 bg-green-500 rounded-lg text-white hover:bg-green-400 duration-300"
                 >
                   ເງິນໂອນ
                 </button>
@@ -406,12 +376,8 @@ const Invoice = () => {
                   type="button"
                   onClick={() => {
                     setDialog(!dialog);
-                    updateDisMuont(0);
-                    updateMnBack(0);
-                    updateMnCheckOut(cart?.total_lak ?? 0);
-                    updateMnCustomer(0);
                   }}
-                  className="px-3 py-2 bg-red-700 rounded-lg text-white hover:bg-red-500 duration-300"
+                  className="px-3 py-2 bg-red-500 rounded-lg text-white hover:bg-red-400 duration-300"
                 >
                   ຍົກເລີກ
                 </button>

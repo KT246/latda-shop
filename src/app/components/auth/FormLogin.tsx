@@ -58,7 +58,7 @@ export default function FormLogin() {
         toast.success("ສຳເລັດ");
         const path = user?.path;
 
-        if (path === 1) {
+        if (path === 0 || path === 1) {
           router.push("/admin");
         }
         if (path === 2) {

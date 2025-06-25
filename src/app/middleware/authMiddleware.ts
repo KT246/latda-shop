@@ -10,7 +10,7 @@ export function checkAuth(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (path.startsWith("/admin") && user?.path !== 1) {
+  if (path.startsWith("/admin") && user?.path !== 0) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

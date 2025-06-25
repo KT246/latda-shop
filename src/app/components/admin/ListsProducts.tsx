@@ -95,7 +95,7 @@ function ListsProducts() {
 
       <Table
         color={"primary"}
-        selectionMode="single"
+        // selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination

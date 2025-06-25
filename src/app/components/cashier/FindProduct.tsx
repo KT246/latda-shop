@@ -170,6 +170,7 @@ const FindProduct = () => {
       setProductsTemp(res.data);
     } catch (error) {
       throw error;
+      console.log(error);
     }
   };
   const FindProductByPage = async () => {

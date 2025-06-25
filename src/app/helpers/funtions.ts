@@ -13,3 +13,17 @@ export function formatDate(isoString: string): string {
 
   return `${day}/${month}/${year} - ${hours}:${minutes}`;
 }
+
+export const getTodayDate = (
+  format: "yyyy-mm-dd" | "dd/mm/yyyy" = "yyyy-mm-dd"
+): string => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+
+  if (format === "dd/mm/yyyy") {
+    return `${dd}/${mm}/${yyyy}`;
+  }
+  return `${yyyy}-${mm}-${dd}`;
+};

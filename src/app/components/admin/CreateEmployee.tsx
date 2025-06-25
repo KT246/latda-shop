@@ -3,16 +3,17 @@ import { useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { SwalNotification } from "@/app/helpers/alers";
 import { formattedNumber } from "@/app/helpers/funtions";
+import { toast } from "react-toastify";
+import { addUsers } from "@/app/api/admin.product";
 function CreateEmployee() {
   const [formData, setFormData] = useState({
+    id: "",
+    username: "",
+    password: "",
     name: "",
-    dob: "",
-    gender: "ຊາຍ",
     phone: "",
-    workDate: "",
-    position: "",
-    salary: 0,
     address: "",
+    role: 2,
   });
 
   const router = useRouter();
@@ -28,52 +29,49 @@ function CreateEmployee() {
   };
 
   const validateForm = () => {
-    if (formData.name === "") {
-      SwalNotification("ກະລຸນາປ້ອນຊື່ແລະນາມສະກຸນ", "warning");
+    if (formData.id.trim() === "") {
+      toast.warning("ກະລຸນາປ້ອນລະຫັດ");
       return false;
     }
-    if (formData.dob === "") {
-      SwalNotification("ກະລຸນາປ້ອນວັນເດືອນປີເກີດ", "warning");
+
+    if (formData.password.trim() === "") {
+      toast.warning("ກະລຸນາປ້ອນລະຫັດຜ່ານ");
       return false;
     }
-    if (formData.phone === "") {
-      SwalNotification("ກະລຸນາປ້ອນເບີໂທ", "warning");
+
+    if (formData.name.trim() === "") {
+      toast.warning("ກະລຸນາປ້ອນຊື່ແລະນາມສະກຸນ");
       return false;
     }
-    if (formData.workDate === "") {
-      SwalNotification("ກະລຸນາປ້ອນວັນທີເຂົົ້າເຮັດວຽກ", "warning");
+
+    if (formData.phone.trim() === "") {
+      toast.warning("ກະລຸນາປ້ອນເບີໂທ");
+      return false;
+    } else if (!/^\d{8,15}$/.test(formData.phone)) {
+      toast.warning("ເບີໂທບໍ່ຖືກຕ້ອງ");
       return false;
     }
-    if (formData.position === "") {
-      SwalNotification("ກະລຸນາປ້ອນຕຳແຫນ່ງ", "warning");
+
+    if (formData.address.trim() === "") {
+      toast.warning("ກະລຸນາປ້ອນທີ່ຢູ່");
       return false;
     }
-    if (formData.salary < 0) {
-      SwalNotification("ກະລຸນາປ້ອນເງິນເດືອນ", "warning");
-      return false;
-    }
-    if (formData.address === "") {
-      SwalNotification("ກະລຸນາປ້ອນທີ່ຢູ່", "warning");
-      return false;
-    }
+
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
-      console.log("Form submitted", formData);
-      setFormData({
-        name: "",
-        dob: "",
-        gender: "ຊາຍ",
-        phone: "",
-        workDate: "",
-        position: "",
-        salary: 0,
-        address: "",
-      });
+      try {
+        const res: any = await addUsers(formData);
+        if (res.data.status !== "error") {
+          toast.success("ສ້າງສຳເລັດ");
+          router.push("/admin/employees");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -83,9 +81,29 @@ function CreateEmployee() {
         ສ້າງພະນັກງານ
       </h1>
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ຊື່ແລະນາມສະກຸນ</label>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold">ຊື່ເຂົ້າລະບົບ</label>
+            <input
+              type="text"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold">ລະຫັດ</label>
+            <input
+              type="text"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block font-semibold">ຊື່ຜູ້ໃຊ້</label>
             <input
               type="text"
               name="name"
@@ -94,33 +112,8 @@ function CreateEmployee() {
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
             />
           </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ວັນເດືອນປີເກີດ</label>
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
-        </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ເພດ</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            >
-              <option value="ຊາຍ">ຊາຍ</option>
-              <option value="ຍິງ">ຍິງ</option>
-              <option value="ອື່ນ">ອື່ນ (Khác)</option>
-            </select>
-          </div>
-          <div className="flex-1">
+          <div>
             <label className="block font-semibold">ເບີໂທ</label>
             <input
               type="tel"
@@ -130,46 +123,20 @@ function CreateEmployee() {
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
             />
           </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ວັນທີເຂົົ້າເຮັດວຽກ</label>
-            <input
-              type="date"
-              name="workDate"
-              value={formData.workDate}
+          <div>
+            <label className="block font-semibold">ໜ້າທີ່</label>
+            <select
+              name="role"
+              value={formData.role}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
+            >
+              {/* "ຈັດການສິນຄ້າ" : "ຜູ້ຂາຍ" */}
+              <option value={1}>ຈັດການສິນຄ້າ </option>
+              <option value={2}>ຜູ້ຂາຍ</option>
+            </select>
           </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ຕຳແຫນ່ງ</label>
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ເງິນເດືອນ</label>
-            <input
-              type="number"
-              name="salary"
-              value={formData.salary}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" sticky top-0">
-              {formattedNumber(formData.salary)}. ກີບ
-            </span>
-          </div>
-          <div className="flex-1">
+          <div>
             <label className="block font-semibold">ທີ່ຢູ່</label>
             <input
               type="text"

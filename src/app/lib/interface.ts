@@ -46,6 +46,8 @@ export interface Invoice {
   rate: number;
   m_discount: number;
   pay_type: string;
+  money_received: number;
+  money_cash: number;
   date_create: string;
   status: string;
   details: Details[];
@@ -57,3 +59,24 @@ export interface InvoiceResponse {
   currentPage: number;
 }
 export const currenDate = new Date().toISOString().split("T")[0];
+
+export interface Employee {
+  id: number;
+  username: string;
+  password: string;
+  name: string;
+  phone: string;
+  position: string;
+  address: string;
+  role: number;
+}
+// {
+//   id: "LD0001",
+//   username: "LD0001",
+//   password: "!234",
+//   name: "soulixai",
+//   phone: "12345",
+//   address: "",
+//   avatar: "",
+//   role: 2,
+// },

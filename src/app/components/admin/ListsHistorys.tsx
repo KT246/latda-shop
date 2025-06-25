@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Details } from "@/app/lib/interface";
+import { InvoiceResponse } from "@/app/lib/interface";
 import Link from "next/link";
 
-import { formattedNumber } from "@/app/helpers/funtions";
+import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 import HeaderLinks from "../HeaderLinks";
 import {
   Table,
@@ -17,62 +17,110 @@ import {
   Tooltip,
 } from "@heroui/react";
 
+import { GetAllInvoices } from "@/app/api/admin.product";
+import { getTodayDate } from "@/app/helpers/funtions";
+
 function ListsHistorys() {
-  // const [products, setProduct] = useState<Product[]>([]);
+  /// useState
   const [page, setPage] = React.useState(1);
-  const [pages, setPages] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const products: Details[] = [
-    {
-      id: 3,
-      cart_id: 101,
-      barcode: "12234567890123",
-      title: "ຜະລິດຕະພັນຕົວຢ່າງ",
-      cost_thb: 50,
-      size: "500ml",
-      category: "category",
-      use_for: "ສຳລັບສະອາດຜົມ dfssfafggfsgfaergaghg",
-      unit: "ຂວດ",
-      cost_lak: 95000000,
-      wholesale_thb: 45,
-      wholesale_lak: 8500,
-      retail_thb: 55,
-      retail_lak: 10000,
-      discount: 5,
-      qty: 2,
-      total_unit_lak: 9500,
-      total_lak: 19000,
-    },
-    {
-      id: 1,
-      cart_id: 101,
-      barcode: "12324567890123",
-      title: "ຜະລິດຕະພັນຕົວຢ່າງ",
-      cost_thb: 50,
-      size: "500ml",
-      category: "category",
-      use_for: "ສຳລັບສະອາດຜົມ dfssfafggfsgfaergaghg",
-      unit: "ຂວດ",
-      cost_lak: 95000000,
-      wholesale_thb: 45,
-      wholesale_lak: 8500,
-      retail_thb: 55,
-      retail_lak: 10000,
-      discount: 5,
-      qty: 2,
-      total_unit_lak: 9500,
-      total_lak: 19000,
-    },
-  ];
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(10);
+  const [invoices, setInvoices] = useState<InvoiceResponse | null>(null);
+
+  /// paramiter
+  const data_start = "2025-06-20";
+  const data_end = getTodayDate();
+
+  const fetchData = async () => {
+    const res: any = await GetAllInvoices(10, page, data_start, data_end);
+    const data = res.data;
+    setInvoices(data);
+    setTotalPages(data.totalPages);
+  };
+
+  /// useEffect
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  React.useEffect(() => {
+    fetchData();
+  }, [page]);
+
+  const handleAll = async (e: React.FormEvent) => {};
+  const handleFilter = async (e: any) => {};
   return (
     <div>
-      <HeaderLinks
+      <div className="flex items-center justify-between gap-5 border-b-2 mb-3 pb-2">
+        <h3 className="w-[200px] font-semibold text-xl">ປະຫວັດການຂາຍ</h3>
+        <form className="w-full" onSubmit={handleAll}>
+          <div className="flex w-full items-center gap-4">
+            <label>ເລີ່ມຕົ້ນ</label>
+            <div
+              className="border-gray-300 border-2 px-3 py-1 rounded-md
+        "
+            >
+              <input
+                type="date"
+                // value={date_start}
+                // onChange={(e) => updateDateStart(e.target.value)}
+                className="w-full outline-none"
+              />
+            </div>
+            <label>ສີ້ນສຸດ</label>
+            <div
+              className="border-gray-300 border-2 px-3 py-1 rounded-md
+        "
+            >
+              <input
+                type="date"
+                // value={date_end}
+                // onChange={(e) => updateDateEnd(e.target.value)}
+                className="w-full outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="bg-blue-500 px-2 py-1 rounded text-white"
+            >
+              ຄົ້ນຫາ
+            </button>
+            <button
+              type="button"
+              // onClick={handleReset}
+              className="bg-blue-500 px-2 py-1 rounded text-white"
+            >
+              ຄ່າເລີ່ມຕົ້ນ
+            </button>
+          </div>
+        </form>
+        <form onSubmit={handleFilter} className="flex items-center gap-2 pe-10">
+          <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
+            <input
+              type="text"
+              className="w-full  px-2 py-1 outline-none "
+              placeholder="ປ້ອນ ID ບິນ...."
+              // value={idVoice}
+              // onChange={(e) => setIdVoice(e.target.value)}
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-yellow-500 px-2 py-1 rounded text-white"
+          >
+            ຄົ້ນຫາ
+          </button>
+        </form>
+      </div>
+      {/* <HeaderLinks
         name="ປະຫວັດການຂາຍ"
         linkCreate=""
         linkLists=""
         nameCreate=""
         nameList=""
-      />
+      /> */}
 
       <Table
         color={"primary"}
@@ -85,7 +133,7 @@ function ListsHistorys() {
               showShadow
               color="primary"
               page={page}
-              total={pages}
+              total={totalPages}
               onChange={(page) => setPage(page)}
             />
           </div>
@@ -96,60 +144,47 @@ function ListsHistorys() {
         }}
       >
         <TableHeader>
-          <TableColumn key="barcode">barcode</TableColumn>
-          <TableColumn key="title">ຊື່</TableColumn>
-          {/* <TableColumn key="size">ຂະຫນາດ</TableColumn>
-                <TableColumn key="No">.No</TableColumn>
-                <TableColumn key="code">code</TableColumn>
-                <TableColumn key="page">page</TableColumn>
-                <TableColumn key="brand">ແບນ</TableColumn> */}
-          <TableColumn key="unit">ໜ່ວຍ</TableColumn>
-          <TableColumn key="category">ປະເພດ</TableColumn>
-          <TableColumn key="qty_start">ຍົກມາ</TableColumn>
-          <TableColumn key="qty_in">ຍອດຊື້</TableColumn>
-          <TableColumn key="qty_out">ຍອດຂາຍ</TableColumn>
-          <TableColumn key="qty_balance">balance</TableColumn>
-          <TableColumn key="retail_lak">LAK</TableColumn>
-          <TableColumn key="retail_thb">THB</TableColumn>
-          <TableColumn key="status">status</TableColumn>
-          <TableColumn key="">action</TableColumn>
+          <TableColumn>ລະຫັດບິນ</TableColumn>
+          <TableColumn>ວັນທີສ້າງ</TableColumn>
+
+          <TableColumn>ລະຫັດຜູ້ຂາຍ</TableColumn>
+          <TableColumn>ອັດຕາແລກປ່ຽນ</TableColumn>
+          <TableColumn>ຈໍານວນສິນຄ້າ</TableColumn>
+          <TableColumn>ສ່ວນຫຼຸດ</TableColumn>
+          <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn>ປະເພດການຈ່າຍ</TableColumn>
+          <TableColumn>status</TableColumn>
+          <TableColumn>action</TableColumn>
         </TableHeader>
-        <TableBody items={products}>
+        <TableBody items={invoices?.invoices ?? []}>
           {(item) => (
-            <TableRow key={item.barcode}>
-              <TableCell>{item.barcode}</TableCell>
-              <TableCell>{item.title}</TableCell>
-              {/* <TableCell>{item.size}</TableCell>
-                    <TableCell>{item.No}</TableCell>
-                    <TableCell>{item.code}</TableCell>
-                    <TableCell>{item.page}</TableCell>
-                    <TableCell>{item.brand}</TableCell> */}
-              <TableCell>{item.unit}</TableCell>
-              <TableCell>{item.category}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              <TableCell>{item.cost_lak}</TableCell>
-              {/* <TableCell>{item.qty_in}</TableCell>
-              <TableCell>{item.qty_out}</TableCell>
-              <TableCell>{item.qty_balance}</TableCell>
-              <TableCell>{item.retail_lak.toLocaleString()}</TableCell>
-              <TableCell>{item.retail_thb.toLocaleString()}</TableCell>
-              <TableCell>{item.status}</TableCell> */}
+            <TableRow key={item.id}>
+              <TableCell>{item.id}</TableCell>
+              <TableCell>{formatDate(item.date_create)}</TableCell>
+              <TableCell>{item.cashier_id}</TableCell>
+              <TableCell>{item.rate}</TableCell>
+              <TableCell>{item.details.length}</TableCell>
+              <TableCell>{item.m_discount}</TableCell>
+              <TableCell>{formattedNumber(item.total_checkout_lak)}</TableCell>
+              <TableCell>
+                {item.pay_type === "cash"
+                  ? "ເງິນສົດ"
+                  : item.pay_type === "transfer"
+                  ? "ເງິນໂອນ"
+                  : "່ຕິດໜີ້"}
+              </TableCell>
+              <TableCell>{item.status}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="ເບິ່ງ">
-                    <Link href={`/admin/products/detail/${item.barcode}`}>
+                    <Link href={`/admin/products/detail/${item.id}`}>
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <EyeIcon />
                       </span>
                     </Link>
                   </Tooltip>
                   <Tooltip content="ແກ້ໄຂ">
-                    <Link href={`/admin/products/edit/${item.barcode}`}>
+                    <Link href={`/admin/products/edit/${item.id}`}>
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <EditIcon />
                       </span>
@@ -171,6 +206,26 @@ function ListsHistorys() {
           )}
         </TableBody>
       </Table>
+      {/* <span className="py-1 px-2 border-l-1 w-1/12 text-center">ລະຫັດບິນ</span>
+      <span className="py-1 px-2 border-l-1 w-1/6 text-center">ວັນທີສ້າງ</span>
+      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
+        ລະຫັດຜູ້ຂາຍ
+      </span>
+
+      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
+        ອັດຕາແລກປ່ຽນ
+      </span>
+      <span className="py-1 px-2 border-l-1 w-1/12 text-center ">
+        ຈໍານວນສິນຄ້າ
+      </span>
+      <span className="py-1 px-2 border-l-1 w-1/12 text-center ">ສ່ວນຫຼຸດ</span>
+      <span className="py-1 px-2 border-l-1 w-1/6 text-center">
+        ລາຄາລວມ (LAK)
+      </span>
+      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
+        ປະເພດການຈ່າຍ
+      </span>
+      <span className="py-1 px-2 border-l-1 w-1/4 text-center">ດຳເນີນການ</span> */}
       {/* <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
         <span className="py-1 px-2  w-12">ລຳດັບ</span>
         <span className="py-1 px-2 border-l-1 w-36">ບາໂຄດ</span>

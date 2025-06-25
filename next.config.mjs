@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["localhost"], // 👈 Cho phép load ảnh từ http://localhost
+    remotePatterns: [
+      {
+        protocol: "https", // Protocol should be 'https'
+        hostname: "8abb-117-2-49-250.ngrok-free.app", // Only the hostname
+      },
+    ],
   },
 };
 
