@@ -15,24 +15,39 @@ import {
   Pagination,
   getKeyValue,
   Tooltip,
+  Select,
+  SelectItem,
+  Button,
 } from "@heroui/react";
 
-import { GetAllInvoices } from "@/app/api/admin.product";
+import {
+  GetAllInvoices,
+  GetInvoicesId,
+  _cancleInvoices,
+} from "@/app/api/admin.product";
 import { getTodayDate } from "@/app/helpers/funtions";
+import { toast } from "react-toastify";
 
 function ListsHistorys() {
   /// useState
+  const [idInvoice, setIdInvoice] = React.useState<number | null>(null);
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
-  const [currentPage, setCurrentPage] = useState(10);
   const [invoices, setInvoices] = useState<InvoiceResponse | null>(null);
+  const [payType, setPayType] = React.useState("");
+  const [dateStart, setDateStart] = React.useState("2025-06-20");
+  const [dateEnd, setDateEnd] = React.useState(getTodayDate());
 
   /// paramiter
-  const data_start = "2025-06-20";
-  const data_end = getTodayDate();
 
   const fetchData = async () => {
-    const res: any = await GetAllInvoices(10, page, data_start, data_end);
+    const res: any = await GetAllInvoices(
+      10,
+      page,
+      dateStart,
+      dateEnd,
+      payType
+    );
     const data = res.data;
     setInvoices(data);
     setTotalPages(data.totalPages);
@@ -42,41 +57,76 @@ function ListsHistorys() {
 
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [payType]);
 
   React.useEffect(() => {
     fetchData();
   }, [page]);
 
-  const handleAll = async (e: React.FormEvent) => {};
-  const handleFilter = async (e: any) => {};
+  /// handle Button
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (dateEnd < dateStart) {
+      toast.warning("ວັນທີສີ້ນສຸດ ຕ້ອງໃຫຍ່ກວ່າ ວັນທີເລີ່ມ");
+      return;
+    } else {
+      fetchData();
+    }
+  };
+  const handleFilter = async (e: any) => {
+    if (!idInvoice) {
+      return toast.warning("ປ້ອນ ID ບິນ", {
+        position: "top-center",
+      });
+    }
+
+    try {
+      const res: any = await GetInvoicesId(idInvoice);
+
+      const data = res.data;
+      if (data.status !== "error") {
+        const data = res.data;
+        setInvoices(data);
+        setTotalPages(1);
+      }
+    } catch (error: any) {
+      toast.warning(error.response.data.message, { position: "top-center" });
+    }
+  };
+
+  const handleCanle = async (id: number, status: string) => {
+    if (status === "cancel") {
+      toast.warning("ຖືກລົບແລ້ວ");
+      return;
+    }
+    const res: any = await _cancleInvoices(id);
+    const data = res.data;
+    toast.success(data.message);
+    fetchData();
+  };
+
   return (
     <div>
-      <div className="flex items-center justify-between gap-5 border-b-2 mb-3 pb-2">
-        <h3 className="w-[200px] font-semibold text-xl">ປະຫວັດການຂາຍ</h3>
-        <form className="w-full" onSubmit={handleAll}>
-          <div className="flex w-full items-center gap-4">
+      <div className="flex items-center gap-5 border-b-2 mb-3 pb-2">
+        <h3 className="w-[150px] font-semibold text-xl">ປະຫວັດການຂາຍ</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="flex items-center gap-4">
             <label>ເລີ່ມຕົ້ນ</label>
-            <div
-              className="border-gray-300 border-2 px-3 py-1 rounded-md
-        "
-            >
+            <div className="border-gray-300 border-2 px-3 py-1 rounded-md">
               <input
                 type="date"
-                // value={date_start}
-                // onChange={(e) => updateDateStart(e.target.value)}
+                value={dateStart}
+                onChange={(e) => setDateStart(e.target.value)}
                 className="w-full outline-none"
               />
             </div>
             <label>ສີ້ນສຸດ</label>
-            <div
-              className="border-gray-300 border-2 px-3 py-1 rounded-md
-        "
-            >
+            <div className="border-gray-300 border-2 px-3 py-1 rounded-md">
               <input
                 type="date"
-                // value={date_end}
-                // onChange={(e) => updateDateEnd(e.target.value)}
+                value={dateEnd}
+                onChange={(e) => setDateEnd(e.target.value)}
                 className="w-full outline-none"
               />
             </div>
@@ -96,35 +146,56 @@ function ListsHistorys() {
             </button>
           </div>
         </form>
-        <form onSubmit={handleFilter} className="flex items-center gap-2 pe-10">
+
+        <div className="flex items-center gap-3">
+          <span>ປະເພດການຈ່າຍ</span>
+          <select
+            name="pay_type"
+            onChange={(e) => setPayType(e.target.value)}
+            className=" cursor-pointer py-1 rounded border-gray-400 border-2"
+            defaultValue=""
+          >
+            <option value="">ທັງໝົດ</option>
+            <option className=" cursor-pointer" value="cash">
+              ເງິນສົດ
+            </option>
+            <option className=" cursor-pointer" value="transfer">
+              ເງິນໂອນ
+            </option>
+            <option className=" cursor-pointer" value="debt">
+              ຕິດໜີ້
+            </option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2 pe-10">
           <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
             <input
               type="text"
               className="w-full  px-2 py-1 outline-none "
               placeholder="ປ້ອນ ID ບິນ...."
-              // value={idVoice}
-              // onChange={(e) => setIdVoice(e.target.value)}
+              value={idInvoice !== null ? idInvoice : ""}
+              onChange={(e: any) =>
+                setIdInvoice(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
             />
           </div>
-          <button
-            type="submit"
-            className="bg-yellow-500 px-2 py-1 rounded text-white"
+          <Button
+            color="primary"
+            onPress={handleFilter}
+            radius="sm"
+            size="sm"
+            className="text-medium"
           >
             ຄົ້ນຫາ
-          </button>
-        </form>
+          </Button>
+        </div>
       </div>
-      {/* <HeaderLinks
-        name="ປະຫວັດການຂາຍ"
-        linkCreate=""
-        linkLists=""
-        nameCreate=""
-        nameList=""
-      /> */}
 
       <Table
         color={"primary"}
-        selectionMode="single"
+        // selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination
@@ -173,7 +244,15 @@ function ListsHistorys() {
                   ? "ເງິນໂອນ"
                   : "່ຕິດໜີ້"}
               </TableCell>
-              <TableCell>{item.status}</TableCell>
+              <TableCell className="text-white">
+                {item.status === "cancel" ? (
+                  <span className="bg-red-600 rounded-lg px-2">ຍົກເລີກ</span>
+                ) : item.status === "pedding" ? (
+                  <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
+                ) : (
+                  <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
+                )}
+              </TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="ເບິ່ງ">
@@ -193,7 +272,7 @@ function ListsHistorys() {
                   <Tooltip color="danger" content="ລົບ">
                     <button
                       type="button"
-                      // onClick={() => handleDelete(item?.barcode)}
+                      onClick={() => handleCanle(item.id, item.status)}
                     >
                       <span className="text-lg text-danger cursor-pointer active:opacity-50">
                         <DeleteIcon />
@@ -206,77 +285,6 @@ function ListsHistorys() {
           )}
         </TableBody>
       </Table>
-      {/* <span className="py-1 px-2 border-l-1 w-1/12 text-center">ລະຫັດບິນ</span>
-      <span className="py-1 px-2 border-l-1 w-1/6 text-center">ວັນທີສ້າງ</span>
-      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-        ລະຫັດຜູ້ຂາຍ
-      </span>
-
-      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-        ອັດຕາແລກປ່ຽນ
-      </span>
-      <span className="py-1 px-2 border-l-1 w-1/12 text-center ">
-        ຈໍານວນສິນຄ້າ
-      </span>
-      <span className="py-1 px-2 border-l-1 w-1/12 text-center ">ສ່ວນຫຼຸດ</span>
-      <span className="py-1 px-2 border-l-1 w-1/6 text-center">
-        ລາຄາລວມ (LAK)
-      </span>
-      <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-        ປະເພດການຈ່າຍ
-      </span>
-      <span className="py-1 px-2 border-l-1 w-1/4 text-center">ດຳເນີນການ</span> */}
-      {/* <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
-        <span className="py-1 px-2  w-12">ລຳດັບ</span>
-        <span className="py-1 px-2 border-l-1 w-36">ບາໂຄດ</span>
-        <span className="py-1 px-2 border-l-1 w-48">ຫົວຂໍ້</span>
-        <span className="py-1 px-2 border-l-1 w-48">ໃຊ້ສໍາລັບ</span>
-        <span className="py-1 px-2 border-l-1 w-20">ຂະຫນາດ</span>
-        <span className="py-1 px-2 border-l-1 w-20">ຫົວໜ່ວຍ</span>
-        <span className="py-1 px-2 border-l-1 w-32">ໝວດຫມູ່</span>
-        <span className="py-1 px-2 border-l-1 w-24 ">ຈໍານວນສິນຄ້າ</span>
-        <span className="py-1 px-2 border-l-1 w-32 ">ລາຄາ (LAK)</span>
-        <span className="py-1 px-2 border-l-1 w-16 ">ສ່ວນຫຼຸດ</span>
-        <span className="py-1 px-2 border-l-1 w-32 text-center">ດຳເນີນການ</span>
-      </p>
-      <div className="overflow-y-auto h-[71vh] scroll-smooth pb-5">
-        {products.length > 0 ? (
-          products.map((it, index) => (
-            <p className="flex border-b-1" key={index}>
-              <span className="py-1 px-2  w-12">{it.id}</span>
-              <span className="py-1 px-2 border-l-1 w-36">{it.barcode}</span>
-              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                {it.title}
-              </span>
-              <span className="py-1 px-2 border-l-1 w-48 truncate overflow-hidden whitespace-nowrap">
-                {it.use_for}
-              </span>
-              <span className="py-1 px-2 border-l-1 w-20">{it.size}</span>
-              <span className="py-1 px-2 border-l-1 w-20">{it.unit}</span>
-              <span className="py-1 px-2 border-l-1 w-32">{it.category}</span>
-              <span className="py-1 px-2 border-l-1 w-24 ">{it.qty}</span>
-              <span className="py-1 px-2 border-l-1 w-32 ">
-                {formattedNumber(it.cost_lak)}. ກີບ
-              </span>
-              <span className="py-1 px-2 border-l-1 w-16 text-red-500">
-                {it.discount}%
-              </span>
-              <span className="flex justify-center gap-3 p-1 border-l-1 w-48 text-center text-sm">
-                <Link
-                  href={`/admin/products/detail/${it.id}`}
-                  className="bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
-                >
-                  ລາຍລະອຽດ
-                </Link>
-              </span>
-            </p>
-          ))
-        ) : (
-          <div className="h-[400px] flex justify-center items-center">
-            <p>ບໍ່ທັນມີລາຍຊື່</p>
-          </div>
-        )}
-      </div> */}
     </div>
   );
 }

@@ -1,3 +1,17 @@
+export interface Cart {
+  id: number;
+  cashier_id: string;
+  cart_type: number;
+  cart_name: number;
+  total_lak: number;
+  total_thb: number;
+  total_unit_lak: number;
+  total_unit_thb: number;
+  rate: number;
+  m_discount: number;
+  status: string;
+  details: Details[];
+}
 export interface Details {
   id: number;
   cart_id: number;
@@ -18,20 +32,7 @@ export interface Details {
   total_unit_lak: number;
   total_lak: number;
 }
-export interface Cart {
-  id: number;
-  cashier_id: string;
-  cart_type: number;
-  cart_name: number;
-  total_lak: number;
-  total_thb: number;
-  total_unit_lak: number;
-  total_unit_thb: number;
-  rate: number;
-  m_discount: number;
-  status: string;
-  details: Details[];
-}
+
 export interface Invoice {
   id: number;
   cashier_id: string;
@@ -70,13 +71,31 @@ export interface Employee {
   address: string;
   role: number;
 }
-// {
-//   id: "LD0001",
-//   username: "LD0001",
-//   password: "!234",
-//   name: "soulixai",
-//   phone: "12345",
-//   address: "",
-//   avatar: "",
-//   role: 2,
-// },
+export interface Products {
+  barcode: string;
+  page: string | null;
+  No: string | null;
+  code: string | null;
+  size: string | null;
+  title: string;
+  use_for: string | null;
+  brand: string | null;
+  unit: string;
+  category: string;
+  cost_thb: number | 0;
+  cost_lak: number | 0;
+  wholesale_thb: number | 0;
+  wholesale_lak: number | 0;
+  retail_thb: number | 0;
+  retail_lak: number | 0;
+  discount: number | 0;
+  num_of_discount: number | 0;
+  qty_start: number | 0;
+  qty_in: number | 0;
+  qty_out: number | 0;
+  qty_balance: number | 0;
+  qty_alert: number | 0;
+  supplier: string | null;
+  img_name: string | null;
+  status: string;
+}

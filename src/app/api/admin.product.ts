@@ -1,5 +1,33 @@
 import api from "../lib/constants";
 
+/// invoices
+export const GetAllInvoices = async (
+  size: number,
+  page: number,
+  date_start: string,
+  date_end: string,
+  pay_type: string
+) => {
+  try {
+    return await api.get(
+      `/api/admin/invoices?size=${size}&page=${page}&date_end=${date_end}&date_start=${date_start}&pay_type=${pay_type}`
+    );
+  } catch (error) {
+    return error;
+  }
+};
+export const GetInvoicesId = async (id: number) => {
+  return await api.get(`/api/admin/invoice?id=${id}`);
+};
+export const _cancleInvoices = async (id: number) => {
+  try {
+    return await api.delete(`/api/admin/invoice?id=${id}`);
+  } catch (error) {
+    return error;
+  }
+};
+
+/// products
 export const GetAllProduct = async (size: number, page: number) => {
   try {
     return await api.get(`/api/admin/products?size=${size}&page=${page}`);
@@ -7,23 +35,16 @@ export const GetAllProduct = async (size: number, page: number) => {
     return error;
   }
 };
-export const GetAllInvoices = async (
-  size: number,
-  page: number,
-  date_start: string,
-  date_end: string
-) => {
+export const GetProductById = async (bracode: string) => {
   try {
-    return await api.get(
-      `/api/admin/invoices?size=${size}&page=${page}&date_end=${date_end}&date_start=${date_start}`
-    );
+    return await api.get(`/api/admin/productid?barcode=${bracode}`);
   } catch (error) {
     return error;
   }
 };
-export const GetProductById = async (bracode: string) => {
+export const GetProductByIds = async (key: string, value: string) => {
   try {
-    return await api.get(`/api/admin/productid?barcode=${bracode}`);
+    return await api.get(`/api/admin/findproduct?${key}=${value}`);
   } catch (error) {
     return error;
   }

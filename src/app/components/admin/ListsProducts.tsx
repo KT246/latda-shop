@@ -13,46 +13,40 @@ import {
   Pagination,
   getKeyValue,
   Tooltip,
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Selection, // <-- Add this import
 } from "@heroui/react";
 
 import { apiDlPdruct } from "@/app/api/products";
-import { GetAllProduct } from "@/app/api/admin.product";
+import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
 import Image from "next/image";
-interface Product {
-  barcode: string;
-  page: string | null;
-  No: string | null;
-  code: string | null;
-  size: string | null;
-  title: string;
-  use_for: string | null;
-  brand: string | null;
-  unit: string;
-  category: string;
-  cost_thb: number | 0;
-  cost_lak: number | 0;
-  wholesale_thb: number | 0;
-  wholesale_lak: number | 0;
-  retail_thb: number | 0;
-  retail_lak: number | 0;
-  discount: number | 0;
-  num_of_discount: number | 0;
-  qty_start: number | 0;
-  qty_in: number | 0;
-  qty_out: number | 0;
-  qty_balance: number | 0;
-  qty_alert: number | 0;
-  supplier: string | null;
-  img_name: string | null;
-  status: string;
-}
+
+// interface
+import { Products } from "@/app/lib/interface";
+import { toast } from "react-toastify";
 
 function ListsProducts() {
-  const [products, setProduct] = useState<Product[]>([]);
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+    new Set<string>(["ທັງໝົດ"])
+  );
+
+  const [values, setValues] = React.useState("");
+  const [products, setProduct] = useState<Products[]>([]);
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(4);
 
+  /// handles changes
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    [selectedKeys]
+  );
+
+  /// useEffect
   React.useEffect(() => {
     fetchData();
   }, []);
@@ -61,6 +55,10 @@ function ListsProducts() {
     fetchData();
   }, [page]);
 
+  React.useEffect(() => {
+    filtered(selectedValue, values);
+  }, [selectedValue]);
+  /// functions
   const fetchData = async () => {
     const res: any = await GetAllProduct(rowsPerPage, page);
     console.log(res);
@@ -70,6 +68,7 @@ function ListsProducts() {
     }
   };
 
+  /// handle functions
   const handleDelete = async (barcode: string) => {
     try {
       const res: any = await apiDlPdruct(barcode);
@@ -86,12 +85,92 @@ function ListsProducts() {
     }
   };
 
-  console.log("Products:", products);
+  const filtered = async (key: string, value: string) => {
+    const res: any = await GetProductByIds(key, value);
+    console.log(res.data);
+    // if (res?.data?.length === 0) {
+    //   setProduct([]);
+    //   return;
+    // }
+    // setProduct(res.data);
+    // setPages(res.data.length / rowsPerPage);
+    // toast.success(key);
+    // if (key === "ທັງໝົດ") {
+    //   fetchData();
+    //   return;
+    // } else {
+    //   const res: any = await GetProductByIds(key, value);
+    //   console.log(res.data);
+    //   if (res?.data?.length === 0) {
+    //     setProduct([]);
+    //     return;
+    //   }
+    //   setProduct(res.data);
+    //   setPages(res.data.length / rowsPerPage);
+    // }
+  };
+
   return (
     <div>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
-        ລາຍການສິນຄ້າ
-      </h1>
+      <div className="flex items-center gap-5">
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+          ລາຍການສິນຄ້າ
+        </h1>
+
+        <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
+          <input
+            type="text"
+            className="w-full  px-2 py-1 outline-none "
+            placeholder={`ປ້ອນ ${selectedValue}....`}
+            value={values}
+            onChange={(e: any) => setValues(e.target.value)}
+          />
+        </div>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button
+              className=" capitalize text-medium"
+              color="primary"
+              radius="sm"
+            >
+              {selectedValue}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            disallowEmptySelection
+            aria-label="Single selection example"
+            selectedKeys={selectedKeys}
+            selectionMode="single"
+            variant="flat"
+            onSelectionChange={setSelectedKeys}
+          >
+            <DropdownItem color="primary" key="ທັງໝົດ">
+              ທັງໝົດ
+            </DropdownItem>
+            <DropdownItem color="primary" key="code">
+              Code
+            </DropdownItem>
+            <DropdownItem color="primary" key="barcode">
+              Barcode
+            </DropdownItem>
+            <DropdownItem color="primary" key="title">
+              Title
+            </DropdownItem>
+            <DropdownItem color="primary" key="size">
+              size
+            </DropdownItem>
+            <DropdownItem color="primary" key="page">
+              page
+            </DropdownItem>
+            <DropdownItem color="primary" key="qty">
+              ຈຳນວນ
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Button color="success" radius="sm" className="text-medium text-white">
+          ອັບເດດສະຕັອກ
+        </Button>
+      </div>
 
       <Table
         color={"primary"}
@@ -118,10 +197,6 @@ function ListsProducts() {
           <TableColumn key="img_name">hinh</TableColumn>
           <TableColumn key="barcode">barcode</TableColumn>
           <TableColumn key="title">ຊື່</TableColumn>
-          {/* <TableColumn key="size">ຂະຫນາດ</TableColumn>
-          <TableColumn key="code">code</TableColumn>
-          <TableColumn key="page">page</TableColumn>
-          <TableColumn key="brand">ແບນ</TableColumn> */}
           <TableColumn key="unit">ໜ່ວຍ</TableColumn>
           <TableColumn key="category">ປະເພດ</TableColumn>
           <TableColumn key="qty_start">ຍົກມາ</TableColumn>
@@ -147,19 +222,14 @@ function ListsProducts() {
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>{item.title}</TableCell>
-              {/* <TableCell>{item.size}</TableCell>
-              <TableCell>{item.No}</TableCell>
-              <TableCell>{item.code}</TableCell>
-              <TableCell>{item.page}</TableCell>
-              <TableCell>{item.brand}</TableCell> */}
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.qty_start}</TableCell>
               <TableCell>{item.qty_in}</TableCell>
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>{item.qty_balance}</TableCell>
-              <TableCell>{item.retail_lak.toLocaleString()}</TableCell>
-              <TableCell>{item.retail_thb.toLocaleString()}</TableCell>
+              <TableCell>{item.retail_lak}</TableCell>
+              <TableCell>{item.retail_thb}</TableCell>
               <TableCell>{item.status}</TableCell>
               <TableCell>
                 <div className="relative flex items-center gap-2">

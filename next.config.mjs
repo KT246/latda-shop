@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https", // Protocol should be 'https'
-        hostname: "8abb-117-2-49-250.ngrok-free.app", // Only the hostname
+        hostname: "bkh4k412-3000.asse.devtunnels.ms", // Only the hostname
       },
     ],
   },
