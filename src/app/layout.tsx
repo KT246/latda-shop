@@ -1,8 +1,8 @@
 import React from "react";
-import { Providers } from "./providers";
 
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
+import { HeroUIProvider } from "@heroui/react";
 
 export const metadata = {
   title: "LATDA Shop",
@@ -16,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <ToastContainer />
-        <Providers>{children}</Providers>
+        <HeroUIProvider>
+          <ToastContainer />
+          {children}
+        </HeroUIProvider>
       </body>
     </html>
   );

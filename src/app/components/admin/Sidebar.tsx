@@ -16,9 +16,10 @@ import Image from "next/image";
 
 const Sidebar = () => {
   const pathname = usePathname();
-
+  const { token, user } = useAuthStore();
   const { logout } = useAuthStore();
   const router = useRouter();
+
   const isActive = (path: string) => {
     if (pathname === path) return true;
     if (pathname.startsWith(path) && path !== "/admin") return true;
@@ -31,11 +32,11 @@ const Sidebar = () => {
   };
 
   const Links = [
-    { label: "ພາບລວມ", href: "/admin" },
-    { label: "ຈັດການສິນຄ້າ", href: "/admin/products" },
-    { label: "ຈັດການພະນັກງານ", href: "/admin/employees" },
-    { label: "ປະຫວັດການຂາຍ", href: "/admin/history" },
-    { label: "ຈັດການລະບົບ", href: "/admin/profile" },
+    { label: "ພາບລວມ", href: "/admin", path: 0 },
+    { label: "ຈັດການສິນຄ້າ", href: "/admin/products", path: 1 },
+    { label: "ຈັດການພະນັກງານ", href: "/admin/employees", path: 0 },
+    { label: "ປະຫວັດການຂາຍ", href: "/admin/history", path: 0 },
+    { label: "ຈັດການລະບົບ", href: "/admin/profile", path: 0 },
   ];
   return (
     <div className="w-full overflow-hidden flex flex-col border-r">
@@ -49,19 +50,38 @@ const Sidebar = () => {
           </p>
         </div>
       </div>
-      {Links.map((link, index) => (
-        <Link
-          key={index}
-          href={link.href}
-          className={` ${
-            isActive(link.href)
-              ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
-              : "text-white"
-          } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
-        >
-          <span className="text-sm">{link.label}</span>
-        </Link>
-      ))}
+      {Links.map((link, index) => {
+        if (user?.path === 1) {
+          if (link.path === 1) {
+            return (
+              <Link
+                key={index}
+                href={link.href}
+                className={` ${isActive(link.href)
+                  ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
+                  : "text-white"
+                  } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
+              >
+                <span className="text-sm">{link.label}</span>
+              </Link>
+            )
+          }
+        } else {
+          return (
+            <Link
+              key={index}
+              href={link.href}
+              className={` ${isActive(link.href)
+                ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
+                : "text-white"
+                } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
+            >
+              <span className="text-sm">{link.label}</span>
+            </Link>
+          )
+        }
+
+      })}
       <div className="pt-[250px]">
         <button
           onClick={handleLogout}

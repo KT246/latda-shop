@@ -7,6 +7,22 @@ import { toast } from "react-toastify";
 import { useRouter, redirect } from "next/navigation";
 
 export default function FormLogin() {
+  const router = useRouter();
+
+  const { token, user } = useAuthStore();
+  const Login = useAuthStore((state) => state.login);
+
+  if (token) {
+    if (user?.path === 2) {
+      router.push("/cashier");
+    } else if (user?.path === 0) {
+      router.push("/admin");
+    } else if (user?.path === 1) {
+      router.push("/admin/products");
+    } else {
+      router.push("/login");
+    }
+  }
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -17,10 +33,8 @@ export default function FormLogin() {
     "default" | "primary"
   >("default");
 
-  const { token, user } = useAuthStore();
-  const Login = useAuthStore((state) => state.login);
 
-  const router = useRouter();
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,6 +59,7 @@ export default function FormLogin() {
           password,
         }
       );
+      setLoading(false);
       const data = res.data;
       if (data?.token) {
         const token = data?.token;
@@ -57,12 +72,16 @@ export default function FormLogin() {
         Login(token, user);
         toast.success("ສຳເລັດ");
         const path = user?.path;
-
-        if (path === 0 || path === 1) {
+        console.log(path)
+        if (path === 0) {
           router.push("/admin");
-        }
-        if (path === 2) {
+          return;
+        } else if (path === 1) {
+          router.push("/admin/products");
+        } else if (path === 2) {
           router.push("/cashier");
+        } else {
+          router.push("/login");
         }
       }
     } catch (e) {
@@ -76,18 +95,18 @@ export default function FormLogin() {
     }
   };
 
-  useEffect(() => {
-    if (token) {
-      const path = user?.path;
+  // useEffect(() => {
+  //   if (token) {
+  //     const path = user?.path;
 
-      if (path === 1) {
-        return redirect("/admin");
-      }
-      if (path === 2) {
-        return redirect("/cashier");
-      }
-    }
-  }, [token]);
+  //     if (path === 1) {
+  //       return redirect("/admin");
+  //     }
+  //     if (path === 2) {
+  //       return redirect("/cashier");
+  //     }
+  //   }
+  // }, [token]);
 
   return (
     <div className="grid grid-cols-1 h-screen bg-slate-300 lg:grid-cols-2">
