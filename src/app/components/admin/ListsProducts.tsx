@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Details } from "@/app/lib/interface";
 import Link from "next/link";
 import { formattedNumber } from "@/app/helpers/funtions";
@@ -25,6 +25,8 @@ import { apiDlPdruct } from "@/app/api/products";
 import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
 import Image from "next/image";
 
+import debounce from "lodash.debounce";
+
 // interface
 import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
@@ -46,6 +48,37 @@ function ListsProducts() {
     [selectedKeys]
   );
 
+  /// funtion
+  const fetchData = async () => {
+    const res: any = await GetAllProduct(rowsPerPage, page);
+    // console.log(res);
+    if (res?.status === 200) {
+      setProduct(res.data.products);
+      setPages(res.data.totalPages);
+    }
+  };
+
+  const filtered = async (key: string, value: string) => {
+    if (key === "ທັງໝົດ") {
+      setValues("");
+      fetchData();
+      return;
+    }
+    const res: any = await GetProductByIds(key, value);
+    if (res.data.length === 0) {
+      setPages(0);
+    }
+    setPages(Math.ceil(res.data.length / rowsPerPage));
+    setProduct(res.data || []);
+  };
+
+  const debouncedFiltered = useCallback(
+    debounce((key: string, value: string) => {
+      filtered(key, value);
+    }, 500),
+    []
+  );
+
   /// useEffect
   React.useEffect(() => {
     fetchData();
@@ -56,17 +89,10 @@ function ListsProducts() {
   }, [page]);
 
   React.useEffect(() => {
-    filtered(selectedValue, values);
-  }, [selectedValue]);
-  /// functions
-  const fetchData = async () => {
-    const res: any = await GetAllProduct(rowsPerPage, page);
-    console.log(res);
-    if (res?.status === 200) {
-      setProduct(res.data.products);
-      setPages(res.data.totalPages);
+    if (selectedValue && values) {
+      debouncedFiltered(selectedValue, values);
     }
-  };
+  }, [values, debouncedFiltered, selectedValue]);
 
   /// handle functions
   const handleDelete = async (barcode: string) => {
@@ -83,31 +109,6 @@ function ListsProducts() {
     } catch (error) {
       console.error("Error deleting product:", error);
     }
-  };
-
-  const filtered = async (key: string, value: string) => {
-    const res: any = await GetProductByIds(key, value);
-    console.log(res.data);
-    // if (res?.data?.length === 0) {
-    //   setProduct([]);
-    //   return;
-    // }
-    // setProduct(res.data);
-    // setPages(res.data.length / rowsPerPage);
-    // toast.success(key);
-    // if (key === "ທັງໝົດ") {
-    //   fetchData();
-    //   return;
-    // } else {
-    //   const res: any = await GetProductByIds(key, value);
-    //   console.log(res.data);
-    //   if (res?.data?.length === 0) {
-    //     setProduct([]);
-    //     return;
-    //   }
-    //   setProduct(res.data);
-    //   setPages(res.data.length / rowsPerPage);
-    // }
   };
 
   return (
@@ -208,7 +209,7 @@ function ListsProducts() {
           <TableColumn key="status">status</TableColumn>
           <TableColumn key="">action</TableColumn>
         </TableHeader>
-        <TableBody items={products}>
+        <TableBody emptyContent={"ບໍ່ພົບສິນຄ້ານີ້"} items={products}>
           {(item) => (
             <TableRow key={item.barcode}>
               <TableCell>
