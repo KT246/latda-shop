@@ -32,6 +32,7 @@ import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
 
 function ListsProducts() {
+  /// useState
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set<string>(["ທັງໝົດ"])
   );
@@ -41,6 +42,8 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(4);
+  const fallback = "/skv.jpg";
+  const [errorIMG, setErrorIMG] = useState<boolean>(false);
 
   /// handles changes
   const selectedValue = React.useMemo(
@@ -213,13 +216,23 @@ function ListsProducts() {
           {(item) => (
             <TableRow key={item.barcode}>
               <TableCell>
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.img_name}`}
-                  alt="No Name"
-                  className=""
-                  width={50}
-                  height={100}
-                />
+                {item.img_name !== null ? (
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.img_name}`}
+                    alt="No Name"
+                    className=""
+                    width={50}
+                    height={100}
+                  />
+                ) : (
+                  <Image
+                    src={"/skv.jpg"}
+                    alt="No Name"
+                    className=""
+                    width={70}
+                    height={70}
+                  />
+                )}
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>{item.title}</TableCell>
@@ -295,6 +308,21 @@ export const EyeIcon = (props: any) => {
         strokeWidth={1.5}
       />
     </svg>
+  );
+};
+
+const FallbackImage = ({ src }: { src: string }) => {
+  const fallback = "/skv.jpg";
+  const [imgSrc, setImgSrc] = useState(src);
+
+  return (
+    <Image
+      src={imgSrc}
+      alt="Image"
+      width={50}
+      height={100}
+      onError={() => setImgSrc(fallback)}
+    />
   );
 };
 

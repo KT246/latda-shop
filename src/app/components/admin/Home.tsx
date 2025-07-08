@@ -1,9 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import HeaderLinks from "../HeaderLinks";
-import { div } from "framer-motion/client";
-
+import useSWR from "swr";
 import { Doughnut, Line } from "react-chartjs-2";
+
+/// api start
+
+import { FetchReport } from "@/app/api/admin.product";
+
+/// api end
 import {
   Chart as ChartJS,
   ArcElement,
@@ -80,7 +85,19 @@ const options_line = {
 };
 
 function Home() {
+  /// useState
+  const { data: dataRP, error: errorRP } = useSWR(
+    `/api/admin/report-product`,
+    FetchReport
+  );
+  const { data: dataRS, error: errorRS } = useSWR(
+    `/api/admin/report-sale?date_start=2025-07-01&date_end=2025-07-01`,
+    FetchReport
+  );
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  console.log("dataRP", dataRP);
+  console.log("dataRS", dataRS);
 
   const cards = [
     { label: "ຕົ້ນທືນ", value: 2 },
@@ -167,7 +184,6 @@ function Home() {
             </div>
           </div> */}
         </div>
-
         <div className="flex flex-col gap-2 ">
           <div className=" shadow-sm  p-2 rounded">
             <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500 uppercase">
@@ -200,6 +216,10 @@ function Home() {
             </div>
           </div>
         </div>
+        fsdfsdf Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi
+        accusamus eligendi fugiat distinctio corrupti! Officiis sint, ullam
+        fugit nihil repellendus vel cumque cupiditate dolore doloremque magni.
+        Perspiciatis beatae rerum ea.
       </div>
     </>
   );

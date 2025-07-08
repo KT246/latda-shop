@@ -1,15 +1,14 @@
-"use client"
+"use client";
 import React from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/admin/Sidebar";
 import useAuthStore from "../store/authStores";
 import { usePathname, useRouter } from "next/navigation";
 
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   // console.log(pathname)
-  const router = useRouter()
+  const router = useRouter();
   const { token, user } = useAuthStore();
   if (!token) {
     router.push("/login");
@@ -19,15 +18,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       router.push("/cashier");
     }
     if (user?.path === 1) {
-      const allowedPaths = [
-        "/admin/products",
-        "/admin/products/create"
-      ];
+      const allowedPaths = ["/admin/products", "/admin/products/create"];
 
       const isEditProduct = /^\/admin\/products\/edit\/\w+$/.test(pathname);
       const isdetailProduct = /^\/admin\/products\/detail\/\w+$/.test(pathname);
 
-      const isAllowed = allowedPaths.includes(pathname) || isEditProduct || isdetailProduct;
+      const isAllowed =
+        allowedPaths.includes(pathname) || isEditProduct || isdetailProduct;
 
       if (!isAllowed) {
         // Redirect hoặc chặn quyền truy cập
@@ -42,7 +39,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Navbar />
       </div>
       <div className="h-[92vh] flex gap-5">
-        <div className=" bg-blue-950 w-[200px]">
+        <div className=" bg-blue-950 w-[200px] fixed top-0 left-0 h-full overflow-y-auto">
           <Sidebar />
         </div>
         <div className="bg-white w-full">{children}</div>
@@ -50,7 +47,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   );
   // React.useEffect(() => {
-
 
   //   if (!token || role !== 'admin') {
   //     setAuthorized(false)
@@ -70,5 +66,4 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   //     </div>
   //   )
   // }
-
 }

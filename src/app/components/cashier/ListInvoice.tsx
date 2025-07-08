@@ -9,7 +9,18 @@ import {
 } from "@/app/lib/interface";
 import Link from "next/link";
 import { formattedNumber, formatDate } from "@/app/helpers/funtions";
-import { Pagination, DatePicker, Tooltip } from "@heroui/react";
+import {
+  Pagination,
+  DatePicker,
+  Tooltip,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Spinner,
+} from "@heroui/react";
 import {
   apiPostInvoice,
   apiPostInvoiceCancle,
@@ -226,156 +237,239 @@ export default function ListInvoice() {
         </form>
       </div>
       {/* table */}
-      <p className="font-semibold flex bg-blue-500 text-gray-100  rounded-t-md sticky top-0 z-10 mt-5 text-sm">
-        <span className="py-1 px-2  w-14">ລຳດັບ</span>
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-          ລະຫັດບິນ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/6 text-center">
-          ວັນທີສ້າງ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-          ລະຫັດຜູ້ຂາຍ
-        </span>
 
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-          ອັດຕາແລກປ່ຽນ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center ">
-          ຈໍານວນສິນຄ້າ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center ">
-          ສ່ວນຫຼຸດ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/6 text-center">
-          ລາຄາລວມ (LAK)
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/12 text-center">
-          ປະເພດການຈ່າຍ
-        </span>
-        <span className="py-1 px-2 border-l-1 w-1/4 text-center">
-          ດຳເນີນການ
-        </span>
-      </p>
-      <div className="overflow-y-auto h-[71vh] scroll-smooth pb-5">
-        {change ? (
-          <p className="flex border-b-1">
-            <span className="py-1 px-2  w-14 ">{1}</span>
-            <span className="text-center py-1 px-2 border-l-1 w-1/12 uppercase">
-              {invoice?.id}
-            </span>
-            <span className="text-center py-1 px-2 border-l-1 w-1/6">
-              {formatDate(invoice?.date_create ?? "")}
-            </span>
-            <span className="text-center py-1 px-2 border-l-1 w-1/12">
-              {invoice?.cashier_id}
-            </span>
-
-            <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-              {invoice?.rate}
-            </span>
-            <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-              {(invoice?.details?.length ?? 0) + 1}
-            </span>
-            <span className="text-right py-1 px-2 border-l-1 w-1/12 text-red-500">
-              {formattedNumber(invoice?.m_discount ?? 0)}. ກີບ
-            </span>
-            <span className="text-right py-1 px-2 border-l-1 w-1/6 ">
-              {formattedNumber(invoice?.total_checkout_lak ?? 0)}. ກີບ
-            </span>
-            <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-              {invoice?.pay_type === "cash" ? "ເງິນສົດ" : "ເງິນໂອນ"}
-            </span>
-            <span className="flex justify-center gap-3 p-1 border-l-1 w-1/4 text-center text-sm">
-              <Link
-                href={`/cashier/invoice/detail/${invoice?.id}`}
-                className="flex-1 bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
-              >
-                ລາຍລະອຽດ
-              </Link>
-              <button className="flex-1 bg-blue-500 hover:bg-blue-700 text-white  font-bold  px-2 rounded">
-                Print
-              </button>
-              <button
-                onClick={handleCanle(invoice?.id ?? 0)}
-                className="flex-1 bg-red-500 hover:bg-red-700 text-white  font-bold  px-2 rounded"
-              >
-                ຍົກເລີກ
-              </button>
-            </span>
-          </p>
-        ) : invoices ? (
-          <>
-            {invoices?.invoices.map((invoice: Invoice, index: number) => (
-              <p className="flex border-b-1">
-                <span className="py-1 px-2  w-14 ">{index + 1}</span>
-                <span className="text-center py-1 px-2 border-l-1 w-1/12 uppercase">
-                  {invoice?.id}
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-1/6">
-                  {formatDate(invoice?.date_create)}
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-1/12">
-                  {invoice?.cashier_id}
-                </span>
-
-                <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-                  {invoice?.rate}
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-                  {invoice?.details?.length + 1}
-                </span>
-                <span className="text-right py-1 px-2 border-l-1 w-1/12 text-red-500">
-                  {formattedNumber(invoice?.m_discount)}. ກີບ
-                </span>
-                <span className="text-right py-1 px-2 border-l-1 w-1/6 ">
-                  {formattedNumber(invoice?.total_checkout_lak)}. ກີບ
-                </span>
-                <span className="text-center py-1 px-2 border-l-1 w-1/12 ">
-                  {invoice.pay_type === "cash" ? "ເງິນສົດ" : "ເງິນໂອນ"}
-                </span>
-                <span className="flex justify-center gap-3 p-1 border-l-1 w-1/4 text-center text-sm">
-                  <Link
-                    href={`/cashier/invoice/detail/${invoice.id}`}
-                    className="flex-1 bg-green-500 hover:bg-green-700 text-white  font-bold  px-2 rounded"
-                  >
-                    ລາຍລະອຽດ
-                  </Link>
-                  {invoice.status === "" ? (
-                    <>
-                      <button className="flex-1 bg-blue-500 hover:bg-blue-700 text-white  font-bold  px-2 rounded">
-                        Print
-                      </button>
-                      <button
-                        onClick={handleCanle(invoice?.id)}
-                        className="flex-1 bg-red-500 hover:bg-red-700 text-white  font-bold  px-2 rounded"
-                      >
-                        ຍົກເລີກ
-                      </button>
-                    </>
-                  ) : (
-                    <div className=" flex-1 bg-red-300 text-white  font-bold  px-2 rounded">
-                      ບິນຖືກຍົກເລີກ
-                    </div>
-                  )}
-                </span>
-              </p>
-            ))}
-            <div className="flex justify-center items-center mt-10 w-full">
+      <Table
+        aria-label="Example table with client async pagination"
+        bottomContent={
+          (invoices?.totalPages ?? 0) > 0 ? (
+            <div className="flex w-full justify-center">
               <Pagination
+                isCompact
                 showControls
+                showShadow
+                color="primary"
                 page={currentPage}
                 total={(invoices?.totalPages ?? 0) - 1}
                 onChange={handleChangePage}
               />
             </div>
-          </>
-        ) : (
-          <div className="h-[400px] flex justify-center items-center">
-            <p>ບໍ່ທັນມີລາຍການບີນ</p>
-          </div>
-        )}
-      </div>
+          ) : null
+        }
+      >
+        <TableHeader>
+          <TableColumn>ລະຫັດບິນ</TableColumn>
+          <TableColumn> ວັນທີສ້າງ</TableColumn>
+          <TableColumn> ລະຫັດຜູ້ຂາຍ</TableColumn>
+          <TableColumn> ອັດຕາແລກປ່ຽນ</TableColumn>
+          <TableColumn> ຈໍານວນສິນຄ້າ</TableColumn>
+          <TableColumn> ສ່ວນຫຼຸດ</TableColumn>
+          <TableColumn> ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn> ປະເພດການຈ່າຍ</TableColumn>
+          <TableColumn> ດຳເນີນການ</TableColumn>
+        </TableHeader>
+        <TableBody
+          loadingContent={<Spinner />}
+          // loadingState={loadingState}
+          items={invoices?.invoices ?? []}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item.id}</TableCell>
+              <TableCell>{formatDate(item.date_create ?? "")}</TableCell>
+              <TableCell>{item.cashier_id}</TableCell>
+              <TableCell>{item.rate}</TableCell>
+              <TableCell className="text-right">
+                {(item.details?.length ?? 0) + 1}
+              </TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.m_discount ?? 0)}
+              </TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_checkout_lak ?? 0)}
+              </TableCell>
+              <TableCell className="text-center">
+                {item.pay_type === "cash" ? "ເງິນສົດ" : "ເງິນໂອນ"}
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Tooltip color="default" content="ເບິ່ງລາຍລະອຽດ">
+                    <Link href={`/cashier/invoice/detail/${item.id}`}>
+                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                        <EyeIcon />
+                      </span>
+                    </Link>
+                  </Tooltip>
+                  {item.status !== "" ? (
+                    <>
+                      <Tooltip color="default" content="coppy ບິນ">
+                        <button onClick={handleCanle(item.id)}>
+                          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <PrintIcon />
+                          </span>
+                        </button>
+                      </Tooltip>
+                      <Tooltip content="ລົບ" color="danger">
+                        <button onClick={handleCanle(item.id)}>
+                          <span className="text-lg text-red-400 cursor-pointer active:opacity-50 ">
+                            <DeleteIcon />
+                          </span>
+                        </button>
+                      </Tooltip>
+                    </>
+                  ) : (
+                    <div className=" ">
+                      <span className="bg-red-300 text-white  font-bold  px-2 rounded">
+                        ບິນຖືກຍົກເລີກ
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </>
   );
 }
+
+export const PrintIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      height="1em"
+      width="1em"
+      fill="none"
+      viewBox="0 0 20 24"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M16.444 18H19a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2.556M17 11V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v6h10ZM7 15h10v4a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-4Z"
+      />
+    </svg>
+  );
+};
+
+export const EyeIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 20 20"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M12.9833 10C12.9833 11.65 11.65 12.9833 10 12.9833C8.35 12.9833 7.01666 11.65 7.01666 10C7.01666 8.35 8.35 7.01666 10 7.01666C11.65 7.01666 12.9833 8.35 12.9833 10Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+      <path
+        d="M9.99999 16.8916C12.9417 16.8916 15.6833 15.1583 17.5917 12.1583C18.3417 10.9833 18.3417 9.00831 17.5917 7.83331C15.6833 4.83331 12.9417 3.09998 9.99999 3.09998C7.05833 3.09998 4.31666 4.83331 2.40833 7.83331C1.65833 9.00831 1.65833 10.9833 2.40833 12.1583C4.31666 15.1583 7.05833 16.8916 9.99999 16.8916Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+    </svg>
+  );
+};
+
+export const DeleteIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 20 20"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M17.5 4.98332C14.725 4.70832 11.9333 4.56665 9.15 4.56665C7.5 4.56665 5.85 4.64998 4.2 4.81665L2.5 4.98332"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+      <path
+        d="M7.08331 4.14169L7.26665 3.05002C7.39998 2.25835 7.49998 1.66669 8.90831 1.66669H11.0916C12.5 1.66669 12.6083 2.29169 12.7333 3.05835L12.9166 4.14169"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+      <path
+        d="M15.7084 7.61664L15.1667 16.0083C15.075 17.3166 15 18.3333 12.675 18.3333H7.32502C5.00002 18.3333 4.92502 17.3166 4.83335 16.0083L4.29169 7.61664"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+      <path
+        d="M8.60834 13.75H11.3833"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+      <path
+        d="M7.91669 10.4167H12.0834"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+      />
+    </svg>
+  );
+};
+
+export const EditIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      viewBox="0 0 20 20"
+      width="1em"
+      {...props}
+    >
+      <path
+        d="M11.05 3.00002L4.20835 10.2417C3.95002 10.5167 3.70002 11.0584 3.65002 11.4334L3.34169 14.1334C3.23335 15.1084 3.93335 15.775 4.90002 15.6084L7.58335 15.15C7.95835 15.0834 8.48335 14.8084 8.74168 14.525L15.5834 7.28335C16.7667 6.03335 17.3 4.60835 15.4583 2.86668C13.625 1.14168 12.2334 1.75002 11.05 3.00002Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={1.5}
+      />
+      <path
+        d="M9.90833 4.20831C10.2667 6.50831 12.1333 8.26665 14.45 8.49998"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={1.5}
+      />
+      <path
+        d="M2.5 18.3333H17.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit={10}
+        strokeWidth={1.5}
+      />
+    </svg>
+  );
+};
