@@ -34,15 +34,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }
   return (
-    <div className="flex flex-col">
-      <div className="bg-blue-500 h-[8vh]">
-        <Navbar />
+    <div className="flex gap-5">
+      <div className=" bg-blue-950 w-[200px] fixed top-0 left-0 h-full overflow-y-auto z-20">
+        <Sidebar />
       </div>
-      <div className="h-[92vh] flex gap-5">
-        <div className=" bg-blue-950 w-[200px] fixed top-0 left-0 h-full overflow-y-auto">
-          <Sidebar />
+      <div className="w-full ms-48">
+        <div className="bg-blue-500 h-[8vh]">
+          <Navbar />
         </div>
-        <div className="bg-white w-full">{children}</div>
+        <div className="ms-4">{children}</div>
       </div>
     </div>
   );
