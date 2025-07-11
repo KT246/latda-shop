@@ -5,10 +5,10 @@ import useSWR from "swr";
 import { Doughnut, Line } from "react-chartjs-2";
 
 /// interface
-import { ReportProduct } from "@/app/lib/interface";
+import { ReportProduct, ReportSaleResponse } from "@/app/lib/interface";
 
 /// api
-import { FetchReport } from "@/app/api/admin.product";
+import { FetchReport, GetReportSale } from "@/app/api/admin.product";
 
 /// table
 import {
@@ -26,101 +26,41 @@ import {
   Button,
 } from "@heroui/react";
 
-/// chart.js
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip as ChartTooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-} from "chart.js";
 import Link from "next/link";
-import { formattedNumber } from "@/app/helpers/funtions";
-
-ChartJS.register(
-  ArcElement,
-  ChartTooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title
-);
-
-const data_pie = {
-  labels: ["ອາທິດ", "ເດືອນ", "ທັງຫມົດ"],
-  datasets: [
-    {
-      label: "Tỷ lệ phần trăm",
-      data: [40, 10, 30],
-      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const options_pie = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "bottom" as const,
-      labels: {
-        boxWidth: 10,
-        padding: 10,
-      },
-    },
-  },
-};
-
-const data_line = {
-  labels: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
-  datasets: [
-    {
-      label: "Doanh thu",
-      data: [120, 190, 300, 250, 400],
-      borderColor: "#36A2EB",
-      backgroundColor: "rgba(54, 162, 235, 0.2)",
-      tension: 0.4,
-      fill: true,
-    },
-  ],
-};
-
-const options_line = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Biểu đồ Doanh thu theo tháng",
-    },
-  },
-};
+import {
+  formatDate,
+  formattedNumber,
+  getTodayDate,
+} from "@/app/helpers/funtions";
+import { toast } from "react-toastify";
 
 function Home() {
   /// useState
   const [resportProduct, setReportProduct] = useState<ReportProduct | null>(
     null
   );
+  const [resportSale, setReportSale] = useState<ReportSaleResponse | null>(
+    null
+  );
+  const [dateStart, setDateStart] = React.useState("2025-07-01");
+  const [dateEnd, setDateEnd] = React.useState(getTodayDate());
 
   /// useSWR
   const { data: dataRP, error: errorRP } = useSWR(
     `/api/admin/report-product`,
     FetchReport
   );
-  const { data: dataRS, error: errorRS } = useSWR(
-    `/api/admin/report-sale?date_start=2025-07-01&date_end=2025-07-01`,
-    FetchReport
-  );
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
+  /// funtions
+  const fetchData = async () => {
+    try {
+      const res: any = await GetReportSale(dateStart, dateEnd);
+      setReportSale(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   /// useEffect
   React.useEffect(() => {
     if (dataRP) {
@@ -128,19 +68,20 @@ function Home() {
     }
   }, [dataRP]);
 
-  // React.useEffect(() => {
-  //   if (dataRP) {
-  //     setReportSale(dataRP);
-  //   }
-  // }, [dataRP]);
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
-  // console.log("dataRS", resportProduct?.products);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const cards = [
-    { label: "ຕົ້ນທືນ", value: 2 },
-    { label: "ກຳໄລ", value: 2 },
-    { label: "ພະນັກງານ", value: 2 },
-  ];
+    if (dateEnd < dateStart) {
+      toast.warning("ວັນທີສີ້ນສຸດ ຕ້ອງໃຫຍ່ກວ່າ ວັນທີເລີ່ມ");
+      return;
+    } else {
+      fetchData();
+    }
+  };
 
   return (
     <>
@@ -151,19 +92,20 @@ function Home() {
         nameCreate=""
         nameList=""
       />
-      <div className="shadow-2xl rounded">
-        <div className="flex flex-col ">
-          <div className="  p-2 rounded ">
+      <div className="px-5 py-3 bg-gray-100 rounded-lg">
+        <div className="flex flex-col space-y-5">
+          <div className="p-2 space-y-5">
             <form
-            // onSubmit={handleSubmit}
+              onSubmit={handleSubmit}
+              className="bg-white shadow-lg p-5 inline-block rounded-lg"
             >
               <div className="flex items-center gap-4">
                 <label>ເລີ່ມຕົ້ນ</label>
                 <div className="border-gray-300 border-2 px-3 py-1 rounded-md">
                   <input
                     type="date"
-                    // value={dateStart}
-                    // onChange={(e) => setDateStart(e.target.value)}
+                    value={dateStart}
+                    onChange={(e) => setDateStart(e.target.value)}
                     className="w-full outline-none"
                   />
                 </div>
@@ -171,8 +113,8 @@ function Home() {
                 <div className="border-gray-300 border-2 px-3 py-1 rounded-md">
                   <input
                     type="date"
-                    // value={dateEnd}
-                    // onChange={(e) => setDateEnd(e.target.value)}
+                    value={dateEnd}
+                    onChange={(e) => setDateEnd(e.target.value)}
                     className="w-full outline-none"
                   />
                 </div>
@@ -183,59 +125,135 @@ function Home() {
                 >
                   ຄົ້ນຫາ
                 </button>
-                <button
-                  type="button"
-                  // onClick={handleReset}
-                  className="bg-blue-500 px-2 py-1 rounded text-white"
-                >
-                  ຄ່າເລີ່ມຕົ້ນ
-                </button>
               </div>
             </form>
-            <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2 my-3 text-blue-500">
-              ລາຍງານການຂາຍ
-            </h3>
+            <div className="flex gap-10 px-2">
+              <div className="w-2/3 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
+                <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
+                  ບິນຕິດຫນີ້
+                </h3>
+                <Table
+                  selectionMode="single"
+                  color="success"
+                  isHeaderSticky
+                  classNames={{
+                    th: "bg-green-500 text-black font-semibold text-sm ",
+                    wrapper:
+                      " max-h-[25.5rem] overflow-y-auto p-0 rounded-lg shadow-lg scroll-thin border-b-2 border-r-2 border-l-2 border-green-400",
+                  }}
+                >
+                  <TableHeader>
+                    <TableColumn>ID</TableColumn>
+                    <TableColumn>ວັນທີ</TableColumn>
+                    <TableColumn>ຊື່ລູກຄ້າ</TableColumn>
+                    <TableColumn className="text-right">
+                      ລາຄາລວມທັງຫມົດ(ກີບ)
+                    </TableColumn>
+                    <TableColumn className="text-center">ລາຍລະອຽດ</TableColumn>
+                  </TableHeader>
+                  <TableBody
+                    items={resportSale?.invoice_debt ?? []}
+                    emptyContent="ບໍ່ພົບບິນ"
+                  >
+                    {(item) => (
+                      <TableRow>
+                        <TableCell>{item.id}</TableCell>
+                        <TableCell>{formatDate(item.date_create)}</TableCell>
+                        <TableCell>{item.member_id}</TableCell>
+                        <TableCell className="text-right">
+                          {formattedNumber(item.total_checkout_lak ?? 0)}
+                        </TableCell>
 
-            <div className="flex gap-3 px-2">
-              <div className="w-2/6 flex flex-col gap-3 border-gray-950">
+                        <TableCell>
+                          <Tooltip content="ລາຍລະອຽດ" color="success">
+                            <Link
+                              href={`/admin/products/detail/1076795421996`}
+                              className="text-lg hover:text-green-400 flex justify-center "
+                            >
+                              <EyeIcon />
+                            </Link>
+                          </Tooltip>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
+                <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
+                  ລາຍງານບິນ
+                </h3>
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-success-500 rounded-lg p-2 ">
+                  <p className="text-end">ຂາຍສຳເລັດ</p>
+                  <p className="text-center text-xl font-semibold">2</p>
+                  <p>ຈຳນວນ: 2</p>
+                </div>
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-warning-500 rounded-lg p-2">
+                  <p className="text-end">ກຳລັງດຳເນີນການ</p>
+                  <p className="text-center text-xl font-semibold">2</p>
+                  <p>ຈຳນວນ: 2</p>
+                </div>
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-danger-500 text-white rounded-lg p-2 ">
+                  <p className="text-end">ຖືກຍົກເລີກ</p>
+                  <p className="text-center text-xl font-semibold">2</p>
+                  <p>ຈຳນວນ: 2</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="p-2">
+            <div className="flex gap-10 px-2">
+              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
+                <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2 text-blue-500">
+                  ລາຍງານສິນຄ້າ
+                </h3>
                 <div className="h-32 shadow-md border-2 border-blue-400 rounded-lg p-2 ">
                   <p> ຕົ້ນທືນທັງຫມົດ (ກີບ)</p>
-                  <p className="text-center font-semibold pt-5">
-                    {formattedNumber(
-                      resportProduct?.warehouse.total_cost_lak || 0
-                    )}
+
+                  <p className="flex justify-center text-center text-gray-600 text-xl font-semibold pt-5">
+                    {/* <LaoCurrentCy /> */}
+                    <span>
+                      {formattedNumber(
+                        resportProduct?.warehouse.total_cost_lak || 0
+                      )}
+                    </span>
                   </p>
                 </div>
                 <div className="h-32 shadow-md border-2 border-blue-400 rounded-lg p-2 ">
                   <p> ຕົ້ນທືນທັງຫມົດ (ບາດ)</p>
-                  <p className="text-center font-semibold pt-5">
+                  <p className="text-center text-gray-600 text-xl font-semibold pt-5">
                     {formattedNumber(
                       resportProduct?.warehouse.total_cost_thb || 0
                     )}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 ">
-                  <div className="h-32 shadow-md flex-1 border-2 border-blue-400 rounded-lg p-2">
-                    <p>ສິນຄ້າທັງຫມົດ</p>
-                    <p className="text-center font-semibold pt-5">
+                  <div className="h-32 shadow-lg flex-1 bg-blue-500 text-white rounded-lg p-2">
+                    <p className="text-center border-b-1">ສິນຄ້າທັງຫມົດ</p>
+                    <p className="text-center text-xl font-semibold pt-5">
                       {resportProduct?.warehouse.total_qty_balance}
                     </p>
                   </div>
-                  <div className="h-32 shadow-md flex-1 border-2 border-blue-400 rounded-lg p-2">
-                    <p>ສິນຄ້າເຄື່ອນໄຫວ</p>
-                    <p className="text-center font-semibold pt-5">
+                  <div className="h-32 shadow-lg text-sm flex-1  bg-success-500 rounded-lg p-2">
+                    <p className="text-center border-b-1 pb-1">
+                      ສິນຄ້າເຄື່ອນໄຫວ
+                    </p>
+                    <p className="text-center text-xl font-semibold pt-5">
                       {resportProduct?.warehouse.active_products_count}
                     </p>
                   </div>
-                  <div className="h-32 shadow-md flex-1 border-2 border-blue-400 rounded-lg p-2">
-                    <p>ສິນຄ້າບລັອກ</p>
-                    <p className="text-center font-semibold pt-5">
+                  <div className="h-32 shadow-lg bg-danger-500 text-white flex-1 rounded-lg p-2">
+                    <p className="text-center border-b-1">ສິນຄ້າບລັອກ</p>
+                    <p className="text-center text-xl font-semibold pt-5">
                       {resportProduct?.warehouse.blocked_products_count}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="w-2/3">
+              <div className="w-2/3 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
+                <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2  text-blue-500">
+                  ສິນຄ້າໃກ້ຫມົດ
+                </h3>
                 <Table
                   selectionMode="single"
                   color="primary"
@@ -250,19 +268,32 @@ function Home() {
                   <TableHeader>
                     <TableColumn>Bracode</TableColumn>
                     <TableColumn>ຊື່</TableColumn>
-                    <TableColumn>ຈໍານວນ</TableColumn>
-                    <TableColumn>ຕົ້ນທືນ(ກີບ)</TableColumn>
-                    <TableColumn>ຕົ້ນທືນ(ບາດ)</TableColumn>
+                    <TableColumn className="text-right">ຈໍານວນ</TableColumn>
+                    <TableColumn className="text-right">
+                      ຕົ້ນທືນ(ກີບ)
+                    </TableColumn>
+                    <TableColumn className="text-right">
+                      ຕົ້ນທືນ(ບາດ)
+                    </TableColumn>
                     <TableColumn className="text-center">ລາຍລະອຽດ</TableColumn>
                   </TableHeader>
-                  <TableBody items={resportProduct?.productalert ?? []}>
+                  <TableBody
+                    items={resportProduct?.productalert ?? []}
+                    emptyContent="ບໍ່ພົບສິນຄ້າ"
+                  >
                     {(item) => (
                       <TableRow key={item.barcode}>
                         <TableCell>{item.barcode}</TableCell>
                         <TableCell>{item.title}</TableCell>
-                        <TableCell>{item.qty_balance}</TableCell>
-                        <TableCell>{item.cost_lak}</TableCell>
-                        <TableCell>{item.cost_thb}</TableCell>
+                        <TableCell className="text-right">
+                          {item.qty_balance}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formattedNumber(item.cost_lak ?? 0)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formattedNumber(item.cost_thb ?? 0)}
+                        </TableCell>
                         <TableCell>
                           <Tooltip content="ລາຍລະອຽດ" color="primary">
                             <Link
@@ -277,70 +308,6 @@ function Home() {
                     )}
                   </TableBody>
                 </Table>
-              </div>
-            </div>
-          </div>
-          <div className=" shadow-sm  p-2 rounded">
-            <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 my-3 text-blue-500">
-              ຍອດບິນ
-            </h3>
-            <div className="flex gap-3 px-2">
-              <div className="w-2/3">
-                <Table
-                  selectionMode="single"
-                  color="success"
-                  isHeaderSticky
-                  classNames={{
-                    th: "bg-green-500 text-black font-semibold text-sm ",
-                    wrapper:
-                      " max-h-[25.5rem] overflow-y-auto p-0 rounded-lg shadow-lg scroll-thin border-b-2 border-r-2 border-l-2 border-green-400",
-                  }}
-                >
-                  <TableHeader>
-                    <TableColumn>Bracode</TableColumn>
-                    <TableColumn>ຊື່</TableColumn>
-                    <TableColumn>ຈໍານວນ</TableColumn>
-                    <TableColumn>ຕົ້ນທືນ(ກີບ)</TableColumn>
-                    <TableColumn>ຕົ້ນທືນ(ບາດ)</TableColumn>
-                    <TableColumn className="text-center">ລາຍລະອຽດ</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>001</TableCell>
-                      <TableCell>ສິນຄ້າ 1</TableCell>
-                      <TableCell>10</TableCell>
-                      <TableCell>100.00</TableCell>
-                      <TableCell>100.00</TableCell>
-                      <TableCell>
-                        <Tooltip content="ລາຍລະອຽດ" color="success">
-                          <Link
-                            href={`/admin/products/detail/1076795421996`}
-                            className="text-lg hover:text-green-400 flex justify-center "
-                          >
-                            <EyeIcon />
-                          </Link>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="w-2/6 flex flex-col gap-3 border-gray-950">
-                <div className="h-32 flex flex-col justify-between shadow-md border-2 border-green-400 rounded-lg p-2 ">
-                  <p className="text-end">ຂາຍສຳເລັດ</p>
-                  <p className="text-center font-semibold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
-                <div className="h-32 flex flex-col justify-between shadow-md border-2 border-green-400 rounded-lg p-2">
-                  <p className="text-end">ກຳລັງດຳເນີນການ</p>
-                  <p className="text-center font-semibold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
-                <div className="h-32 flex flex-col justify-between shadow-md border-2 border-green-400 rounded-lg p-2 ">
-                  <p className="text-end">ຖືກຍົກເລີກ</p>
-                  <p className="text-center font-semibold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
               </div>
             </div>
           </div>
@@ -378,6 +345,31 @@ export const EyeIcon = (props: any) => {
         strokeLinejoin="round"
         strokeWidth={1.5}
       />
+    </svg>
+  );
+};
+
+export const LaoCurrentCy = (props: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1rem"
+      height="1rem"
+      viewBox="0 0 66.068 66.068"
+      fill="currentColor" // kế thừa từ className bên ngoài
+      {...props}
+    >
+      <g>
+        <path
+          fill="currentColor"
+          d="M63.371,63.627L38.658,36.545h19.539c1.939,0,3.512-1.57,3.512-3.512c0-1.939-1.572-3.512-3.512-3.512H39.559L61.272,2.367
+          c0.361-0.452,0.419-1.073,0.15-1.576C61.164,0.301,60.656,0,60.094,0H49.349c-0.461,0-0.904,0.214-1.184,0.569L26.941,27.511V1.465
+          C26.941,0.656,26.27,0,25.445,0h-8.656c-0.825,0-1.497,0.656-1.497,1.465v28.057H5.828c-1.94,0-3.512,1.572-3.512,3.512
+          c0,1.94,1.572,3.513,3.512,3.513h9.464v28.057c0,0.809,0.672,1.465,1.497,1.465h8.656c0.824,0,1.496-0.656,1.496-1.465V41.965
+          l1.262-0.021l22.716,23.663c0.283,0.292,0.678,0.46,1.088,0.46h10.248c0.57,0,1.1-0.324,1.352-0.834
+          C63.865,64.701,63.775,64.073,63.371,63.627z"
+        />
+      </g>
     </svg>
   );
 };

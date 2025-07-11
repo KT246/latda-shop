@@ -112,3 +112,39 @@ export interface ReportProduct {
   warehouse: Warehouse;
   productalert: Products[];
 }
+
+export interface SaleDetail {
+  total: number | null;
+  bill_count: number;
+}
+
+export interface ReportSaleDetail {
+  saleCompleted: SaleDetail;
+  saleDebt: SaleDetail;
+  saleCancle: SaleDetail;
+}
+
+export interface InvoiceDebt {
+  id: number;
+  cashier_id: string;
+  member_id: string;
+  cart_type: number;
+  total_lak: number;
+  total_thb: number;
+  total_unit_lak: number;
+  total_unit_thb: number;
+  total_checkout_lak: number;
+  total_checkout_thb: number;
+  rate: number;
+  m_discount: number;
+  pay_type: string;
+  date_create: string;
+  money_received: number;
+  money_cash: number;
+  status: string;
+}
+
+export interface ReportSaleResponse {
+  detail: ReportSaleDetail;
+  invoice_debt: InvoiceDebt[];
+}

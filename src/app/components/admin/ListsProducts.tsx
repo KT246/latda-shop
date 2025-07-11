@@ -29,7 +29,6 @@ import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-
 function ListsProducts() {
   /// useState
   const [selectedColor, setSelectedColor] = React.useState("default");
@@ -106,8 +105,8 @@ function ListsProducts() {
       showCancelButton: true,
       confirmButtonColor: "red",
       confirmButtonText: "ລົບ",
-      cancelButtonText: 'ຍົກເລິກ',
-      focusCancel: true
+      cancelButtonText: "ຍົກເລິກ",
+      focusCancel: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -126,7 +125,6 @@ function ListsProducts() {
         }
       }
     });
-
   };
 
   return (
@@ -193,10 +191,6 @@ function ListsProducts() {
 
       <Table
         color={"primary"}
-<<<<<<< HEAD
-
-=======
->>>>>>> c3a43f24094c9f5b7bf37715c1ca9a22c5a095d7
         selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
@@ -234,10 +228,9 @@ function ListsProducts() {
         </TableHeader>
         <TableBody emptyContent={"ບໍ່ມີສິນຄ້າ"} items={products}>
           {(item) => (
-            <TableRow key={item.barcode} >
+            <TableRow key={item.barcode}>
               <TableCell>
-
-                {(item.img_name !== null || item.img_name === '') ? (
+                {item.img_name !== null || item.img_name === "" ? (
                   <Image
                     loading="lazy"
                     src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.img_name}`}
@@ -258,13 +251,25 @@ function ListsProducts() {
                 )}
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
-              <TableCell>{item.title}{" "}{item.size}</TableCell>
+              <TableCell>
+                {item.title} {item.size}
+              </TableCell>
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.qty_start}</TableCell>
               <TableCell>{item.qty_in}</TableCell>
               <TableCell>{item.qty_out}</TableCell>
-              <TableCell><span className={`${item.qty_balance <= item.qty_alert ? 'text-red-500' : 'text-black'}`}>{item.qty_balance}</span></TableCell>
+              <TableCell>
+                <span
+                  className={`${
+                    item.qty_balance <= item.qty_alert
+                      ? "text-red-500"
+                      : "text-black"
+                  }`}
+                >
+                  {item.qty_balance}
+                </span>
+              </TableCell>
               <TableCell>{item.retail_lak.toLocaleString()}</TableCell>
               <TableCell>{item.retail_thb.toLocaleString()}</TableCell>
               {/* <TableCell>{item.status}</TableCell> */}
@@ -334,10 +339,6 @@ export const EyeIcon = (props: any) => {
   );
 };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> c3a43f24094c9f5b7bf37715c1ca9a22c5a095d7
 export const DeleteIcon = (props: any) => {
   return (
     <svg

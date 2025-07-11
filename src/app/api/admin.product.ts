@@ -116,3 +116,9 @@ export const DeleteUsers = async (id: string) => {
 
 export const FetchReport = (url: string) =>
   api.get(url).then((res) => res.data);
+
+export const GetReportSale = async (dateStart: string, dateEnd: string) => {
+  return await api.get(
+    `/api/admin/report-sale?date_start=${dateStart}&date_end=${dateEnd}`
+  );
+};
