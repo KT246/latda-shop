@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { token, user } = useAuthStore();
   if (!token) {
-    router.push("/login");
+    // router.push("/login");
   }
   if (token) {
     if (user?.path === 2) {

@@ -193,7 +193,10 @@ function ListsProducts() {
 
       <Table
         color={"primary"}
+<<<<<<< HEAD
 
+=======
+>>>>>>> c3a43f24094c9f5b7bf37715c1ca9a22c5a095d7
         selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
@@ -208,13 +211,14 @@ function ListsProducts() {
             />
           </div>
         }
+        className="capitalize"
         classNames={{
-          wrapper: "min-h-[222px]",
+          wrapper: "min-h-[222px]  ",
           th: "bg-blue-500 text-white font-semibold text-sm",
         }}
       >
         <TableHeader>
-          <TableColumn key="img_name">hinh</TableColumn>
+          <TableColumn key="img_name">ຮູບພາບ</TableColumn>
           <TableColumn key="barcode">barcode</TableColumn>
           <TableColumn key="title">ຊື່</TableColumn>
           <TableColumn key="unit">ໜ່ວຍ</TableColumn>
@@ -228,7 +232,7 @@ function ListsProducts() {
           {/* <TableColumn key="status">status</TableColumn> */}
           <TableColumn key="">action</TableColumn>
         </TableHeader>
-        <TableBody emptyContent={"ບໍ່ພົບສິນຄ້ານີ້"} items={products}>
+        <TableBody emptyContent={"ບໍ່ມີສິນຄ້າ"} items={products}>
           {(item) => (
             <TableRow key={item.barcode} >
               <TableCell>
@@ -330,7 +334,10 @@ export const EyeIcon = (props: any) => {
   );
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c3a43f24094c9f5b7bf37715c1ca9a22c5a095d7
 export const DeleteIcon = (props: any) => {
   return (
     <svg

@@ -13,7 +13,6 @@ import {
   TableRow,
   TableCell,
   Pagination,
-  getKeyValue,
   Tooltip,
   Select,
   SelectItem,
@@ -95,20 +94,13 @@ function ListsHistorys() {
     }
   };
 
-  const handleCanle = async (id: number, status: string) => {
-    if (status === "cancel") {
-      toast.warning("ຖືກລົບແລ້ວ");
-      return;
-    }
-    const res: any = await _cancleInvoices(id);
-    const data = res.data;
-    toast.success(data.message);
+  const handleReset = () => {
     fetchData();
   };
 
   return (
     <div>
-      <div className="flex items-center gap-5 border-b-2 mb-3 pb-2">
+      <div className="flex items-center justify-between gap-5 border-b-2 py-3">
         <h3 className="w-[150px] font-semibold text-xl">ປະຫວັດການຂາຍ</h3>
         <form onSubmit={handleSubmit}>
           <div className="flex items-center gap-4">
@@ -130,19 +122,11 @@ function ListsHistorys() {
                 className="w-full outline-none"
               />
             </div>
-
             <button
               type="submit"
               className="bg-blue-500 px-2 py-1 rounded text-white"
             >
               ຄົ້ນຫາ
-            </button>
-            <button
-              type="button"
-              // onClick={handleReset}
-              className="bg-blue-500 px-2 py-1 rounded text-white"
-            >
-              ຄ່າເລີ່ມຕົ້ນ
             </button>
           </div>
         </form>
@@ -192,10 +176,12 @@ function ListsHistorys() {
           </Button>
         </div>
       </div>
-
+      <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
+        ລາຍການສິນຄ້າ
+      </h1>
       <Table
         color={"primary"}
-        // selectionMode="single"
+        selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination
@@ -225,9 +211,12 @@ function ListsHistorys() {
           <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
           <TableColumn>ປະເພດການຈ່າຍ</TableColumn>
           <TableColumn>status</TableColumn>
-          <TableColumn>action</TableColumn>
+          <TableColumn className="text-center">action</TableColumn>
         </TableHeader>
-        <TableBody items={invoices?.invoices ?? []}>
+        <TableBody
+          items={invoices?.invoices ?? []}
+          emptyContent={"ບໍ່ພົບໃບບິນ"}
+        >
           {(item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
@@ -246,40 +235,23 @@ function ListsHistorys() {
               </TableCell>
               <TableCell className="text-white">
                 {item.status === "cancel" ? (
-                  <span className="bg-red-600 rounded-lg px-2">ຍົກເລີກ</span>
+                  <span className="bg-red-600 cursor-not-allowed rounded-lg px-2">
+                    ຍົກເລີກ
+                  </span>
                 ) : item.status === "pedding" ? (
                   <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
                 ) : (
                   <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
                 )}
               </TableCell>
-              <TableCell>
-                <div className="relative flex items-center gap-2">
-                  <Tooltip content="ເບິ່ງ">
-                    <Link href={`/admin/products/detail/${item.id}`}>
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <EyeIcon />
-                      </span>
-                    </Link>
-                  </Tooltip>
-                  <Tooltip content="ແກ້ໄຂ">
-                    <Link href={`/admin/products/edit/${item.id}`}>
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <EditIcon />
-                      </span>
-                    </Link>
-                  </Tooltip>
-                  <Tooltip color="danger" content="ລົບ">
-                    <button
-                      type="button"
-                      onClick={() => handleCanle(item.id, item.status)}
-                    >
-                      <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                        <DeleteIcon />
-                      </span>
-                    </button>
-                  </Tooltip>
-                </div>
+              <TableCell className="flex justify-center">
+                <Tooltip content="ແກ້ໄຂ">
+                  <Link href={`/admin/history/detail/${item.id}`}>
+                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <EditIcon />
+                    </span>
+                  </Link>
+                </Tooltip>
               </TableCell>
             </TableRow>
           )}

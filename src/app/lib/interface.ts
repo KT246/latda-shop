@@ -99,3 +99,16 @@ export interface Products {
   img_name: string | null;
   status: string;
 }
+
+export interface Warehouse {
+  total_qty_balance: string;
+  total_cost_lak: number;
+  total_cost_thb: number;
+  active_products_count: string;
+  blocked_products_count: string;
+}
+
+export interface ReportProduct {
+  warehouse: Warehouse;
+  productalert: Products[];
+}

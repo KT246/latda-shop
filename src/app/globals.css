@@ -16,7 +16,15 @@ body {
   /* Table custom */
 }
 
-/* .Toastify__toast-theme--colored.Toastify__toast--success {
-  color: re;
-  background: var(--toastify-color-success);
+.scroll-thin::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(218, 218, 218);
+  border-radius: 6px;
+}
+
+/* .scroll-thin::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
 } */
