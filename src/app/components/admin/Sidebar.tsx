@@ -57,32 +57,33 @@ const Sidebar = () => {
               <Link
                 key={index}
                 href={link.href}
-                className={` ${isActive(link.href)
-                  ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
-                  : "text-white"
-                  } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
+                className={` ${
+                  isActive(link.href)
+                    ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
+                    : "text-white"
+                } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
               >
                 <span className="text-sm">{link.label}</span>
               </Link>
-            )
+            );
           }
         } else {
           return (
             <Link
               key={index}
               href={link.href}
-              className={` ${isActive(link.href)
-                ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
-                : "text-white"
-                } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
+              className={` ${
+                isActive(link.href)
+                  ? "bg-gray-100 text-blue-500 border-r-4 border-green-500"
+                  : "text-white"
+              } flex items-center  hover:text-blue-500 gap-2 py-2 px-5  transition duration-300`}
             >
               <span className="text-sm">{link.label}</span>
             </Link>
-          )
+          );
         }
-
       })}
-      <div className="pt-[250px]">
+      <div className="h-[350px] flex flex-col justify-end">
         <button
           onClick={handleLogout}
           className="flex items-center bg-red-500 text-white hove:text-gray-100 hover:bg-red-400 py-3 px-5  w-full"

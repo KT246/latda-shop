@@ -48,7 +48,7 @@ function ListsEmployees() {
 
   return (
     <div>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+      <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
         ລາຍຊື່ພະນັກງານ
       </h1>
       <Table

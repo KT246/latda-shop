@@ -118,23 +118,5 @@ export const DeleteUsers = async (id: string) => {
 
 /// reports
 
-// export const GetReportProduct = async () => {
-//   try {
-//     return await api.get(`/api/admin/report-product`);
-//   } catch (error) {
-//     return error;
-//   }
-// };
-
-// export const GetReportSale = async () => {
-//   try {
-//     return await api.get(
-//       `/api/admin/sale-report?date_start=2025-06-20&date_end=2025-06-24`
-//     );
-//   } catch (error) {
-//     return error;
-//   }
-// };
-
 export const FetchReport = (url: string) =>
   api.get(url).then((res) => res.data);

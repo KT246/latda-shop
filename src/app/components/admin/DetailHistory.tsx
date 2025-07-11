@@ -1,0 +1,210 @@
+"use client";
+import React, { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { IoChevronBackOutline } from "react-icons/io5";
+import HeaderLinks from "../HeaderLinks";
+import { GetInvoicesId } from "@/app/api/admin.product";
+import { formatDate, formattedNumber } from "@/app/helpers/funtions";
+import { Invoice } from "@/app/lib/interface";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownSection,
+  DropdownItem,
+} from "@heroui/react";
+
+export default function DetailHistory() {
+  const params = useParams();
+  const router = useRouter();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [invoice, setInvoices] = React.useState<Invoice | null>(null);
+
+  const getInvoice = async () => {
+    if (!id) {
+      console.error("Invalid invoice ID");
+      return;
+    }
+    const res = await GetInvoicesId(Number(id));
+    if (res.status === 200) {
+      const data = res.data.invoices[0];
+      setInvoices(data);
+    } else {
+      console.log("Error fetching invoice data");
+    }
+  };
+
+  useEffect(() => {
+    getInvoice();
+  }, [id]);
+
+  return (
+    <>
+      <div className="py-3 my-3  border-b-2 flex items-center gap-10">
+        <h3 className="font-semibold text-xl ">ລາຍລະອຽດປະຫວັດການຂາຍ</h3>
+        <span>ວັນທີຊຳລະ: 12/02/2026</span>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="flat" className="font-semibold ">
+              ແກ້ໄຂ ສະຖານະ
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu>
+            <DropdownItem key="succes">ສຳເລັດ</DropdownItem>
+            <DropdownItem key="delete" className="text-danger" color="danger">
+              ຍົກເລີກ
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+      <div>
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+          ລາຍລະອຽດໃບບິນ
+        </h1>
+
+        {/* HisDetailHistory bills */}
+
+        <div className="grid grid-cols-7 gap-5 px-6 py-3 my-3 border-1 rounded shadow-md ">
+          <div className="text-center space-y-3">
+            <p>ລະຫັດບິນ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.id}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ວັນທີສ້າງ</p>
+            <p className="text-gray-500 font-semibold">
+              {formatDate(invoice?.date_create ?? "")}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ລະຫັດຜູ້ຂາຍ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.cashier_id}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ຊື່ລູກຄ້າ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.member_id}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ປະເພດກະຕ່າ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.cart_type}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ອັດຕາແລກປ່ຽນ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.rate}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ສ່ວນຫຼຸດ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.m_discount}</p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ປະເພດການຈ່າຍເງິນ</p>
+            <p className="text-gray-500 font-semibold">
+              {invoice?.pay_type === "cash"
+                ? "ເງິນສົດ"
+                : invoice?.pay_type === "transfer"
+                ? "ເງິນໂອນ"
+                : "ຕິດຫນີ້"}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ເງິນທີ່ໄດ້ຮັບ</p>
+            <p className="text-gray-500 font-semibold">
+              {formattedNumber(invoice?.money_received ?? 0)}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ເງິນສົດ</p>
+            <p className="text-gray-500 font-semibold">
+              {formattedNumber(invoice?.money_cash ?? 0)}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ສະຖານະ</p>
+            <p className="text-white ">
+              {invoice?.status === "cancel" ? (
+                <span className="bg-red-600 rounded-lg px-2">ຍົກເລີກ</span>
+              ) : invoice?.status === "pedding" ? (
+                <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
+              ) : (
+                <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
+              )}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ລາຄາລວມທັງຫມົດ(LAK)</p>
+            <p className="text-gray-500 text-xl font-semibold">
+              {formattedNumber(invoice?.total_unit_lak ?? 0)}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ລາຄາລວມ+ສ່ວນຫຼຸດ(LAK)</p>
+            <p className="text-gray-500 text-xl font-semibold">
+              {formattedNumber(invoice?.total_lak ?? 0)}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ລວມຈ່າຍທັງຫມົດ(LAK)</p>
+            <p className="text-gray-500 text-xl font-semibold">
+              {formattedNumber(invoice?.total_checkout_lak ?? 0)}
+            </p>
+          </div>
+        </div>
+
+        {/* detail product */}
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+          ລາຍລະອຽດສິນຄ້າ
+        </h1>
+
+        <div className="p-6">
+          <Table
+            classNames={{
+              wrapper:
+                "max-h-[300px] overflow-hidden p-0 rounded-lg shadow-lg scroll-thin border-b-2 border-r-2 border-l-2 border-blue-400",
+              th: "bg-blue-500 text-white font-semibold text-sm",
+            }}
+          >
+            <TableHeader>
+              <TableColumn> ບາໂຄດ</TableColumn>
+              <TableColumn>ຫົວຂໍ້</TableColumn>
+              <TableColumn> ຫົວໜ່ວຍ</TableColumn>
+              <TableColumn>ໝວດຫມູ່</TableColumn>
+              <TableColumn> ຈໍານວນ</TableColumn>
+              <TableColumn>ລາຄາ (LAK)</TableColumn>
+              <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
+            </TableHeader>
+            <TableBody items={invoice?.details ?? []}>
+              {(item) => (
+                <TableRow key={item.barcode}>
+                  <TableCell>{item.barcode}</TableCell>
+                  <TableCell>{item.title}</TableCell>
+                  <TableCell>{item.size}</TableCell>
+                  <TableCell>{item.category}</TableCell>
+                  <TableCell>{item.qty}</TableCell>
+                  <TableCell>{formattedNumber(item.total_unit_lak)}</TableCell>
+                  <TableCell>{formattedNumber(item.total_lak)}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        {/* button back */}
+        <div className="p-6 space-y-6">
+          <button
+            onClick={() => window.history.back()}
+            type="button"
+            className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
+          >
+            <IoChevronBackOutline />
+            ກັບຄືນ
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
