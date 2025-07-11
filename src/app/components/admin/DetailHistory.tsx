@@ -27,6 +27,13 @@ export default function DetailHistory() {
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const [invoice, setInvoices] = React.useState<Invoice | null>(null);
 
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
+
+  const selectedValue = React.useMemo(
+    () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
+    [selectedKeys]
+  );
+
   const getInvoice = async () => {
     if (!id) {
       console.error("Invalid invoice ID");
@@ -57,8 +64,13 @@ export default function DetailHistory() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu>
-            <DropdownItem key="succes">ສຳເລັດ</DropdownItem>
-            <DropdownItem key="delete" className="text-danger" color="danger">
+            <DropdownItem key="success" color="success">
+              ສຳເລັດ
+            </DropdownItem>
+            <DropdownItem key="padding" color="warning">
+              ຕິດໜີ້
+            </DropdownItem>
+            <DropdownItem key="cancle" color="danger">
               ຍົກເລີກ
             </DropdownItem>
           </DropdownMenu>
@@ -114,13 +126,13 @@ export default function DetailHistory() {
           </div>
           <div className="text-center space-y-3">
             <p>ເງິນທີ່ໄດ້ຮັບ</p>
-            <p className="text-gray-500 font-semibold">
+            <p className="text-gray-500 text-xl font-semibold">
               {formattedNumber(invoice?.money_received ?? 0)}
             </p>
           </div>
           <div className="text-center space-y-3">
             <p>ເງິນສົດ</p>
-            <p className="text-gray-500 font-semibold">
+            <p className="text-gray-500 text-xl font-semibold">
               {formattedNumber(invoice?.money_cash ?? 0)}
             </p>
           </div>
@@ -129,7 +141,7 @@ export default function DetailHistory() {
             <p className="text-white ">
               {invoice?.status === "cancel" ? (
                 <span className="bg-red-600 rounded-lg px-2">ຍົກເລີກ</span>
-              ) : invoice?.status === "pedding" ? (
+              ) : invoice?.status === "padding" ? (
                 <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
               ) : (
                 <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
@@ -172,9 +184,9 @@ export default function DetailHistory() {
             <TableHeader>
               <TableColumn> ບາໂຄດ</TableColumn>
               <TableColumn>ຫົວຂໍ້</TableColumn>
-              <TableColumn> ຫົວໜ່ວຍ</TableColumn>
+              <TableColumn>ຫົວໜ່ວຍ</TableColumn>
               <TableColumn>ໝວດຫມູ່</TableColumn>
-              <TableColumn> ຈໍານວນ</TableColumn>
+              <TableColumn>ຈໍານວນ</TableColumn>
               <TableColumn>ລາຄາ (LAK)</TableColumn>
               <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
             </TableHeader>
