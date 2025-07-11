@@ -238,7 +238,7 @@ function ListsHistorys() {
                   <span className="bg-red-600 cursor-not-allowed rounded-lg px-2">
                     ຍົກເລີກ
                   </span>
-                ) : item.status === "pedding" ? (
+                ) : item.status === "padding" ? (
                   <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
                 ) : (
                   <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
