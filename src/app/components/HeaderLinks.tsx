@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import Link from "next/link";
 import { CiViewList } from "react-icons/ci";
@@ -22,10 +23,10 @@ function HeaderLinks({
   const validLinkCreate = linkCreate || "#";
   const validLinkLists = linkLists || "#";
   return (
-    <div className="flex items-center gap-5 border-b-2 mb-3 pb-2">
-      <h3 className="w-[150px] font-semibold text-xl">{name}</h3>
+    <div className="w-full flex justify-between items-center gap-5 border-b-2 p-2 mb-2">
+      <h3 className="w-full font-semibold text-xl">{name}</h3>
       {validLinkCreate && validLinkLists !== "#" ? (
-        <div className="w-full flex justify-center gap-3 items-center">
+        <div className="w-full flex justify-end gap-3 items-center">
           <Tooltip content={nameList}>
             <Link
               href={validLinkLists}

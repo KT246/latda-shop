@@ -1,16 +1,21 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { SwalNotification } from "@/app/helpers/alers";
 import { formattedNumber } from "@/app/helpers/funtions";
 import Image from "next/image";
-import { CreateProducts } from "@/app/api/admin.product";
+import { CreateProducts, GetProductById } from "@/app/api/admin.product";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { Button } from "@heroui/react";
 
 function CreateProduct() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const barcodeRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const [isNewProduct, setIsnewProduct] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [IMB, setIMG] = useState<string | null>(null);
@@ -41,8 +46,11 @@ function CreateProduct() {
     qty_alert: 0,
     supplier: "",
     img_name: "",
-    status: "",
   });
+
+  useEffect(() => {
+    barcodeRef?.current?.focus();
+  }, [])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -71,10 +79,10 @@ function CreateProduct() {
       return false;
     }
 
-    // if (formData.page === "") {
-    //   SwalNotification("ກະລຸນາປ້ອນຫນ້າ", "warning");
-    //   return false;
-    // }
+    if (formData.page === "") {
+      SwalNotification("ກະລຸນາປ້ອນຫນ້າ", "warning");
+      return false;
+    }
 
     // if (formData.No === "") {
     //   SwalNotification("ກະລຸນາປ້ອນ No", "warning");
@@ -159,9 +167,10 @@ function CreateProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+
     const form = new FormData();
 
-    // Gộp dữ liệu khác
+    // // Gộp dữ liệu khác
     Object.entries(formData).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         form.append(key, value.toString());
@@ -171,353 +180,467 @@ function CreateProduct() {
     if (flieImg) {
       form.append("image", flieImg);
     }
+    setIsLoading(true);
+    const res: any = await CreateProducts(form);
+    setIsLoading(false);
+    if (res.data.status !== "error") {
+      const data = res.data;
+      // router.push("/admin/products");
+      console.log(res)
+      // reset form
+      barcodeRef?.current?.focus();
+      setFileImg(null);
+      setIsnewProduct(false);
+      setFormData({
+        barcode: "",
+        page: "",
+        No: "",
+        code: "",
+        size: "",
+        title: "",
+        use_for: "",
+        brand: "",
+        unit: "",
+        category: "",
+        cost_thb: 0,
+        cost_lak: 0,
+        wholesale_thb: 0,
+        wholesale_lak: 0,
+        retail_thb: 0,
+        retail_lak: 0,
+        discount: 0,
+        num_of_discount: 0,
+        qty_start: 0,
+        qty_in: 0,
+        qty_out: 0,
+        qty_balance: 0,
+        qty_alert: 0,
+        supplier: "",
+        img_name: "",
+      })
+      toast.success(data.message);
+    } else {
+      const data = res.data;
+      toast.warning(data.message);
 
-    if (validateForm()) {
-      setIsLoading(true);
-      const res: any = await CreateProducts(form);
+    }
+    try {
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+    // if (validateForm()) {
+    //   setIsLoading(true);
+    //   const res: any = await CreateProducts(form);
 
-      if (res.data.status !== "error") {
-        const data = res.data;
-        router.push("/admin/products");
-        toast.success(data.message);
-        setIsLoading(!isLoading);
-      } else {
-        const data = res.data;
-        toast.warning(data.message);
-        setIsLoading(false);
-      }
+    //   if (res.data.status !== "error") {
+    //     const data = res.data;
+    //     router.push("/admin/products");
+    //     toast.success(data.message);
+    //     setIsLoading(!isLoading);
+    //   } else {
+    //     const data = res.data;
+    //     toast.warning(data.message);
+    //     setIsLoading(false);
+    //   }
+    //   try {
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+  };
+  const handleCheck = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData?.barcode) {
       try {
+        const res: any = await GetProductById(formData?.barcode);
+        const isExistProduct: any = res?.data
+        // console.log(res)
+
+        if (isExistProduct) {
+          Swal.fire({
+            title: "!ສິນຄ້າມີຢຸ່ແລ້ວ",
+            icon: "warning",
+            html: `
+          <p>ບາໂຄດ: ${isExistProduct?.barcode}</p>
+          <p>ຊື່ສິນຄ້າ: ${isExistProduct?.title}  ${isExistProduct?.size}</p>
+          <p>ຈຳນວນ: ${isExistProduct?.qty_balance}</p>
+
+          `,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "ເພີ່ມ",
+            denyButtonText: `ແກ້ໄຂ`,
+            cancelButtonText: 'ຍົກເລິກ',
+            focusCancel: true
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              // Swal.fire("Saved!", "", "success");
+            } else if (result.isDenied) {
+              router.push("/admin/products/edit/" + isExistProduct?.barcode)
+            }
+          });
+          setFormData({ ...formData, barcode: "" })
+        } else {
+          titleRef.current?.focus();
+          setIsnewProduct(true);
+          titleRef.current?.focus();
+          
+        }
+        
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+  }
   return (
     <div>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
-        ສ້າງສິນຄ້າ
-      </h1>
+      <form onSubmit={handleCheck} className=" px-4">
+        <div className="w-full">
+          <label className="block font-semibold">ບາໂຄດ</label>
+          <input
+            type="text"
+            name="barcode"
+            value={formData.barcode}
+            onChange={handleChange}
+            ref={barcodeRef}
+            required
+            className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+          />
+        </div>
+      </form>
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
-        <div className="flex gap-5">
-          <div
-            className="border-2 border-dotted border-blue-500 w-44 h-56 cursor-pointer"
-            onClick={() => inputRef.current?.click()} // ✅ click div để chọn ảnh lại
-          >
-            {IMB ? (
-              <Image
-                src={IMB}
-                alt="Preview"
-                className="w-full h-full object-cover"
-                width={0}
-                height={0}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-3xl text-gray-400">
-                +
-              </div>
-            )}
+        <div className=" flex gap-5">
+          <div className="w-full bg-white border shadow-lg p-3">
+            <div className="flex gap-3">
 
-            {/* Hidden input file */}
-            <input
-              type="file"
-              accept="image/*"
-              ref={inputRef}
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </div>
-
-          <div className=" grid grid-cols-5  gap-4">
-            <div className="flex-1">
-              <label className="block font-semibold">ບາໂຄດ</label>
-              <input
-                type="text"
-                name="barcode"
-                value={formData.barcode}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">ຫນ້າ</label>
-              <input
-                type="text"
-                name="page"
-                value={formData.page}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">No</label>
-              <input
-                type="text"
-                name="No"
-                value={formData.No}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            {/* {New start} */}
-            <div className="flex-1">
-              <label className="block font-semibold">ຈໍານວນອອກ</label>
-              <input
-                type="number"
-                name="qty_out"
-                value={formData.qty_out}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">ຈໍານວນເຂັົ້າ</label>
-              <input
-                type="number"
-                name="qty_in"
-                value={formData.qty_in}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">alert</label>
-              <input
-                type="number"
-                name="qty_alert"
-                value={formData.qty_alert}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">ຈໍານວນຍັງເຫລືອ</label>
-              <input
-                type="number"
-                name="qty_balance"
-                value={formData.qty_balance}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">ຈໍານວນເລີ່ມຕົ້ນ</label>
-              <input
-                type="number"
-                name="qty_start"
-                value={formData.qty_start}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">supplier</label>
-              <input
-                type="text"
-                name="supplier"
-                value={formData.supplier}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold"> brand</label>
-              <input
-                type="text"
-                name="brand"
-                value={formData.brand}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            {/* {New end} */}
-            <div className="flex-1">
-              <label className="block font-semibold">ລະຫັດ</label>
-              <input
-                type="text"
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block font-semibold">ຂະຫນາດ</label>
-              <input
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-              />
-            </div>{" "}
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block font-semibold">ຫົວຂໍ້</label>
+              <div className="w-full">
+                <label className="block font-semibold">ຊື່ສິນຄ້າ</label>
                 <input
                   type="text"
                   name="title"
+                  ref={titleRef}
                   value={formData.title}
                   onChange={handleChange}
+                  required
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ຂະຫນາດ</label>
+                <input
+                  type="text"
+                  name="size"
+                  value={formData.size}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1">
+            <div className="mt-3 flex gap-3">
+              <div className="w-full">
+                <label className="block font-semibold">ຫົວໜ່ວຍ</label>
+                <input
+                  type="text"
+                  name="unit"
+                  value={formData.unit}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ໝວດຫມູ່</label>
+                <input
+                  type="text"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold"> brand</label>
+                <input
+                  type="text"
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="mt-3 flex gap-3">
+              <div className="w-full">
                 <label className="block font-semibold">ໃຊ້ສໍາລັບ</label>
                 <input
                   type="text"
                   name="use_for"
                   value={formData.use_for}
                   onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ຮັບມາຈາກ</label>
+                <input
+                  type="text"
+                  name="supplier"
+                  value={formData.supplier}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ຍົກມາ</label>
+                <input
+                  type="number"
+                  name="qty_in"
+                  value={formData.qty_in}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
             </div>
           </div>
-        </div>
+          <div className="w-full flex gap-3 bg-white border shadow-lg p-3">
+            <div className=" w-full">
+              <div className="w-full flex items-center gap-3">
+                <div className="w-full">
+                  <label className="block font-semibold">ຫນ້າ</label>
+                  <input
+                    type="text"
+                    name="page"
+                    value={formData.page}
+                    onChange={handleChange}
+                    disabled={!isNewProduct}
+                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
+                <div className="w-full">
+                  <label className="block font-semibold">No</label>
+                  <input
+                    type="text"
+                    name="No"
+                    value={formData.No}
+                    onChange={handleChange}
+                    disabled={!isNewProduct}
+                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ຫົວໜ່ວຍ</label>
-            <input
-              type="text"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ໝວດຫມູ່</label>
-            <input
-              type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
+              </div>
+              <div className="mt-3 w-full flex items-center gap-3">
+                <div className="w-full">
+                  <label className="block font-semibold">ລະຫັດ</label>
+                  <input
+                    type="text"
+                    name="code"
+                    value={formData.code}
+                    onChange={handleChange}
+                    disabled={!isNewProduct}
+                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="mt-3 w-full">
+                <div className="w-full">
+                  <label className="block font-semibold">ຈຳນວນແຈ້ງເຕືອນ ສິນຄ້າເຫຼືອນ້ອຍ</label>
+                  <input
+                    type="number"
+                    name="qty_alert"
+                    value={formData.qty_alert}
+                    onChange={handleChange}
+                    disabled={!isNewProduct}
+                    required
+                    className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
 
-          <div className="flex-1">
-            <label className="block font-semibold">ສ່ວນຫຼຸດ</label>
-            <input
-              type="number"
-              name="discount"
-              value={formData.discount}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
+            <div className="w-full h-full">
+              <label className="block font-semibold">ຮູບພາບ</label>
+              <div
+                className="w-full border-2 border-dotted border-blue-500 cursor-pointer"
+                onClick={() => inputRef.current?.click()}
+              >
+                {IMB ? (
+                  <Image
+                    src={IMB}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    width={0}
+                    height={0}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-3xl text-gray-400">
+                    +
+                  </div>
+                )}
 
-          <div className="flex-1">
-            <label className="block font-semibold">ຈໍານວນສ່ວນຫຼຸດ</label>
-            <input
-              type="number"
-              name="num_of_discount"
-              value={formData.num_of_discount}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block font-semibold">ລາຄາ (THB)</label>
-            <input
-              type="number"
-              name="cost_thb"
-              value={formData.cost_thb}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.cost_thb)}. ບາດ
-            </span>
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ລາຄາ (LAK)</label>
-            <input
-              type="number"
-              name="cost_lak"
-              value={formData.cost_lak}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.cost_lak)}. ກີບ
-            </span>
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (THB)​</label>
-            <input
-              type="number"
-              name="wholesale_thb"
-              value={formData.wholesale_thb}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.wholesale_thb)}. ບາດ
-            </span>
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (LAK)</label>
-            <input
-              type="number"
-              name="wholesale_lak"
-              value={formData.wholesale_lak}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.wholesale_lak)}. ກີບ
-            </span>
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ຂາຍຍ່ອຍ (THB)</label>
-            <input
-              type="number"
-              name="retail_thb"
-              value={formData.retail_thb}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.retail_thb)}. ບາດ
-            </span>
-          </div>
-          <div className="flex-1">
-            <label className="block font-semibold">ຂາຍຍ່ອຍ (LAK)</label>
-            <input
-              type="number"
-              name="retail_lak"
-              value={formData.retail_lak}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-            />
-            <span className=" block">
-              {formattedNumber(formData.retail_lak)}. ກີບ
-            </span>
+                {/* Hidden input file */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  className="hidden"
+                  disabled={!isNewProduct}
+                  onChange={handleFileChange}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex justify-between">
-          <button
-            onClick={() => router.back()}
+        <div className=" flex gap-5">
+          <div className="w-full bg-white border shadow-lg p-3">
+            <div className=" flex gap-3">
+              <div className="w-full">
+                <label className="block font-semibold">ລາຄາ ຕົ້ນທຶນ (LAK)</label>
+                <input
+                  type="number"
+                  name="cost_lak"
+                  value={formData.cost_lak}
+                  disabled={!isNewProduct}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+
+                />
+                <span className=" block">
+                  {formattedNumber(formData.cost_lak)}. ກີບ
+                </span>
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ຂາຍຍ່ອຍ (LAK)</label>
+                <input
+                  type="number"
+                  name="retail_lak"
+                  value={formData.retail_lak}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+                <span className=" block">
+                  {formattedNumber(formData.retail_lak)}. ກີບ
+                </span>
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (LAK)</label>
+                <input
+                  type="number"
+                  name="wholesale_lak"
+                  value={formData.wholesale_lak}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+                <span className=" block">
+                  {formattedNumber(formData.wholesale_lak)}. ກີບ
+                </span>
+              </div>
+
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <div className="w-full">
+                <label className="block font-semibold">ລາຄາ ຕົ້ນທຶນ (THB)</label>
+                <input
+                  type="number"
+                  name="cost_thb"
+                  value={formData.cost_thb}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+                <span className=" block">
+                  {formattedNumber(formData.cost_thb)}. ບາດ
+                </span>
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ລາຄາຂາຍຍ່ອຍ (THB)</label>
+                <input
+                  type="number"
+                  name="retail_thb"
+                  value={formData.retail_thb}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+                <span className=" block">
+                  {formattedNumber(formData.retail_thb)}. ບາດ
+                </span>
+              </div>
+              <div className="w-full">
+                <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (THB)​</label>
+                <input
+                  type="number"
+                  name="wholesale_thb"
+                  value={formData.wholesale_thb}
+                  onChange={handleChange}
+                  disabled={!isNewProduct}
+                  className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+                />
+                <span className=" block">
+                  {formattedNumber(formData.wholesale_thb)}. ບາດ
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="w-full bg-white border shadow-lg p-3">
+            <div className="w-full">
+              <label className="block font-semibold">ເປີເຊັນຫຼຸດ</label>
+              <input
+                type="number"
+                name="discount"
+                value={formData.discount}
+                disabled={!isNewProduct}
+                onChange={handleChange}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+            <div className="mt-3 w-full">
+              <label className="block font-semibold">ຈໍານວນຂັ້ນຕ່ຳຫຼຸດ</label>
+              <input
+                type="number"
+                name="num_of_discount"
+                value={formData.num_of_discount}
+                onChange={handleChange}
+                disabled={!isNewProduct}
+                className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between mt-2">
+          <Button
+            onPress={() => router.back()}
             type="button"
-            className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
+            color="warning"
+            className=" py-2"
           >
             <IoChevronBackOutline />
             ກັບຄືນ
-          </button>
-          <button
-            disabled={isLoading}
+          </Button>
+          <Button
+            disabled={!isNewProduct}
             type="submit"
-            className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-green-500"
+            color={isNewProduct ? "primary" : "default"}
+            className=" py-2"
           >
             ສ້າງ
-          </button>
+          </Button>
         </div>
       </form>
     </div>

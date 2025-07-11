@@ -3,9 +3,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https", // Protocol should be 'https'
-        hostname: "bkh4k412-3000.asse.devtunnels.ms", // Only the hostname
-        // port: "8000",
+        protocol: "http", // Protocol should be 'https'
+        hostname: "localhost", // Only the hostname
+        port: "3000",
       },
     ],
   },

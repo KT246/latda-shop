@@ -36,11 +36,7 @@ export const GetAllProduct = async (size: number, page: number) => {
   }
 };
 export const GetProductById = async (bracode: string) => {
-  try {
-    return await api.get(`/api/admin/productid?barcode=${bracode}`);
-  } catch (error) {
-    return error;
-  }
+  return await api.get(`/api/admin/productid?barcode=${bracode}`);
 };
 export const GetProductByIds = async (key: string, value: string) => {
   try {

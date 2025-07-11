@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useCallback } from "react";
-import { Details } from "@/app/lib/interface";
 import Link from "next/link";
-import { formattedNumber } from "@/app/helpers/funtions";
 import {
   Table,
   TableHeader,
@@ -24,15 +22,17 @@ import {
 import { apiDlPdruct } from "@/app/api/products";
 import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
 import Image from "next/image";
-
 import debounce from "lodash.debounce";
 
 // interface
 import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+
 
 function ListsProducts() {
   /// useState
+  const [selectedColor, setSelectedColor] = React.useState("default");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set<string>(["ທັງໝົດ"])
   );
@@ -41,7 +41,7 @@ function ListsProducts() {
   const [products, setProduct] = useState<Products[]>([]);
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(4);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const fallback = "/skv.jpg";
   const [errorIMG, setErrorIMG] = useState<boolean>(false);
 
@@ -99,19 +99,34 @@ function ListsProducts() {
 
   /// handle functions
   const handleDelete = async (barcode: string) => {
-    try {
-      const res: any = await apiDlPdruct(barcode);
-      if (res?.status === 200) {
-        setProduct((prevProducts) =>
-          prevProducts.filter((product) => product.barcode !== barcode)
-        );
-        fetchData();
-      } else {
-        console.error("Failed to delete product:", res?.data?.message);
+    Swal.fire({
+      title: "!ລົບສິນຄ້າ",
+      text: "ຢຶນຢັນລົບສິນຄ້າລະຫັດ: " + barcode + " ບໍ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "ລົບ",
+      cancelButtonText: 'ຍົກເລິກ',
+      focusCancel: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res: any = await apiDlPdruct(barcode);
+          if (res?.status === 200) {
+            setProduct((prevProducts) =>
+              prevProducts.filter((product) => product.barcode !== barcode)
+            );
+            toast.success("ລົບສຳເລັດ");
+            fetchData();
+          } else {
+            console.error("Failed to delete product:", res?.data?.message);
+          }
+        } catch (error) {
+          console.error("Error deleting product:", error);
+        }
       }
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
+    });
+
   };
 
   return (
@@ -178,7 +193,8 @@ function ListsProducts() {
 
       <Table
         color={"primary"}
-        // selectionMode="single"
+
+        selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination
@@ -209,15 +225,17 @@ function ListsProducts() {
           <TableColumn key="qty_balance">balance</TableColumn>
           <TableColumn key="retail_lak">LAK</TableColumn>
           <TableColumn key="retail_thb">THB</TableColumn>
-          <TableColumn key="status">status</TableColumn>
+          {/* <TableColumn key="status">status</TableColumn> */}
           <TableColumn key="">action</TableColumn>
         </TableHeader>
         <TableBody emptyContent={"ບໍ່ພົບສິນຄ້ານີ້"} items={products}>
           {(item) => (
-            <TableRow key={item.barcode}>
+            <TableRow key={item.barcode} >
               <TableCell>
-                {item.img_name !== null ? (
+
+                {(item.img_name !== null || item.img_name === '') ? (
                   <Image
+                    loading="lazy"
                     src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.img_name}`}
                     alt="No Name"
                     className=""
@@ -226,34 +244,35 @@ function ListsProducts() {
                   />
                 ) : (
                   <Image
-                    src={"/skv.jpg"}
+                    loading="lazy"
+                    src={"/logolatda.webp"}
                     alt="No Name"
                     className=""
-                    width={70}
-                    height={70}
+                    width={30}
+                    height={30}
                   />
                 )}
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
-              <TableCell>{item.title}</TableCell>
+              <TableCell>{item.title}{" "}{item.size}</TableCell>
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.qty_start}</TableCell>
               <TableCell>{item.qty_in}</TableCell>
               <TableCell>{item.qty_out}</TableCell>
-              <TableCell>{item.qty_balance}</TableCell>
-              <TableCell>{item.retail_lak}</TableCell>
-              <TableCell>{item.retail_thb}</TableCell>
-              <TableCell>{item.status}</TableCell>
+              <TableCell><span className={`${item.qty_balance <= item.qty_alert ? 'text-red-500' : 'text-black'}`}>{item.qty_balance}</span></TableCell>
+              <TableCell>{item.retail_lak.toLocaleString()}</TableCell>
+              <TableCell>{item.retail_thb.toLocaleString()}</TableCell>
+              {/* <TableCell>{item.status}</TableCell> */}
               <TableCell>
                 <div className="relative flex items-center gap-2">
-                  <Tooltip content="ເບິ່ງ">
+                  {/* <Tooltip content="ເບິ່ງ">
                     <Link href={`/admin/products/detail/${item.barcode}`}>
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                         <EyeIcon />
                       </span>
                     </Link>
-                  </Tooltip>
+                  </Tooltip> */}
                   <Tooltip content="ແກ້ໄຂ">
                     <Link href={`/admin/products/edit/${item.barcode}`}>
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
@@ -311,20 +330,6 @@ export const EyeIcon = (props: any) => {
   );
 };
 
-const FallbackImage = ({ src }: { src: string }) => {
-  const fallback = "/skv.jpg";
-  const [imgSrc, setImgSrc] = useState(src);
-
-  return (
-    <Image
-      src={imgSrc}
-      alt="Image"
-      width={50}
-      height={100}
-      onError={() => setImgSrc(fallback)}
-    />
-  );
-};
 
 export const DeleteIcon = (props: any) => {
   return (
