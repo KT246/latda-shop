@@ -5,6 +5,7 @@ import { IoChevronBackOutline } from "react-icons/io5";
 import { formattedNumber } from "@/app/helpers/funtions";
 import { GetIdUsers, UpdateUsers } from "@/app/api/admin.product";
 import { toast } from "react-toastify";
+import { Button } from "@heroui/react";
 
 function EditEmployee() {
   const [formData, setFormData] = useState({
@@ -75,8 +76,8 @@ function EditEmployee() {
     }
   };
   return (
-    <div>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+    <>
+      <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
         ແກ້ໄຂພະນັກງານ
       </h1>
       <form onSubmit={handleSubmit} className="p-4 space-y-4">
@@ -148,23 +149,16 @@ function EditEmployee() {
         </div>
 
         <div className="flex justify-between">
-          <button
-            onClick={() => router.back()}
-            type="button"
-            className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
-          >
+          <Button onPress={() => router.back()} color="warning">
             <IoChevronBackOutline />
             ກັບຄືນ
-          </button>
-          <button
-            type="submit"
-            className="hover:bg-green-500 bg-blue-700 text-gray-50  px-6 py-2 rounded duration-500"
-          >
+          </Button>
+          <Button type="submit" color="primary">
             ແກ້ໄຂ
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

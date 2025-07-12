@@ -203,7 +203,6 @@ function ListsHistorys() {
         <TableHeader>
           <TableColumn>ລະຫັດບິນ</TableColumn>
           <TableColumn>ວັນທີສ້າງ</TableColumn>
-
           <TableColumn>ລະຫັດຜູ້ຂາຍ</TableColumn>
           <TableColumn>ອັດຕາແລກປ່ຽນ</TableColumn>
           <TableColumn>ຈໍານວນສິນຄ້າ</TableColumn>

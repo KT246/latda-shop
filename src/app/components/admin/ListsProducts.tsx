@@ -190,7 +190,7 @@ function ListsProducts() {
       </div>
 
       <Table
-        color={"primary"}
+        color="primary"
         selectionMode="single"
         bottomContent={
           <div className="flex w-full justify-center">

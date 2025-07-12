@@ -59,9 +59,7 @@ export default function DetailHistory() {
         <span>ວັນທີຊຳລະ: 12/02/2026</span>
         <Dropdown>
           <DropdownTrigger>
-            <Button variant="flat" className="font-semibold ">
-              ແກ້ໄຂ ສະຖານະ
-            </Button>
+            <Button variant="flat">ແກ້ໄຂ ສະຖານະ</Button>
           </DropdownTrigger>
           <DropdownMenu>
             <DropdownItem key="success" color="success">
@@ -207,14 +205,10 @@ export default function DetailHistory() {
         </div>
         {/* button back */}
         <div className="p-6 space-y-6">
-          <button
-            onClick={() => window.history.back()}
-            type="button"
-            className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
-          >
+          <Button onPress={() => window.history.back()} color="warning">
             <IoChevronBackOutline />
             ກັບຄືນ
-          </button>
+          </Button>
         </div>
       </div>
     </>

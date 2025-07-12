@@ -40,3 +40,6 @@ Thumbs.db
 public/*.log
 public/temp/
 
+# Config file (nếu bạn muốn bỏ qua nó khỏi git)
+next.config.mjs
+

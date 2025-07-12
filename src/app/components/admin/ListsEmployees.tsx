@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from "@heroui/react";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 function ListsEmployees() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -32,18 +33,30 @@ function ListsEmployees() {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const res: any = await DeleteUsers(id);
-
-      if (res.data.status !== "error") {
-        fetchData();
-        toast.success(res.data.message);
-      } else {
-        toast.success(res.data.message);
+    Swal.fire({
+      title: "!ພະນັກງານ",
+      text: "ຢຶນຢັນລົບພະນັກງານລະຫັດ: " + id + " ບໍ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "ລົບ",
+      cancelButtonText: "ຍົກເລິກ",
+      focusCancel: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res: any = await DeleteUsers(id);
+          if (res.data.status !== "error") {
+            fetchData();
+            toast.success(res.data.message);
+          } else {
+            toast.success(res.data.message);
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   return (
