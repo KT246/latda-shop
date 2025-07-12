@@ -30,7 +30,6 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 function ListsProducts() {
-
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set<string>(["barcode"])
   );
@@ -41,7 +40,6 @@ function ListsProducts() {
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
 
   /// handles changes
   const selectedValue = React.useMemo(
@@ -133,8 +131,8 @@ function ListsProducts() {
       showCancelButton: true,
       confirmButtonColor: "red",
       confirmButtonText: "reset",
-      cancelButtonText: 'cancel',
-      focusCancel: true
+      cancelButtonText: "cancel",
+      focusCancel: true,
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -149,15 +147,15 @@ function ListsProducts() {
         } catch (error) {
           console.error("Error reset stock:", error);
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
     });
-  }
+  };
 
   return (
     <div>
-      <div className="flex justify-between px-3">
+      <div className="flex items-center justify-between p-3">
         <div className=" flex items-center gap-5">
           <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
             ລາຍການສິນຄ້າ
@@ -214,7 +212,12 @@ function ListsProducts() {
             </DropdownMenu>
           </Dropdown>
         </div>
-        <Button onPress={handleResetQty} color="success" radius="sm" className="text-medium text-white">
+        <Button
+          onPress={handleResetQty}
+          color="success"
+          radius="sm"
+          className="text-medium text-white"
+        >
           {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
         </Button>
       </div>

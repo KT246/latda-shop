@@ -53,26 +53,9 @@ export default function DetailHistory() {
   }, [id]);
 
   return (
-    <>
+    <div className="px-3">
       <div className="py-3 my-3  border-b-2 flex items-center gap-10">
         <h3 className="font-semibold text-xl ">ລາຍລະອຽດປະຫວັດການຂາຍ</h3>
-        <span>ວັນທີຊຳລະ: 12/02/2026</span>
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="flat">ແກ້ໄຂ ສະຖານະ</Button>
-          </DropdownTrigger>
-          <DropdownMenu>
-            <DropdownItem key="success" color="success">
-              ສຳເລັດ
-            </DropdownItem>
-            <DropdownItem key="padding" color="warning">
-              ຕິດໜີ້
-            </DropdownItem>
-            <DropdownItem key="cancle" color="danger">
-              ຍົກເລີກ
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
       </div>
       <div>
         <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
@@ -81,13 +64,13 @@ export default function DetailHistory() {
 
         {/* HisDetailHistory bills */}
 
-        <div className="grid grid-cols-7 gap-5 px-6 py-3 my-3 border-1 rounded shadow-md ">
-          <div className="text-center space-y-3">
+        <div className="grid grid-cols-7 gap-5 px-6 py-3 my-3 border-1 rounded shadow-lg divide-y-2 divide-blue-500">
+          <div className="text-center space-y-3 border-t-2 border-blue-500">
             <p>ລະຫັດບິນ</p>
             <p className="text-gray-500 font-semibold">{invoice?.id}</p>
           </div>
           <div className="text-center space-y-3">
-            <p>ວັນທີສ້າງ</p>
+            <p>ວັນທີພິມບິນ</p>
             <p className="text-gray-500 font-semibold">
               {formatDate(invoice?.date_create ?? "")}
             </p>
@@ -101,16 +84,8 @@ export default function DetailHistory() {
             <p className="text-gray-500 font-semibold">{invoice?.member_id}</p>
           </div>
           <div className="text-center space-y-3">
-            <p>ປະເພດກະຕ່າ</p>
-            <p className="text-gray-500 font-semibold">{invoice?.cart_type}</p>
-          </div>
-          <div className="text-center space-y-3">
             <p>ອັດຕາແລກປ່ຽນ</p>
             <p className="text-gray-500 font-semibold">{invoice?.rate}</p>
-          </div>
-          <div className="text-center space-y-3">
-            <p>ສ່ວນຫຼຸດ</p>
-            <p className="text-gray-500 font-semibold">{invoice?.m_discount}</p>
           </div>
           <div className="text-center space-y-3">
             <p>ປະເພດການຈ່າຍເງິນ</p>
@@ -129,21 +104,9 @@ export default function DetailHistory() {
             </p>
           </div>
           <div className="text-center space-y-3">
-            <p>ເງິນສົດ</p>
+            <p>ເງິນທອນ</p>
             <p className="text-gray-500 text-xl font-semibold">
               {formattedNumber(invoice?.money_cash ?? 0)}
-            </p>
-          </div>
-          <div className="text-center space-y-3">
-            <p>ສະຖານະ</p>
-            <p className="text-white ">
-              {invoice?.status === "cancel" ? (
-                <span className="bg-red-600 rounded-lg px-2">ຍົກເລີກ</span>
-              ) : invoice?.status === "padding" ? (
-                <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
-              ) : (
-                <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
-              )}
             </p>
           </div>
           <div className="text-center space-y-3">
@@ -153,10 +116,8 @@ export default function DetailHistory() {
             </p>
           </div>
           <div className="text-center space-y-3">
-            <p>ລາຄາລວມ+ສ່ວນຫຼຸດ(LAK)</p>
-            <p className="text-gray-500 text-xl font-semibold">
-              {formattedNumber(invoice?.total_lak ?? 0)}
-            </p>
+            <p>ສ່ວນຫຼຸດ</p>
+            <p className="text-gray-500 font-semibold">{invoice?.m_discount}</p>
           </div>
           <div className="text-center space-y-3">
             <p>ລວມຈ່າຍທັງຫມົດ(LAK)</p>
@@ -164,13 +125,33 @@ export default function DetailHistory() {
               {formattedNumber(invoice?.total_checkout_lak ?? 0)}
             </p>
           </div>
+          <div className="text-center space-y-3">
+            <p>ສະຖານະ</p>
+            <p className="text-white">
+              {invoice?.status === "cancel" ? (
+                <span className="bg-red-600  rounded-lg px-3">ຍົກເລີກ</span>
+              ) : invoice?.status === "padding" ? (
+                <span className="bg-yellow-600 rounded-lg px-2">ຕິດໜີ້</span>
+              ) : (
+                <span className="bg-green-600 rounded-lg px-2">ສຳເລັດ</span>
+              )}
+            </p>
+          </div>
+          <div className="text-center space-y-3">
+            <p>ວັນທີຊຳລະ</p>
+            <p className="text-gray-500 font-semibold">
+              {/* {formatDate(invoice?.date_create ?? "")}
+               */}
+              <span className="text-red-500">ຍັງທັນຊຳລະ</span>
+            </p>
+          </div>
         </div>
 
         {/* detail product */}
-        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 mt-10">
           ລາຍລະອຽດສິນຄ້າ
         </h1>
-
         <div className="p-6">
           <Table
             classNames={{
@@ -204,13 +185,29 @@ export default function DetailHistory() {
           </Table>
         </div>
         {/* button back */}
-        <div className="p-6 space-y-6">
+        <div className="my-5 flex items-center justify-between">
           <Button onPress={() => window.history.back()} color="warning">
             <IoChevronBackOutline />
             ກັບຄືນ
           </Button>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button color="primary">ແກ້ໄຂ ສະຖານະ</Button>
+            </DropdownTrigger>
+            <DropdownMenu>
+              <DropdownItem key="success" color="success">
+                ສຳເລັດ
+              </DropdownItem>
+              <DropdownItem key="padding" color="warning">
+                ຕິດໜີ້
+              </DropdownItem>
+              <DropdownItem key="cancle" color="danger">
+                ຍົກເລີກ
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
-    </>
+    </div>
   );
 }

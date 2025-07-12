@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https", // Protocol should be 'https'
         hostname: "bkh4k412-3000.asse.devtunnels.ms", // Only the hostname
-        port: "3000",
+        // port: "3000",
         // https://bkh4k412-3000.asse.devtunnels.ms
       },
     ],
