@@ -52,6 +52,9 @@ export const apiDeleteProduct = (
 export const apiDlPdruct = (barcode: string) => {
   return api.delete("/api/admin/product/delete?barcode=" + barcode);
 };
+export const apiResetQty = () => {
+  return api.put("/api/admin/product/reset-qty");
+};
 
 // {Invoices}
 

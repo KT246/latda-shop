@@ -19,7 +19,7 @@ import {
   Selection, // <-- Add this import
 } from "@heroui/react";
 
-import { apiDlPdruct } from "@/app/api/products";
+import { apiDlPdruct, apiResetQty } from "@/app/api/products";
 import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
 import Image from "next/image";
 import debounce from "lodash.debounce";
@@ -30,10 +30,9 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 function ListsProducts() {
-  /// useState
-  const [selectedColor, setSelectedColor] = React.useState("default");
+
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
-    new Set<string>(["ທັງໝົດ"])
+    new Set<string>(["barcode"])
   );
 
   const [values, setValues] = React.useState("");
@@ -41,8 +40,8 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const fallback = "/skv.jpg";
-  const [errorIMG, setErrorIMG] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
   /// handles changes
   const selectedValue = React.useMemo(
@@ -101,7 +100,7 @@ function ListsProducts() {
     Swal.fire({
       title: "!ລົບສິນຄ້າ",
       text: "ຢຶນຢັນລົບສິນຄ້າລະຫັດ: " + barcode + " ບໍ?",
-      icon: "warning",
+      icon: "question",
       showCancelButton: true,
       confirmButtonColor: "red",
       confirmButtonText: "ລົບ",
@@ -127,65 +126,96 @@ function ListsProducts() {
     });
   };
 
+  const handleResetQty = async () => {
+    Swal.fire({
+      title: "Reset Stock",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "reset",
+      cancelButtonText: 'cancel',
+      focusCancel: true
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          const res = await apiResetQty();
+          if (res?.status === 200) {
+            toast.success("ສຳເລັດ");
+            fetchData();
+          } else {
+            console.error("Failed to reset stock:", res?.data?.message);
+          }
+        } catch (error) {
+          console.error("Error reset stock:", error);
+        } finally {
+          setIsLoading(false)
+        }
+      }
+    });
+  }
+
   return (
     <div>
-      <div className="flex items-center gap-5">
-        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
-          ລາຍການສິນຄ້າ
-        </h1>
+      <div className="flex justify-between px-3">
+        <div className=" flex items-center gap-5">
+          <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+            ລາຍການສິນຄ້າ
+          </h1>
 
-        <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
-          <input
-            type="text"
-            className="w-full  px-2 py-1 outline-none "
-            placeholder={`ປ້ອນ ${selectedValue}....`}
-            value={values}
-            onChange={(e: any) => setValues(e.target.value)}
-          />
-        </div>
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              className=" capitalize text-medium"
-              color="primary"
-              radius="sm"
+          <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
+            <input
+              type="text"
+              className="w-full  px-2 py-1 outline-none "
+              placeholder={`ປ້ອນ ${selectedValue}....`}
+              value={values}
+              onChange={(e: any) => setValues(e.target.value)}
+            />
+          </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                className=" capitalize text-medium"
+                color="primary"
+                radius="sm"
+              >
+                {selectedValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              disallowEmptySelection
+              aria-label="Single selection example"
+              selectedKeys={selectedKeys}
+              selectionMode="single"
+              variant="flat"
+              onSelectionChange={setSelectedKeys}
             >
-              {selectedValue}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            disallowEmptySelection
-            aria-label="Single selection example"
-            selectedKeys={selectedKeys}
-            selectionMode="single"
-            variant="flat"
-            onSelectionChange={setSelectedKeys}
-          >
-            <DropdownItem color="primary" key="ທັງໝົດ">
-              ທັງໝົດ
-            </DropdownItem>
-            <DropdownItem color="primary" key="code">
-              Code
-            </DropdownItem>
-            <DropdownItem color="primary" key="barcode">
-              Barcode
-            </DropdownItem>
-            <DropdownItem color="primary" key="title">
-              Title
-            </DropdownItem>
-            <DropdownItem color="primary" key="size">
-              size
-            </DropdownItem>
-            <DropdownItem color="primary" key="page">
-              page
-            </DropdownItem>
-            <DropdownItem color="primary" key="qty">
-              ຈຳນວນ
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-        <Button color="success" radius="sm" className="text-medium text-white">
-          ອັບເດດສະຕັອກ
+              <DropdownItem color="primary" key="ທັງໝົດ">
+                ທັງໝົດ
+              </DropdownItem>
+              <DropdownItem color="primary" key="code">
+                Code
+              </DropdownItem>
+              <DropdownItem color="primary" key="barcode">
+                Barcode
+              </DropdownItem>
+              <DropdownItem color="primary" key="title">
+                Title
+              </DropdownItem>
+              <DropdownItem color="primary" key="size">
+                size
+              </DropdownItem>
+              <DropdownItem color="primary" key="page">
+                page
+              </DropdownItem>
+              <DropdownItem color="primary" key="qty">
+                ຈຳນວນ
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+        <Button onPress={handleResetQty} color="success" radius="sm" className="text-medium text-white">
+          {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
         </Button>
       </div>
 

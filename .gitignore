@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-
+next.config.mjs
 # Build output
 .next/
 
