@@ -19,17 +19,22 @@ import { SwalNotification } from "@/app/helpers/alers";
 import { MdDeleteForever } from "react-icons/md";
 import { IoAddCircle } from "react-icons/io5";
 import { RiSubtractLine } from "react-icons/ri";
-import { div } from "framer-motion/client";
-import { useReactToPrint } from "react-to-print";
 import PrintBill from "./PrintBill";
 const Invoice = () => {
   const [dialog, setDialog] = useState(false);
   const [bill, setBill] = useState<any>(null);
-  const [disMount, setDisMount] = useState<number>(0);
-  const [moneyCustomer, setMoneyCustomer] = useState<number>(0);
-  const [checkout, setCheckout] = useState<number>(0);
-  const [moneyChange, setMoneyChange] = useState<number>(0);
+  // const [disMount, setDisMount] = useState<number>(0);
+  // const [moneyCustomer, setMoneyCustomer] = useState<number>(0);
+  // const [checkout, setCheckout] = useState<number>(0);
+  // const [moneyChange, setMoneyChange] = useState<number>(0);
   const [check, setCheck] = useState<boolean>(false);
+
+  const [formData, setFormData] = React.useState({
+    d_mount: 0,
+    check_out: 0,
+    money_cutom: 0,
+    customer_change: 0,
+  });
 
   const { updateCart, cart, cartName } = useCartStore();
   const cartEndRef = useRef<HTMLDivElement>(null);
@@ -40,6 +45,36 @@ const Invoice = () => {
       cartEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [cart?.details.length]);
+
+  React.useEffect(() => {
+    const realTotal = cart?.total_lak || 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      check_out: realTotal,
+    }));
+  }, [cart?.total_lak]);
+
+  /// hanndle
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: Number(value),
+      };
+      const realTotal = cart?.total_lak || 0;
+
+      updated.check_out = Math.max(realTotal - updated.d_mount, 0);
+      updated.customer_change = Math.max(
+        updated.money_cutom - updated.check_out,
+        0
+      );
+
+      return updated;
+    });
+  };
 
   const handleAddToCart = async (barcode: string, id: number) => {
     if (id === 1) {
@@ -106,12 +141,10 @@ const Invoice = () => {
       }
     });
   };
-  const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({ contentRef });
 
   const reTail = async (pay: string) => {
     try {
-      const res = await apiRetail({
+      const res: any = await apiRetail({
         cart_name: cartName,
         // m_discount: dis_muont ?? 0,
         member_id: "",
@@ -171,6 +204,8 @@ const Invoice = () => {
       }
     }
   };
+
+  /// logic
 
   return (
     <>
@@ -305,83 +340,100 @@ const Invoice = () => {
       {/* Dialog */}
 
       {dialog && (
-        <div className=" fixed z-30 bg-gray-900 bg-opacity-70  left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
-          <div className="bg-gray-100 w-[600px] h-[500px] flex flex-col justify-between rounded-lg shadow-sm px-5 py-10">
-            <div className="grid grid-cols-1 gap-5">
-              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                ເງິນລູກຄ້າ
-              </label>
-              <div className="flex">
-                <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+        <div className=" fixed z-30 bg-black bg-opacity-80   left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
+          <div className="bg-gray-100 w-[600px] h-[500px] flex flex-col justify-between rounded-lg overflow-hidden">
+            <div className="p-5">
+              <div className="pb-10 space-y-3">
+                <p className="text-lg text-danger">ສ່ວນຫຼຸດຫນ້າຮ້ານ</p>
+                <div className="overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
                   <input
                     type="number"
                     min={0}
+                    name="d_mount"
+                    value={formData.d_mount}
                     className="w-full h-full outline-none p-1"
+                    onChange={handleChange}
                   />
                 </div>
-                <button
-                  type="button"
-                  disabled
-                  onClick={() => handleSubmit(2)}
-                  className="px-3 py-2 bg-blue-500 rounded-lg text-white hover:bg-blue-400 duration-300"
-                >
-                  ພໍດີ
-                </button>
+
+                <p className="text-lg">ເງິນຮັບມາ</p>
+                <div className="flex h-12 rounded">
+                  <div className="flex-1 overflow-hidden border-gray-300 hover:border-gray-500 border-2 border-r-0">
+                    <input
+                      type="number"
+                      min={0}
+                      name="money_cutom"
+                      value={formData.money_cutom}
+                      className="w-full h-full outline-none p-1"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <Button
+                    onPress={() => handleSubmit(2)}
+                    color="primary"
+                    radius="none"
+                    className="h-full"
+                  >
+                    ພໍດີ
+                  </Button>
+                </div>
               </div>
-              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                ເງິນທອນ
-              </label>
-              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
-                {formattedNumber(cart?.total_lak || 0)} ກີບ
+
+              {/* Tính tiền phải trả và tiền thối */}
+              <div className="pt-10 space-y-3 border-t-2 border-dashed border-primary">
+                <div className="flex items-center">
+                  <p className="flex-1 text-xl font-semibold">
+                    ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ:
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {formattedNumber(formData.check_out)} ກີບ
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <p className="flex-1 text-xl font-semibold">ເງິນທອນ:</p>
+                  <p className="text-3xl font-bold">
+                    {formattedNumber(formData.customer_change)} ກີບ
+                  </p>
+                </div>
               </div>
-              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                ສ່ວນຫຼຸດ
-              </label>
-              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
-                <input
-                  type="number"
-                  min={0}
-                  className="w-full h-full outline-none p-1"
-                />
-              </div>
-              <label className="ont-semibold border-l-4 border-green-500 leading-3 ps-2">
-                ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ
-              </label>
-              <div className="rounded overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
-                {formattedNumber(cart?.total_lak || 0)} ກີບ
-              </div>
-              <div className=" flex items-center justify-center gap-5">
-                <button
-                  type="button"
-                  onClick={() => handleSubmit(3)}
-                  className="px-3 py-2 bg-yellow-600 rounded-lg text-white hover:bg-yellow-600 duration-300"
-                >
-                  ຕິດໜີ້
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSubmit(0)}
-                  className="px-3 py-2 bg-blue-500 rounded-lg text-white hover:bg-blue-400 duration-300"
-                >
-                  ເງິນສົດ
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSubmit(1)}
-                  className="px-3 py-2 bg-green-500 rounded-lg text-white hover:bg-green-400 duration-300"
-                >
-                  ເງິນໂອນ
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDialog(!dialog);
-                  }}
-                  className="px-3 py-2 bg-red-500 rounded-lg text-white hover:bg-red-400 duration-300"
-                >
-                  ຍົກເລີກ
-                </button>
-              </div>
+            </div>
+
+            {/* Button */}
+            <div className=" flex items-center text-white">
+              <Button
+                onPress={() => handleSubmit(3)}
+                color="warning"
+                className="w-[20%] p-10 text-xl font-bold text-white"
+                radius="none"
+              >
+                ຕິດໜີ້
+              </Button>
+              <Button
+                onPress={() => handleSubmit(0)}
+                color="success"
+                className="w-[30%] p-10 text-xl font-bold text-white"
+                radius="none"
+              >
+                ເງິນສົດ
+              </Button>
+              <Button
+                onPress={() => handleSubmit(1)}
+                color="primary"
+                className="w-[30%] p-10 text-xl font-bold text-white"
+                radius="none"
+              >
+                ເງິນໂອນ
+              </Button>
+              <Button
+                color="danger"
+                className="w-[20%] p-10 text-xl font-bold text-white"
+                radius="none"
+                onPress={() => {
+                  setDialog(!dialog);
+                }}
+              >
+                ຍົກເລີກ
+              </Button>
             </div>
           </div>
         </div>
