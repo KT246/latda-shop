@@ -26,6 +26,15 @@ export const _cancleInvoices = async (id: number) => {
     return error;
   }
 };
+export const updateStatusInvoice = async (id: number, status: string) => {
+  try {
+    return await api.put(
+      `/api/admin/invoice/changestatus?id=${id}&status=${status}`
+    );
+  } catch (error) {
+    return error;
+  }
+};
 
 /// products
 export const GetAllProduct = async (size: number, page: number) => {

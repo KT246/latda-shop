@@ -2,10 +2,10 @@
 import React, { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { IoChevronBackOutline } from "react-icons/io5";
-import HeaderLinks from "../HeaderLinks";
-import { GetInvoicesId } from "@/app/api/admin.product";
+import { GetInvoicesId, updateStatusInvoice } from "@/app/api/admin.product";
 import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 import { Invoice } from "@/app/lib/interface";
+
 import {
   Table,
   TableHeader,
@@ -19,20 +19,26 @@ import {
   DropdownMenu,
   DropdownSection,
   DropdownItem,
+  Selection,
 } from "@heroui/react";
+import { toast } from "react-toastify";
 
 export default function DetailHistory() {
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  /// useState
   const [invoice, setInvoices] = React.useState<Invoice | null>(null);
 
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
-
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
+    new Set<string>()
+  );
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
     [selectedKeys]
   );
+  /// funtions
 
   const getInvoice = async () => {
     if (!id) {
@@ -48,9 +54,24 @@ export default function DetailHistory() {
     }
   };
 
-  useEffect(() => {
+  const changStatus = async () => {
+    const res: any = await updateStatusInvoice(Number(id), selectedValue);
+    if (res.status === 200) {
+      toast.success("ອັບເດດສຳເລັດ");
+      setInvoices(res.data);
+    }
+  };
+
+  /// useEffect
+  React.useEffect(() => {
     getInvoice();
   }, [id]);
+
+  React.useEffect(() => {
+    if (selectedKeys && selectedValue) {
+      changStatus();
+    }
+  }, [selectedKeys]);
 
   return (
     <div className="px-3">
@@ -140,9 +161,12 @@ export default function DetailHistory() {
           <div className="text-center space-y-3">
             <p>ວັນທີຊຳລະ</p>
             <p className="text-gray-500 font-semibold">
-              {/* {formatDate(invoice?.date_create ?? "")}
-               */}
-              <span className="text-red-500">ຍັງທັນຊຳລະ</span>
+              {invoice?.status === "completed" ||
+              invoice?.status === "cancel" ? (
+                formatDate(invoice?.date_payment ?? "")
+              ) : (
+                <span className="text-red-500">ຍັງທັນຊຳລະ</span>
+              )}
             </p>
           </div>
         </div>
@@ -194,14 +218,18 @@ export default function DetailHistory() {
             <DropdownTrigger>
               <Button color="primary">ແກ້ໄຂ ສະຖານະ</Button>
             </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem key="success" color="success">
+            <DropdownMenu
+              selectionMode="single"
+              variant="flat"
+              onSelectionChange={setSelectedKeys}
+            >
+              <DropdownItem key="completed" color="success">
                 ສຳເລັດ
               </DropdownItem>
               <DropdownItem key="padding" color="warning">
                 ຕິດໜີ້
               </DropdownItem>
-              <DropdownItem key="cancle" color="danger">
+              <DropdownItem key="cancel" color="danger">
                 ຍົກເລີກ
               </DropdownItem>
             </DropdownMenu>

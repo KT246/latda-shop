@@ -31,7 +31,7 @@ function ListsHistorys() {
   /// useState
   const [idInvoice, setIdInvoice] = React.useState<number | null>(null);
   const [page, setPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState<number | 0>(1);
   const [invoices, setInvoices] = useState<InvoiceResponse | null>(null);
   const [payType, setPayType] = React.useState("");
   const [dateStart, setDateStart] = React.useState("2025-06-20");
@@ -75,9 +75,12 @@ function ListsHistorys() {
   };
   const handleFilter = async (e: any) => {
     if (!idInvoice) {
-      return toast.warning("ປ້ອນ ID ບິນ", {
+      toast.warning("ປ້ອນ ID ບິນ", {
         position: "top-center",
       });
+      setPayType("");
+      fetchData();
+      return;
     }
 
     try {
@@ -91,11 +94,9 @@ function ListsHistorys() {
       }
     } catch (error: any) {
       toast.warning(error.response.data.message, { position: "top-center" });
+      setPayType("");
+      fetchData();
     }
-  };
-
-  const handleReset = () => {
-    fetchData();
   };
 
   return (

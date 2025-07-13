@@ -50,6 +50,7 @@ export interface Invoice {
   money_received: number;
   money_cash: number;
   date_create: string;
+  date_payment: string;
   status: string;
   details: Details[];
 }

@@ -36,9 +36,6 @@ const FindProduct = () => {
       if (res.data.status !== "error") {
         updateCart(res.data);
         setBarcode("");
-        toast.success("ເພີ່ມສຳເລັດ", {
-          position: "top-center",
-        });
         PlaySound();
       }
     } catch (error) {
@@ -116,9 +113,6 @@ const FindProduct = () => {
         if (res.data.status !== "error") {
           updateCart(res.data);
           setBarcode("");
-          toast.success("ເພີ່ມສຳເລັດ", {
-            position: "top-center",
-          });
           PlaySound();
         }
       } catch (error) {
@@ -143,9 +137,6 @@ const FindProduct = () => {
       if (res.data.status !== "error") {
         updateCart(res.data);
         setBarcode("");
-        toast.success("ເພີ່ມສຳເລັດ", {
-          position: "top-center",
-        });
         PlaySound();
       }
     } catch (error) {
