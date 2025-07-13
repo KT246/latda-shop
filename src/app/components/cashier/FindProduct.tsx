@@ -1,5 +1,4 @@
 "use client";
-
 import { Input, Spinner } from "@heroui/react";
 import React from "react";
 import Highlighter from "react-highlight-words";
@@ -113,6 +112,7 @@ const FindProduct = () => {
           qty: 1,
           cart_name: cartName,
         });
+        console.log(res)
         if (res.data.status !== "error") {
           updateCart(res.data);
           setBarcode("");
@@ -159,6 +159,7 @@ const FindProduct = () => {
   const FindProductByCode = async () => {
     try {
       const res = await apiProductByCode(key);
+      console.log(res)
       setProductsTemp(res.data);
     } catch (error) {
       throw error;
@@ -170,7 +171,6 @@ const FindProduct = () => {
       setProductsTemp(res.data);
     } catch (error) {
       throw error;
-      console.log(error);
     }
   };
   const FindProductByPage = async () => {

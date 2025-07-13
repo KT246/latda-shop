@@ -16,9 +16,9 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className=" h-full flex items-center justify-between ps-5 pe-20">
+    <div className=" h-full flex items-center justify-between px-5">
       <div className="">
-        <h1 className=" text-white text-[20px] font-bold">POS Latda Shop</h1>
+        <h1 className=" text-white text-xl font-bold">POS Latda Shop</h1>
         <h1 className="  text-[12px] font-semibold text-gray-100">
           Power by SKV-GROUP
         </h1>
