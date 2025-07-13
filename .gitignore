@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-next.config.mjs
+
 # Build output
 .next/
 
@@ -39,7 +39,5 @@ Thumbs.db
 # If you store images or assets in `public/`, you might not want to ignore this folder, but you can add specific files if needed.
 public/*.log
 public/temp/
-
-# Config file (nếu bạn muốn bỏ qua nó khỏi git)
 next.config.mjs
 
