@@ -58,12 +58,19 @@ export const apiResetQty = () => {
 
 // {Invoices}
 
-export const apiPostInvoice = (data: object) => {
-  return api.post("/api/cashier/invoice", data);
-};
-export const apiPostInvoiceCancle = (key: number) => {
-  return api.post("/api/cashier/invoice/cancel", key);
+export const apiInvoiceCancle = (id: number) => {
+  return api.delete(`/api/cashier/invoice/cancel?id=${id}`);
 };
 export const apiGetInvoiceById = (key: string) => {
   return api.get("/api/cashier/invoice?id=" + key);
+};
+export const apiGetAllInvoice = (size: number, page: number, date: string) => {
+  return api.get(
+    `/api/cashier/invoices?date_start=${date}&date_end=${date}&page=${page}&size=${size}`
+  );
+};
+export const apiReportSale = (date: string) => {
+  return api.get(
+    `/api/cashier/report-sale?date_start=${date}&date_end=${date}`
+  );
 };

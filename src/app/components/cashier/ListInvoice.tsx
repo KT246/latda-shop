@@ -6,6 +6,7 @@ import {
   InvoiceResponse,
   Invoice,
   currenDate,
+  ReportSaleSummary,
 } from "@/app/lib/interface";
 import Link from "next/link";
 import { formattedNumber, formatDate } from "@/app/helpers/funtions";
@@ -20,21 +21,24 @@ import {
   TableRow,
   TableCell,
   Spinner,
+  Button,
 } from "@heroui/react";
 import {
-  apiPostInvoice,
-  apiPostInvoiceCancle,
+  apiGetAllInvoice,
+  apiInvoiceCancle,
   apiGetInvoiceById,
+  apiReportSale,
 } from "@/app/api/products";
 
 import { useInvoiceStore } from "@/app/store/Invoice";
 import { SwalNotification } from "@/app/helpers/alers";
 import { toast } from "react-toastify";
-import { GrPowerReset } from "react-icons/gr";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function ListInvoice() {
-  const [change, setChange] = useState(false);
   const [idVoice, setIdVoice] = useState("");
+  const [report, setReport] = useState<ReportSaleSummary | null>(null);
 
   const {
     updateInvoices,
@@ -51,32 +55,48 @@ export default function ListInvoice() {
     date_start,
   } = useInvoiceStore();
 
-  const fetchInvoices = async (page: number) => {
+  const fetchInvoices = async () => {
     try {
-      const res = await apiPostInvoice({
-        page: currentPage,
-        size: size,
-        date_start: date_start,
-        date_end: date_end,
-      });
+      const res: any = await apiGetAllInvoice(size, currentPage, date_end);
       if (res.status === 200) {
         updateInvoices(res.data);
-        updateCurrentPage(page);
       }
     } catch (error) {
       console.error("Error fetching invoices:", error);
     }
   };
 
-  useEffect(() => {
-    fetchInvoices(currentPage);
-  }, [currentPage]);
-
-  const handleChangePage = (page: number) => {
-    fetchInvoices(page);
+  const fetcReportSale = async () => {
+    try {
+      const res: any = await apiReportSale(currenDate);
+      if (res.status === 200) {
+        setReport(res.data);
+      }
+    } catch (error) {
+      console.error;
+    }
   };
 
-  const handleFilter = async (e: any) => {
+  /// useEefect
+  useEffect(() => {
+    fetchInvoices();
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetcReportSale();
+    fetchInvoices();
+  }, []);
+
+  const handleChangePage = async (page: number) => {
+    const res: any = await apiGetAllInvoice(size, page, date_end);
+    updateInvoices(res.data);
+  };
+  const handleChangeSize = async () => {
+    const res: any = await apiGetAllInvoice(size, currentPage, date_end);
+    updateInvoices(res.data);
+  };
+
+  const handleFilter = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!idVoice) {
@@ -86,138 +106,91 @@ export default function ListInvoice() {
       return;
     }
     try {
-      const res = await apiGetInvoiceById(idVoice);
-      if (res.data === null) {
-        setChange(false);
-        toast.error("ບໍ່ມີບິນນີ້", {
+      const res: any = await apiGetInvoiceById(idVoice);
+      console.log(res.data);
+      if (res.data.status === "error") {
+        toast.error(res.data.message, {
           position: "top-center",
         });
         return;
       }
-      updateInvoice(res.data);
-      setChange(true);
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
+      updateInvoices(res.data);
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response) {
+        const errorMessage = e.response.data?.message;
+        toast.error(errorMessage, {
+          position: "top-center",
+        });
+      } else {
+        toast.error("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ");
+      }
     }
   };
 
   const handleCanle = (id: number) => async () => {
-    try {
-      const res = await apiPostInvoiceCancle(id);
-      if (res.data.status !== "error") {
-        // console.log("res", res.data.status);
-        // fetchInvoices(currentPage);
-        // SwalNotification(`${res.data.message}`, "success");
-      } else {
-        SwalNotification(`${res.data.message}`, "error");
+    Swal.fire({
+      title: "!ຍົກເລີກບິນ",
+      text: "ຢຶນຢັນຍົກເລີກບິນ: " + id + " ບໍ?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "ຍົກເລີກບິນ",
+      focusCancel: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res: any = await apiInvoiceCancle(id);
+          if (res?.status === 200) {
+            toast.success("ຍົກເລີກສຳເລັດ");
+            fetchInvoices();
+            fetcReportSale();
+          } else {
+            console.error("Failed to delete product:", res?.data?.message);
+          }
+        } catch (error) {
+          console.error("Error deleting product:", error);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
-    }
-  };
-
-  const handleAll = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (date_end && new Date(date_start) > new Date(date_end)) {
-      toast.error("ວັນເລີ່ມຕົ້ນຕ້ອງນ້ອຍກວ່າ ຫຼື ເທົ່າກັບວັນສິ້ນສຸດ!", {
-        position: "top-center",
-      });
-      return;
-    }
-    if (date_start && new Date(date_end) < new Date(date_start)) {
-      toast.error("ວັນສິ້ນສຸດຕ້ອງຫຼາຍກວ່າ ຫຼື ເທົ່າກັບວັນເລີ່ມຕົ້ນ!", {
-        position: "top-center",
-      });
-      return;
-    }
-    try {
-      const res = await apiPostInvoice({
-        page: currentPage,
-        size: size,
-        date_start: date_start,
-        date_end: date_end,
-      });
-      if (res.status === 200) {
-        updateInvoices(res.data);
-        updateCurrentPage(currentPage);
-        setChange(false);
-      }
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
-    }
+    });
   };
 
   const handleReset = () => {
-    const reset_start_date = "2025-05-06";
+    const reset_start_date = date_end;
     const reset_size = 10;
     const reset_page = 1;
     setIdVoice("");
-    setChange(false);
     updateInvoice(null);
     updateDateStart(reset_start_date);
     updateDateEnd(currenDate);
     updateSize(reset_size);
     updateCurrentPage(reset_page);
+    fetchInvoices();
   };
-  console.log(invoices);
   return (
-    <>
+    <div className="px-10">
       {/* header */}
       <div className="flex items-center justify-between gap-5 border-b-2 mb-3 pb-2">
         <h3 className="w-[150px] font-semibold text-xl">ໃບບິນ</h3>
-        <form className="w-full" onSubmit={handleAll}>
-          <div className="flex w-full items-center gap-4">
-            <label>ເລີ່ມຕົ້ນ</label>
-            <div
-              className="border-gray-300 border-2 px-3 py-1 rounded-md
-            "
-            >
-              <input
-                type="date"
-                value={date_start}
-                onChange={(e) => updateDateStart(e.target.value)}
-                className="w-full outline-none"
-              />
-            </div>
-            <label>ສີ້ນສຸດ</label>
-            <div
-              className="border-gray-300 border-2 px-3 py-1 rounded-md
-            "
-            >
-              <input
-                type="date"
-                value={date_end}
-                onChange={(e) => updateDateEnd(e.target.value)}
-                className="w-full outline-none"
-              />
-            </div>
+        <div className="flex w-full items-center gap-4">
+          <label htmlFor="sizePage">ຈໍານວນລາຍການ</label>
+          <input
+            type="number"
+            className="w-1/12 py-1 px-2 border-2 border-gray-300 hover:border-gray-400 rounded outline-none"
+            name="sizePage"
+            value={size}
+            onChange={(e) => updateSize(Number(e.target.value))}
+            min={0}
+            max={12}
+          />
 
-            <label htmlFor="sizePage">ຈໍານວນລາຍການ</label>
-            <input
-              type="number"
-              className="w-1/12 py-1 px-2 border-2 border-gray-300 hover:border-gray-400 rounded outline-none"
-              name="sizePage"
-              value={size}
-              onChange={(e) => updateSize(Number(e.target.value))}
-              min={0}
-              max={12}
-            />
+          <Button onPress={handleChangeSize} color="primary" radius="sm">
+            ຄົ້ນຫາ
+          </Button>
+          <Button onPress={handleReset} color="primary" radius="sm">
+            ຄ່າເລີ່ມຕົ້ນ
+          </Button>
+        </div>
 
-            <button
-              type="submit"
-              className="bg-blue-500 px-2 py-1 rounded text-white"
-            >
-              ຄົ້ນຫາ
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              className="bg-blue-500 px-2 py-1 rounded text-white"
-            >
-              ຄ່າເລີ່ມຕົ້ນ
-            </button>
-          </div>
-        </form>
         <form onSubmit={handleFilter} className="flex items-center gap-2 pe-10">
           <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
             <input
@@ -228,18 +201,84 @@ export default function ListInvoice() {
               onChange={(e) => setIdVoice(e.target.value)}
             />
           </div>
-          <button
+          <Button
             type="submit"
-            className="bg-yellow-500 px-2 py-1 rounded text-white"
+            color="warning"
+            className="text-white"
+            radius="sm"
           >
-            ຄົ້ນຫາ
-          </button>
+            ຄົ້ນຫາ ID
+          </Button>
         </form>
       </div>
-      {/* table */}
 
+      {/* report */}
+      <div className="mb-3">
+        <p className="border-l-3 border-blue-500 leading-none ps-1 my-5">
+          ລາຍງານການຂາຍ
+        </p>
+        <div className="flex items-center gap-3 shadow-lg p-2 rounded-lg text-center">
+          <div className="font-bold flex-1 bg-gradient-to-tr from-neutral-700 to-neutral-400 p-3 rounded-lg text-white">
+            <p className="text-center text-lg font-semibold border-b-2 ">
+              ຂາຍໄດ້ທັງໝົດ
+            </p>
+            <p className="text-2xl">
+              <span>{formattedNumber(report?.totalSale.total ?? 0)}</span> ກີບ
+            </p>
+            <p className="text-xl">
+              <span>{report?.totalSale.bill_count ?? 0}</span> ບິນ
+            </p>
+          </div>
+          <div className="font-bold flex-1 bg-gradient-to-tr from-green-700 to-green-400 p-3 rounded-lg text-white">
+            <p className="text-center text-lg font-semibold border-b-2">
+              ເງິນສົດ
+            </p>
+            <p className="text-2xl">
+              <span>{formattedNumber(report?.saleCash.total ?? 0)}</span> ກີບ
+            </p>
+            <p className="text-xl">{report?.saleCash.bill_count ?? 0} ບິນ</p>
+          </div>
+          <div className="font-bold flex-1 bg-gradient-to-tr from-blue-700 to-blue-400 p-3 rounded-lg text-white">
+            <p className="text-center text-lg font-semibold border-b-2">
+              ເງິນໂອນ
+            </p>
+            <p className="text-2xl">
+              {formattedNumber(report?.saleTransfer.total ?? 0)} ກີບ
+            </p>
+            <p className="text-xl">
+              {report?.saleTransfer.bill_count ?? 0} ບິນ
+            </p>
+          </div>
+          <div className="font-bold flex-1 bg-gradient-to-tr from-warning-700 to-warning-400 p-3 rounded-lg text-white">
+            <p className="text-center text-lg font-semibold border-b-2">
+              ຕິດໜີ້
+            </p>
+            <p className="text-2xl">
+              {formattedNumber(report?.saleDebt.total ?? 0)} ກີບ
+            </p>
+            <p className="text-xl">{report?.saleDebt.bill_count ?? 0} ບິນ</p>
+          </div>
+          <div className="font-bold flex-1 bg-gradient-to-tr from-danger-700 to-danger-400 p-3 rounded-lg text-white">
+            <p className="text-center text-lg font-semibold border-b-2">
+              ຍົກເລີກ
+            </p>
+            <p className="text-2xl">
+              {formattedNumber(report?.saleCancle.total ?? 0)} ກີບ
+            </p>
+            <p className="text-xl">{report?.saleCancle.bill_count ?? 0} ບິນ</p>
+          </div>
+        </div>
+      </div>
+      {/* table */}
+      <p className="border-l-3 border-blue-500 leading-none ps-1 my-5">
+        ລາຍການບິນ
+      </p>
       <Table
-        aria-label="Example table with client async pagination"
+        selectionMode="single"
+        color="primary"
+        classNames={{
+          th: "bg-blue-500 text-white font-semibold text-sm",
+        }}
         bottomContent={
           (invoices?.totalPages ?? 0) > 0 ? (
             <div className="flex w-full justify-center">
@@ -249,7 +288,7 @@ export default function ListInvoice() {
                 showShadow
                 color="primary"
                 page={currentPage}
-                total={(invoices?.totalPages ?? 0) - 1}
+                total={invoices?.totalPages ?? 0}
                 onChange={handleChangePage}
               />
             </div>
@@ -308,13 +347,17 @@ export default function ListInvoice() {
                           </span>
                         </button>
                       </Tooltip>
-                      <Tooltip content="ລົບ" color="danger">
-                        <button onClick={handleCanle(item.id)}>
-                          <span className="text-lg text-red-400 cursor-pointer active:opacity-50 ">
-                            <DeleteIcon />
-                          </span>
-                        </button>
-                      </Tooltip>
+                      {item.status === "cancel" ? (
+                        ""
+                      ) : (
+                        <Tooltip content="ຍົກເລີກ" color="danger">
+                          <button onClick={handleCanle(item.id)}>
+                            <span className="text-lg text-red-400 cursor-pointer active:opacity-50 ">
+                              <DeleteIcon />
+                            </span>
+                          </button>
+                        </Tooltip>
+                      )}
                     </>
                   ) : (
                     <div className=" ">
@@ -329,7 +372,7 @@ export default function ListInvoice() {
           )}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }
 

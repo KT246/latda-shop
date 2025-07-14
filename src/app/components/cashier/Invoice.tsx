@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Input, Tooltip } from "@heroui/react";
+import { Button, form, Input, Tooltip } from "@heroui/react";
 
 import { useCartStore } from "@/app/store/cartStore";
 import { formattedNumber } from "@/app/helpers/funtions";
@@ -23,11 +23,8 @@ import PrintBill from "./PrintBill";
 const Invoice = () => {
   const [dialog, setDialog] = useState(false);
   const [bill, setBill] = useState<any>(null);
-  // const [disMount, setDisMount] = useState<number>(0);
-  // const [moneyCustomer, setMoneyCustomer] = useState<number>(0);
-  // const [checkout, setCheckout] = useState<number>(0);
-  // const [moneyChange, setMoneyChange] = useState<number>(0);
   const [check, setCheck] = useState<boolean>(false);
+  const [memberId, setMemberId] = useState<string | null>("");
 
   const [formData, setFormData] = React.useState({
     d_mount: 0,
@@ -142,13 +139,15 @@ const Invoice = () => {
     });
   };
 
-  const reTail = async (pay: string) => {
+  /// Sale
+  const Sale = async (pay: string, name: string) => {
     try {
       const res: any = await apiRetail({
         cart_name: cartName,
-        // m_discount: dis_muont ?? 0,
+        m_discount: formData.d_mount,
         member_id: "",
         pay_type: pay,
+        money_received: formData.money_cutom,
       });
 
       const data = res.data;
@@ -156,6 +155,12 @@ const Invoice = () => {
         updateCart(null);
         setDialog(!dialog);
         setBill(data);
+        setFormData({
+          d_mount: 0,
+          check_out: 0,
+          money_cutom: 0,
+          customer_change: 0,
+        });
         toast.success(data.message);
       } else {
         toast.warning(data.message);
@@ -167,20 +172,50 @@ const Invoice = () => {
       }
     }
   };
+  const Transfer = (pay: string) => {
+    Sale(pay, "");
+  };
+  const Cash = async (pay: string) => {
+    Sale(pay, "");
+  };
+  const Debt = async (pay: string) => {
+    Swal.fire({
+      title: "ປ້ອນຊື່ຂອງທ່ານ",
+      input: "text",
+      inputPlaceholder: "ພິມຊື່...",
+      showCancelButton: true,
+      confirmButtonText: "ຂາຍ",
+      cancelButtonText: "ຍົກເລີກ",
+      icon: "question",
+      focusConfirm: true,
+      didOpen: () => {
+        const input = Swal.getInput();
+        if (input) input.focus();
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const name = result.value;
+        if (!name) {
+          Swal.fire("ຜິດພາດ", "ກະລຸນາປ້ອນຊື່", "error");
+        } else {
+          Sale(pay, name);
+        }
+      }
+    });
+  };
 
+  /// onSubmit
   const handleSubmit = async (key: number) => {
     if (cart === null) {
       toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ");
       return;
     }
-    if (key === 1) {
-      await reTail("transfer");
+    if (key === 0) {
+      Debt("debt");
+    } else if (key === 1) {
+      Cash("cash");
     } else if (key === 2) {
-      await reTail("cash");
-    } else if (key === 3) {
-      await reTail("cash");
-    } else {
-      await reTail("cash");
+      Transfer("transfer");
     }
   };
 
@@ -228,9 +263,7 @@ const Invoice = () => {
                       className="w-full flex justify-center items-center text-sm border-b border-slate-200"
                       key={index}
                     >
-                      <p className=" w-[20%]">
-                        {item.title + item.size}
-                      </p>
+                      <p className=" w-[20%]">{item.title + item.size}</p>
                       <p className=" w-[20%] flex justify-center items-center gap-2">
                         <Tooltip content="ເພີ່ມ" placement="top">
                           <button
@@ -250,9 +283,7 @@ const Invoice = () => {
                           </button>
                         </Tooltip>
                       </p>
-                      <p className="w-[10%]">
-                        {item.unit}
-                      </p>
+                      <p className="w-[10%]">{item.unit}</p>
                       <p className="w-[20%]">
                         {formattedNumber(item.retail_lak)} ກີບ
                       </p>
@@ -325,8 +356,8 @@ const Invoice = () => {
               cart !== null
                 ? setDialog(!dialog)
                 : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
-                  position: "top-center",
-                });
+                    position: "top-center",
+                  });
               // updateMnCheckOut(cart?.total_lak ?? 0);
             }}
             color="primary"
@@ -369,7 +400,12 @@ const Invoice = () => {
                     />
                   </div>
                   <Button
-                    onPress={() => handleSubmit(2)}
+                    onPress={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        money_cutom: formData.check_out,
+                      }))
+                    }
                     color="primary"
                     radius="none"
                     className="h-full"
@@ -401,7 +437,7 @@ const Invoice = () => {
             {/* Button */}
             <div className=" flex items-center text-white">
               <Button
-                onPress={() => handleSubmit(3)}
+                onPress={() => handleSubmit(0)}
                 color="warning"
                 className="w-[20%] p-10 text-xl font-bold text-white"
                 radius="none"
@@ -409,7 +445,7 @@ const Invoice = () => {
                 ຕິດໜີ້
               </Button>
               <Button
-                onPress={() => handleSubmit(0)}
+                onPress={() => handleSubmit(1)}
                 color="success"
                 className="w-[30%] p-10 text-xl font-bold text-white"
                 radius="none"
@@ -417,7 +453,7 @@ const Invoice = () => {
                 ເງິນສົດ
               </Button>
               <Button
-                onPress={() => handleSubmit(1)}
+                onPress={() => handleSubmit(2)}
                 color="primary"
                 className="w-[30%] p-10 text-xl font-bold text-white"
                 radius="none"

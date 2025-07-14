@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 
 import { Invoice } from "@/app/lib/interface";
+import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 
 interface PrintBillProps {
   data: Invoice;
@@ -29,7 +30,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
     <div className="hidden">
       <div
         ref={contentRef}
-        className="w-[80mm] h-auto px-4 py-2 text-[14px] border border-gray-700"
+        className="w-[148mm] text-[14px] p-2 border border-gray-700"
       >
         {/* {header} */}
         <h1 className="text-center font-bold uppercase text-medium mb-2">
@@ -43,47 +44,60 @@ function PrintBill({ data, clearData }: PrintBillProps) {
         {/* {content} */}
         <p className="text-center font-bold my-3">ບິນໄລ່ເງິນ</p>
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
-        <p className="flex font-semibold">
-          <span className="w-1/2 pe-3">ຊີ່ສິນຄ້າ</span>
-          <span className="w-1/4">ຈຳນວນ</span>
-          <span className="w-1/2 text-center">ລາຄາ</span>
+        <p className="grid grid-cols-3">
+          <span>ຊີ່ສິນຄ້າ</span>
+          <span>ຈຳນວນ</span>
+          <span>ລາຄາ</span>
         </p>
 
-        {data?.details?.map((it, index) => (
-          <p key={index} className="flex">
-            <span className="w-1/2 break-all pe-3">{it?.title}</span>
-            <span className="w-1/4">x{it?.qty}</span>
-            <span className="w-1/2">{it?.retail_lak}</span>
+        {data?.details?.map((item, index) => (
+          <p key={index} className="grid grid-cols-3">
+            <span>{item.title}</span>
+            <span>x{item?.qty}</span>
+            <span>{formattedNumber(item?.retail_lak ?? 0)}</span>
           </p>
         ))}
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
         <div className="flex">
-          <p className="flex-1 font-semibold">ເງິນລູກຄ້າ:</p>
-          <p className="flex-1 text-right">{"122121"} ກີບ</p>
+          <p className="flex-1 font-semibold">ເງິນຮັບມາ:</p>
+          <p className="flex-1 text-right">
+            {formattedNumber(data?.money_received ?? 0)} ກີບ
+          </p>
         </div>
         <div className="flex">
           <p className="flex-1 font-semibold">ສ່ວນຫລຸດ:</p>
-          <p className="flex-1 text-right">{data?.m_discount || 0} ກີບ</p>
+          <p className="flex-1 text-right">
+            {formattedNumber(data?.m_discount ?? 0)} ກີບ
+          </p>
         </div>
         <div className="flex">
           <p className="flex-1 font-semibold">ເງິນທອນ:</p>
-          <p className="flex-1 text-right">{"-122121"} ກີບ</p>
+          <p className="flex-1 text-right">
+            {formattedNumber(data?.money_cash ?? 0)} ກີບ
+          </p>
         </div>
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
         <div className="flex">
           <p className="flex-1 font-semibold">ລວມ:</p>
           <p className="flex-1 text-right">
-            {data?.total_checkout_lak || 0} ກີບ
+            {formattedNumber(data?.total_checkout_lak ?? 0)} ກີບ
           </p>
         </div>
 
         {/* {bottom} */}
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
         <div className="text-left pt-2">
-          <p>ເລກບິນ: LD000155465465</p>
-          <p>ລະຫັດຜູ້ຂາຍ: LD0001</p>
-          <p>ປະເພດຈ່າຍ: ເງິນສົດ</p>
-          <p>ວັນເວລາ: 12/07/2025 10:10:10</p>
+          <p>ເລກບິນ: {data?.id}</p>
+          <p>ລະຫັດຜູ້ຂາຍ: {data?.cashier_id}</p>
+          <p>
+            ປະເພດຈ່າຍ:{" "}
+            {data?.pay_type === "debt"
+              ? "ຕິດໜີ້"
+              : data?.pay_type === "cash"
+              ? "ເງິນສົດ"
+              : "ເງິນໂອນ"}
+          </p>
+          <p>ວັນເວລາ: {formatDate(data?.date_create)}</p>
           <p className="text-center pt-2">ຂອບໃຈລູກຄ້າ</p>
           <p className="text-center">ແລ້ວພົບກັນໃຫມ່!</p>
         </div>

@@ -149,3 +149,11 @@ export interface ReportSaleResponse {
   detail: ReportSaleDetail;
   invoice_debt: InvoiceDebt[];
 }
+
+export interface ReportSaleSummary {
+  totalSale: SaleDetail;
+  saleCash: SaleDetail;
+  saleTransfer: SaleDetail;
+  saleDebt: SaleDetail;
+  saleCancle: SaleDetail;
+}
