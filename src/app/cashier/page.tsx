@@ -7,10 +7,10 @@ import FindProduct from "../components/cashier/FindProduct";
 const page = () => {
   return (
     <div className="w-full flex gap-5">
-      <div className=" w-[50%] inline-block">
+      <div className=" w-[60%] inline-block">
         <Invoice />
       </div>
-      <div className=" w-[50%] inline-block">
+      <div className=" w-[40%] inline-block">
         <SelectCart />
         <FindProduct />
       </div>

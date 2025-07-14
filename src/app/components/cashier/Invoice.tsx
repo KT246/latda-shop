@@ -175,28 +175,28 @@ const Invoice = () => {
   return (
     <>
       <div className=" w-full h-full p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
-        <div className="w-full h-[55vh]">
-          <p className=" flex bg-green-200 w-full font-semibold text-sm">
-            <span className="py-1 px-2 text-left w-40">ຊື່ສິນຄ້າ</span>
-            <span className="py-1 px-2  text-center w-40">ຈຳນວນ</span>
-            <span className="py-1 px-2 text-center w-28">ຫົວຫນ່ວຍ</span>
-            <span className="py-1 px-2 text-left w-40">ລາຄາ</span>
-            <span className="py-1 px-2 text-left w-40">ລວມ</span>
-            <span className="py-1 px-2 text-center w-20">ລຶບ</span>
-          </p>
+        <div className="w-full h-[60%]">
+          <div className=" w-full flex justify-center items-center bg-green-200 font-semibold text-sm">
+            <p className="py-1 w-[20%] text-center ">ຊື່ສິນຄ້າ</p>
+            <p className="py-1 w-[20%] text-center ">ຈຳນວນ</p>
+            <p className="py-1 w-[10%] text-center ">ຫນ່ວຍ</p>
+            <p className="py-1 w-[20%] text-center ">ລາຄາ</p>
+            <p className="py-1 w-[20%] text-center ">ລວມ</p>
+            <p className="py-1 w-[] text-center ">ລຶບ</p>
+          </div>
           <div className="overflow-y-auto h-full pb-10">
             {cart !== null ? (
               cart.details?.map((item, index) => {
                 return (
                   <>
-                    <p
-                      className="flex justify-center items-center text-sm"
+                    <div
+                      className="w-full flex justify-center items-center text-sm border-b border-slate-200"
                       key={index}
                     >
-                      <span className="py-1 px-2 text-left w-40 break-words overflow-auto">
-                        {item.title + item.size + item.use_for}
-                      </span>
-                      <span className="py-1 px-2  text-center w-40 flex items-center justify-center gap-2">
+                      <p className=" w-[20%]">
+                        {item.title + item.size}
+                      </p>
+                      <p className=" w-[20%] flex justify-center items-center gap-2">
                         <Tooltip content="ເພີ່ມ" placement="top">
                           <button
                             className="hover:text-green-500 duration-300 hover:bg-green-100 rounded-full p-1"
@@ -214,17 +214,17 @@ const Invoice = () => {
                             <RiSubtractLine size={20} />
                           </button>
                         </Tooltip>
-                      </span>
-                      <span className="py-1 px-2 text-center w-28">
+                      </p>
+                      <p className="w-[10%]">
                         {item.unit}
-                      </span>
-                      <span className="py-1 px-2 text-left w-40">
+                      </p>
+                      <p className="w-[20%]">
                         {formattedNumber(item.retail_lak)} ກີບ
-                      </span>
-                      <span className="py-1 px-2 text-left w-40">
+                      </p>
+                      <p className="w-[20%]">
                         {formattedNumber(item.total_lak)} ກີບ
-                      </span>
-                      <span className="py-1 px-2 text-center w-20">
+                      </p>
+                      <div className="w-[10%]">
                         <button
                           onClick={() =>
                             handleDeleteProduct(
@@ -237,8 +237,8 @@ const Invoice = () => {
                         >
                           <MdDeleteForever size={24} />
                         </button>
-                      </span>
-                    </p>
+                      </div>
+                    </div>
                     <p ref={cartEndRef} />
                   </>
                 );
@@ -250,7 +250,7 @@ const Invoice = () => {
             )}
           </div>
         </div>
-        <div className="h-[20vh]  flex items-center">
+        <div className="h-[20%]  flex items-center">
           <div className="w-full">
             <div className="w-full flex justify-between px-2 bg-blue-100 border-b border-gray-300">
               <p>ລວມ</p>
@@ -275,7 +275,7 @@ const Invoice = () => {
             </div>
           </div>
         </div>
-        <div className=" flex gap-3 justify-between items-center">
+        <div className="h-[20%] flex gap-3 justify-between items-center">
           <Button
             radius="sm"
             onPress={() => handleDeleteCart(cart?.id ?? 0)}
@@ -290,8 +290,8 @@ const Invoice = () => {
               cart !== null
                 ? setDialog(!dialog)
                 : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
-                    position: "top-center",
-                  });
+                  position: "top-center",
+                });
               // updateMnCheckOut(cart?.total_lak ?? 0);
             }}
             color="primary"

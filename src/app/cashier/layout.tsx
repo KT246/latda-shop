@@ -6,14 +6,14 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col h-screen">
-      <div className="bg-blue-500 h-[8vh]">
+      <div className="bg-blue-500 h-[19%]">
         <Navbar />
       </div>
-      <div className="w-full h-[92vh] flex">
+      <div className="w-full h-[99%] flex">
         <div className=" bg-blue-950">
           <Sidebar />
         </div>
-        <div className="bg-white w-full px-3 pt-3">{children}</div>
+        <div className="bg-white w-full h-full p-3">{children}</div>
       </div>
     </div>
   );

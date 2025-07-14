@@ -47,7 +47,7 @@ const Sidebar = () => {
   if (!mounted) return null; // 👈 หยุด render ก่อนรู้ว่าอยู่บน client
 
   return (
-    <div className="w-full h-screen flex flex-col justify-between border-r">
+    <div className="w-full h-full flex flex-col justify-between border-r">
       <div className="">
         {/* logo section */}
         <div className="flex items-center py-5 px-2  gap-2 border-b border-gray-500 mb-3">

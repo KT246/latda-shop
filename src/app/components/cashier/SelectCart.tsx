@@ -15,7 +15,6 @@ const SelectCart = () => {
   const handleMaxMinqty = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateMaxMinqty(Number(e.target.value));
   };
-  console.log(maxMinqty);
 
   const handleGetCart = async (id: string) => {
     try {
@@ -31,7 +30,7 @@ const SelectCart = () => {
   };
 
   return (
-    <div className="mb-3 flex justify-start gap-3 font-semibold">
+    <div className="mb-3 flex justify-start gap-3">
       <Button
         onPress={() => handleCart("1")}
         color={`${cartName === "1" ? "primary" : "default"}`}

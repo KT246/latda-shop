@@ -18,8 +18,8 @@ const Navbar = () => {
   return (
     <div className=" h-full flex items-center justify-between px-5">
       <div className="">
-        <h1 className=" text-white text-xl font-bold">POS Latda Shop</h1>
-        <h1 className="  text-[12px] font-semibold text-gray-100">
+        <h1 className=" text-white text-xl font-bold p-0 m-0">POS ລັດດາ ອາໄຫຼ່</h1>
+        <h1 className="  text-[12px] font-semibold text-gray-100  p-0 m-0">
           Power by SKV-GROUP
         </h1>
       </div>
@@ -36,7 +36,7 @@ const Navbar = () => {
       <div className="flex gap-2 items-center text-gray-50 font-semibold uppercase">
         <p className="text-sm text-gray-200 lowercase">hello! </p>
         <p>{user_name}</p>
-        <p className="bg-gray-100 bg-opacity-50 px-3 py-1 rounded-sm">
+        <p className="bg-gray-100 bg-opacity-50 px-3 rounded-sm">
           <span>{idName}</span>
         </p>
       </div>
