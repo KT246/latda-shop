@@ -92,12 +92,12 @@ function Home() {
         nameCreate=""
         nameList=""
       />
-      <div className="px-5 py-3 bg-gray-100 rounded-lg">
-        <div className="flex flex-col space-y-5">
-          <div className="p-2 space-y-5">
+      <div className="">
+        <div className="">
+          <div className="flex flex-col gap-5">
             <form
               onSubmit={handleSubmit}
-              className="bg-white shadow-lg p-5 inline-block rounded-lg"
+              className="mt-5 bg-white shadow-lg p-5 flex justify-between items-center rounded-lg"
             >
               <div className="flex items-center gap-4">
                 <label>ເລີ່ມຕົ້ນ</label>
@@ -126,8 +126,11 @@ function Home() {
                   ຄົ້ນຫາ
                 </button>
               </div>
+              <div>
+                <p>Exchange rate: 4444</p>
+              </div>
             </form>
-            <div className="flex gap-10 px-2">
+            <div className="flex gap-10">
               <div className="w-2/3 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
                 <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
                   ບິນຕິດຫນີ້
@@ -167,7 +170,7 @@ function Home() {
                         <TableCell>
                           <Tooltip content="ລາຍລະອຽດ" color="success">
                             <Link
-                              href={`/admin/products/detail/1076795421996`}
+                              href={`/admin/history/detail/`+item.id}
                               className="text-lg hover:text-green-400 flex justify-center "
                             >
                               <EyeIcon />
@@ -181,7 +184,7 @@ function Home() {
               </div>
               <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
                 <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
-                  ລາຍງານບິນ
+                  ລາຍງານໃບບິນ
                 </h3>
                 <div className="h-32 flex flex-col justify-between shadow-lg bg-success-500 rounded-lg p-2 ">
                   <p className="text-end">ຂາຍສຳເລັດ</p>
@@ -189,7 +192,7 @@ function Home() {
                   <p>ຈຳນວນ: 2</p>
                 </div>
                 <div className="h-32 flex flex-col justify-between shadow-lg bg-warning-500 rounded-lg p-2">
-                  <p className="text-end">ກຳລັງດຳເນີນການ</p>
+                  <p className="text-end">ຕິດໜີ້</p>
                   <p className="text-center text-xl font-semibold">2</p>
                   <p>ຈຳນວນ: 2</p>
                 </div>
@@ -201,8 +204,8 @@ function Home() {
               </div>
             </div>
           </div>
-          <div className="p-2">
-            <div className="flex gap-10 px-2">
+          <div className="mt-5">
+            <div className="flex gap-10">
               <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
                 <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2 text-blue-500">
                   ລາຍງານສິນຄ້າ
@@ -297,7 +300,7 @@ function Home() {
                         <TableCell>
                           <Tooltip content="ລາຍລະອຽດ" color="primary">
                             <Link
-                              href={`/admin/products/detail/${item.barcode}`}
+                              href={`/admin/products/edit/${item.barcode}`}
                               className="text-lg hover:text-blue-400 flex justify-center "
                             >
                               <EyeIcon />

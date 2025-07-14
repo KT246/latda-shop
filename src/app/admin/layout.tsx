@@ -39,10 +39,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar />
       </div>
       <div className="w-full ms-[200px]">
-        <div className="bg-blue-500 h-[8vh]">
+        {/* <div className="bg-blue-500 h-[8vh]">
           <Navbar />
-        </div>
-        <div className=" px-5 py-3 ">{children}</div>
+        </div> */}
+        <div className="  bg-gray-100 px-10 min-h-screen pb-10">{children}</div>
       </div>
     </div>
   );

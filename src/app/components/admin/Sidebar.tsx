@@ -56,8 +56,9 @@ const Sidebar = () => {
               latda
             </p>
             <p className="text-gray-300 text-xl font-semibold border-b-5 pb-3">
-              Shop
+              ອາໄຫຼ່
             </p>
+            <p className=" text-sm text-white mt-2">power by SKV gruop</p>
           </div>
         </div>
         {/* links */}

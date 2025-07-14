@@ -23,7 +23,7 @@ function HeaderLinks({
   const validLinkCreate = linkCreate || "#";
   const validLinkLists = linkLists || "#";
   return (
-    <div className="w-full flex justify-between items-center gap-5 border-b-2 p-2 mb-2">
+    <div className="w-full flex justify-between items-center gap-5 border-b-2 py-2 ">
       <h3 className="w-full font-semibold text-xl">{name}</h3>
       {validLinkCreate && validLinkLists !== "#" ? (
         <div className="w-full flex justify-end gap-3 items-center">
