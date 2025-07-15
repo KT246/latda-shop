@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SwalNotification } from "@/app/helpers/alers";
 import { formattedNumber } from "@/app/helpers/funtions";
 import Image from "next/image";
-import { CreateProducts, GetProductById } from "@/app/api/admin.product";
+import { _inCreaseProduct, CreateProducts, GetProductById } from "@/app/api/admin.product";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Button } from "@heroui/react";
@@ -276,7 +276,35 @@ function CreateProduct() {
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-              // Swal.fire("Saved!", "", "success");
+              Swal.fire({
+                title: "ເພີ່ມຈຳນວນສິນຄ້າ",
+                html: `
+                  <p>ບາໂຄດ: ${isExistProduct?.barcode}</p>
+                  <p>ຊື່ສິນຄ້າ: ${isExistProduct?.title}  ${isExistProduct?.size}</p>
+                  <p>ຈຳນວນ: ${isExistProduct?.qty_balance}</p>
+                `,
+                allowOutsideClick: false,
+                input: "number",
+                inputAttributes: {
+                  autocapitalize: "off"
+                },
+                showCancelButton: true,
+                confirmButtonText: "ເພີ່ມ",
+                cancelButtonText: "ຍົກເລີກ",
+                showLoaderOnConfirm: true,
+                preConfirm: async (qty) => {
+                  try {
+                    if (qty <= 0) {
+                      Swal.showValidationMessage(`ຈຳນວນສິນຄ້າບໍ່ຖືກຕ້ອງ`);
+                    } else {
+                      await _inCreaseProduct(isExistProduct?.barcode, qty);
+                      toast.success("ເພີ່ມສຳເລັດ");
+                    }
+                  } catch (error) {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                  }
+                },
+              })
             } else if (result.isDenied) {
               router.push("/admin/products/edit/" + isExistProduct?.barcode)
             }
@@ -286,9 +314,9 @@ function CreateProduct() {
           titleRef.current?.focus();
           setIsnewProduct(true);
           titleRef.current?.focus();
-          
+
         }
-        
+
       } catch (error) {
         console.log(error)
       }

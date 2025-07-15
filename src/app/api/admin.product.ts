@@ -61,7 +61,6 @@ export const CreateProducts = async (data: FormData) => {
     return error;
   }
 };
-
 export const _updateIMG = async (bracode: string, data: FormData) => {
   try {
     return await api.put(
@@ -72,7 +71,6 @@ export const _updateIMG = async (bracode: string, data: FormData) => {
     return error;
   }
 };
-
 export const _updateProduct = async (bracode: string, data: object) => {
   try {
     return await api.patch(
@@ -83,6 +81,13 @@ export const _updateProduct = async (bracode: string, data: object) => {
     return error;
   }
 };
+export const _inCreaseProduct = async (barcode: string, qty: number) => {
+  try {
+    return await api.post(`/api/admin/product/increase`, { barcode, qty });
+  } catch (error) {
+    return error;
+  }
+}
 
 // {users}
 export const addUsers = async (data: object) => {

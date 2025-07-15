@@ -39,9 +39,9 @@ const Sidebar = () => {
   const Links = [
     { label: "ພາບລວມ", href: "/admin", path: 0 },
     { label: "ຈັດການສິນຄ້າ", href: "/admin/products", path: 1 },
-    { label: "ຈັດການພະນັກງານ", href: "/admin/employees", path: 0 },
     { label: "ປະຫວັດການຂາຍ", href: "/admin/history", path: 0 },
-    { label: "ຈັດການລະບົບ", href: "/admin/profile", path: 0 },
+    { label: "ຈັດການພະນັກງານ", href: "/admin/employees", path: 0 },
+    // { label: "ຈັດການລະບົບ", href: "/admin/profile", path: 0 },
   ];
 
   if (!mounted) return null; // 👈 หยุด render ก่อนรู้ว่าอยู่บน client

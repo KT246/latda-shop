@@ -28,8 +28,10 @@ import debounce from "lodash.debounce";
 import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import useAuthStore from "@/app/store/authStores";
 
 function ListsProducts() {
+  const { user } = useAuthStore();
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(
     new Set<string>(["barcode"])
   );
@@ -182,6 +184,21 @@ function ListsProducts() {
             </DropdownMenu>
           </Dropdown>
         </div>
+<<<<<<< HEAD
+=======
+        <div>
+          {/* {user?.path === 0 &&
+           <Button
+            onPress={handleResetQty}
+            color="success"
+            radius="sm"
+            className="text-medium text-white"
+          >
+            {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
+          </Button> } */}
+        </div>
+
+>>>>>>> 18e3ff7a85a01c3cc12852558d79438c41ae635a
       </div>
 
       <Table
@@ -200,7 +217,7 @@ function ListsProducts() {
             />
           </div>
         }
-        className="capitalize"
+        // className="capitalize"
         classNames={{
           wrapper: "min-h-[222px]  ",
           th: "bg-blue-500 text-white font-semibold text-sm",
@@ -247,7 +264,7 @@ function ListsProducts() {
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>
-                {item.title} {item.size}
+                {item.title + " "+ item.size}
               </TableCell>
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
@@ -256,11 +273,10 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${
-                    item.qty_balance <= item.qty_alert
-                      ? "text-red-500"
-                      : "text-black"
-                  }`}
+                  className={`${item.qty_balance <= item.qty_alert
+                    ? "text-red-500"
+                    : "text-black"
+                    }`}
                 >
                   {item.qty_balance}
                 </span>

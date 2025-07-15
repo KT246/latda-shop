@@ -77,10 +77,10 @@ function EditEmployee() {
   };
   return (
     <>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
-        ແກ້ໄຂພະນັກງານ
+       <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
+        ແກ້ໄຂຂໍ້ມູນພະນັກງານ
       </h1>
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg p-4 border">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-semibold">ຊື່ເຂົ້າລະບົບ</label>
@@ -148,7 +148,7 @@ function EditEmployee() {
           </div>
         </div>
 
-        <div className="flex justify-between">
+        <div className="mt-3 flex justify-between">
           <Button onPress={() => router.back()} color="warning">
             <IoChevronBackOutline />
             ກັບຄືນ
