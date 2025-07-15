@@ -131,3 +131,12 @@ export const GetReportSale = async (dateStart: string, dateEnd: string) => {
     `/api/admin/report-sale?date_start=${dateStart}&date_end=${dateEnd}`
   );
 };
+
+/// Exchange
+
+export const PutExChange = async ({ newRate }: { newRate: number }) => {
+  return await api.put(`/api/admin/exchange`, { newRate });
+};
+export const GetExChange = async () => {
+  return await api.get(`/api/exchange`);
+};

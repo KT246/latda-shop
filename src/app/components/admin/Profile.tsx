@@ -89,7 +89,7 @@ function Profile() {
       />
       <div className="flex flex-col">
         <div>
-          <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+          <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
             ຜູ້ຄວບຄຸມລະບົບ
           </h1>
           <form onSubmit={handleSubmit} className="p-4 space-y-4">

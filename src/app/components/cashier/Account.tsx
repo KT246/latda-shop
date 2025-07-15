@@ -46,7 +46,7 @@ export default function Account() {
         nameList=""
       />
       <div>
-        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
           ລາຍລະອຽດຜູ້ໃຊ້
         </h1>
         <form onSubmit={handleSubmit} className="p-4 space-y-4">

@@ -9,7 +9,11 @@ import {
   ReportSaleSummary,
 } from "@/app/lib/interface";
 import Link from "next/link";
-import { formattedNumber, formatDate } from "@/app/helpers/funtions";
+import {
+  formattedNumber,
+  formatDate,
+  formatDateNotime,
+} from "@/app/helpers/funtions";
 import {
   Pagination,
   DatePicker,
@@ -57,7 +61,7 @@ export default function ListInvoice() {
 
   const fetchInvoices = async () => {
     try {
-      const res: any = await apiGetAllInvoice(size, currentPage, date_end);
+      const res: any = await apiGetAllInvoice(size, currentPage, currenDate);
       if (res.status === 200) {
         updateInvoices(res.data);
       }
@@ -88,11 +92,11 @@ export default function ListInvoice() {
   }, []);
 
   const handleChangePage = async (page: number) => {
-    const res: any = await apiGetAllInvoice(size, page, date_end);
+    const res: any = await apiGetAllInvoice(size, page, currenDate);
     updateInvoices(res.data);
   };
   const handleChangeSize = async () => {
-    const res: any = await apiGetAllInvoice(size, currentPage, date_end);
+    const res: any = await apiGetAllInvoice(size, currentPage, currenDate);
     updateInvoices(res.data);
   };
 
@@ -107,7 +111,6 @@ export default function ListInvoice() {
     }
     try {
       const res: any = await apiGetInvoiceById(idVoice);
-      console.log(res.data);
       if (res.data.status === "error") {
         toast.error(res.data.message, {
           position: "top-center",
@@ -170,8 +173,11 @@ export default function ListInvoice() {
     <div className="px-10">
       {/* header */}
       <div className="flex items-center justify-between gap-5 border-b-2 mb-3 pb-2">
-        <h3 className="w-[150px] font-semibold text-xl">ໃບບິນ</h3>
         <div className="flex w-full items-center gap-4">
+          <p className="font-semibold text-xl">ໃບບິນ</p>
+          <p className="flex">
+            ອັບເດດລ່າສຸດ: <span>{formatDateNotime(currenDate)}</span>
+          </p>
           <label htmlFor="sizePage">ຈໍານວນລາຍການ</label>
           <input
             type="number"
@@ -190,7 +196,6 @@ export default function ListInvoice() {
             ຄ່າເລີ່ມຕົ້ນ
           </Button>
         </div>
-
         <form onSubmit={handleFilter} className="flex items-center gap-2 pe-10">
           <div className="border-2 border-gray-300 hover:border-gray-400 rounded overflow-hidden">
             <input
@@ -217,6 +222,7 @@ export default function ListInvoice() {
         <p className="border-l-3 border-blue-500 leading-none ps-1 my-5">
           ລາຍງານການຂາຍ
         </p>
+
         <div className="flex items-center gap-3 shadow-lg p-2 rounded-lg text-center">
           <div className="font-bold flex-1 bg-gradient-to-tr from-neutral-700 to-neutral-400 p-3 rounded-lg text-white">
             <p className="text-center text-lg font-semibold border-b-2 ">

@@ -79,7 +79,7 @@ export default function DetailHistory() {
         <h3 className="font-semibold text-xl ">ລາຍລະອຽດປະຫວັດການຂາຍ</h3>
       </div>
       <div>
-        <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-5">
           ລາຍລະອຽດໃບບິນ
         </h1>
 
@@ -173,41 +173,41 @@ export default function DetailHistory() {
 
         {/* detail product */}
 
-        <h1 className="border-l-4 border-green-500 leading-3 ps-2 mt-10">
+        <h1 className="border-l-4 border-green-500 leading-3 ps-2 mt-10 mb-5">
           ລາຍລະອຽດສິນຄ້າ
         </h1>
-        <div className="p-6">
-          <Table
-            classNames={{
-              wrapper:
-                "max-h-[300px] overflow-hidden p-0 rounded-lg shadow-lg scroll-thin border-b-2 border-r-2 border-l-2 border-blue-400",
-              th: "bg-blue-500 text-white font-semibold text-sm",
-            }}
-          >
-            <TableHeader>
-              <TableColumn> ບາໂຄດ</TableColumn>
-              <TableColumn>ຫົວຂໍ້</TableColumn>
-              <TableColumn>ຫົວໜ່ວຍ</TableColumn>
-              <TableColumn>ໝວດຫມູ່</TableColumn>
-              <TableColumn>ຈໍານວນ</TableColumn>
-              <TableColumn>ລາຄາ (LAK)</TableColumn>
-              <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
-            </TableHeader>
-            <TableBody items={invoice?.details ?? []}>
-              {(item) => (
-                <TableRow key={item.barcode}>
-                  <TableCell>{item.barcode}</TableCell>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.size}</TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>{item.qty}</TableCell>
-                  <TableCell>{formattedNumber(item.total_unit_lak)}</TableCell>
-                  <TableCell>{formattedNumber(item.total_lak)}</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+
+        <Table
+          classNames={{
+            wrapper:
+              "max-h-[300px] overflow-hidden  p-0 rounded-lg shadow-lg scroll-thin border-b-2 border-r-2 border-l-2 border-blue-400",
+            th: "bg-blue-500 text-white font-semibold text-sm",
+          }}
+        >
+          <TableHeader>
+            <TableColumn> ບາໂຄດ</TableColumn>
+            <TableColumn>ຫົວຂໍ້</TableColumn>
+            <TableColumn>ຫົວໜ່ວຍ</TableColumn>
+            <TableColumn>ໝວດຫມູ່</TableColumn>
+            <TableColumn>ຈໍານວນ</TableColumn>
+            <TableColumn>ລາຄາ (LAK)</TableColumn>
+            <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
+          </TableHeader>
+          <TableBody items={invoice?.details ?? []}>
+            {(item) => (
+              <TableRow key={item.barcode}>
+                <TableCell>{item.barcode}</TableCell>
+                <TableCell>{item.title}</TableCell>
+                <TableCell>{item.size}</TableCell>
+                <TableCell>{item.category}</TableCell>
+                <TableCell>{item.qty}</TableCell>
+                <TableCell>{formattedNumber(item.total_unit_lak)}</TableCell>
+                <TableCell>{formattedNumber(item.total_lak)}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+
         {/* button back */}
         <div className="my-5 flex items-center justify-between">
           <Button onPress={() => window.history.back()} color="warning">

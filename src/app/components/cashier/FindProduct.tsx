@@ -14,6 +14,7 @@ import {
 } from "@/app/api/products";
 import { SwalNotification } from "@/app/helpers/alers";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const FindProduct = () => {
   const { cartName, updateCart, searchType, updateSearchType, maxMinqty } =
@@ -92,6 +93,10 @@ const FindProduct = () => {
     }
   }, [key]);
 
+  React.useEffect(() => {
+    FindProductByCode();
+  }, []);
+
   const PlaySound = () => {
     const audio = new Audio("/successed.mp3");
     audio.play();
@@ -109,22 +114,21 @@ const FindProduct = () => {
           qty: 1,
           cart_name: cartName,
         });
-        console.log(res)
         if (res.data.status !== "error") {
           updateCart(res.data);
           setBarcode("");
           PlaySound();
         }
       } catch (error) {
+        SwalNotification("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ", "error");
         throw error;
       }
     } else {
       setProductsTemp([]);
     }
   };
-  //////////
+
   const handleAddToCart = async (barcodet: string) => {
-    console.log("add: " + barcodet);
     if (maxMinqty === 1) {
       return addMaxQty(barcodet);
     }
@@ -139,18 +143,15 @@ const FindProduct = () => {
         setBarcode("");
         PlaySound();
       }
-    } catch (error) {
-      // toast.error(String(error), {
-      //   position: "top-center",
-      // });
-      console.log(error);
+    } catch (e) {
+      SwalNotification("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ", "error");
+      console.error(e);
     }
   };
 
   const FindProductByCode = async () => {
     try {
       const res = await apiProductByCode(key);
-      console.log(res)
       setProductsTemp(res.data);
     } catch (error) {
       throw error;
@@ -190,7 +191,7 @@ const FindProduct = () => {
             label="barcode"
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
-            color="success"
+            color="primary"
             size="md"
             variant="bordered"
             classNames={{

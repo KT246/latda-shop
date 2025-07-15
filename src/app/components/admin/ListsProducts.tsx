@@ -39,7 +39,6 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /// handles changes
   const selectedValue = React.useMemo(
@@ -124,35 +123,6 @@ function ListsProducts() {
     });
   };
 
-  const handleResetQty = async () => {
-    Swal.fire({
-      title: "Reset Stock",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "red",
-      confirmButtonText: "reset",
-      cancelButtonText: "cancel",
-      focusCancel: true,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          setIsLoading(true);
-          const res = await apiResetQty();
-          if (res?.status === 200) {
-            toast.success("ສຳເລັດ");
-            fetchData();
-          } else {
-            console.error("Failed to reset stock:", res?.data?.message);
-          }
-        } catch (error) {
-          console.error("Error reset stock:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    });
-  };
-
   return (
     <div>
       <div className="flex items-center justify-between p-3">
@@ -212,14 +182,6 @@ function ListsProducts() {
             </DropdownMenu>
           </Dropdown>
         </div>
-        <Button
-          onPress={handleResetQty}
-          color="success"
-          radius="sm"
-          className="text-medium text-white"
-        >
-          {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
-        </Button>
       </div>
 
       <Table

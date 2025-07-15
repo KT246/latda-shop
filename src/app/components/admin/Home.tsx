@@ -8,7 +8,12 @@ import { Doughnut, Line } from "react-chartjs-2";
 import { ReportProduct, ReportSaleResponse } from "@/app/lib/interface";
 
 /// api
-import { FetchReport, GetReportSale } from "@/app/api/admin.product";
+import {
+  FetchReport,
+  GetReportSale,
+  PutExChange,
+  GetExChange,
+} from "@/app/api/admin.product";
 
 /// table
 import {
@@ -33,6 +38,9 @@ import {
   getTodayDate,
 } from "@/app/helpers/funtions";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { apiResetQty } from "@/app/api/products";
 
 function Home() {
   /// useState
@@ -44,6 +52,9 @@ function Home() {
   );
   const [dateStart, setDateStart] = React.useState("2025-07-01");
   const [dateEnd, setDateEnd] = React.useState(getTodayDate());
+
+  const [exchange, setExchange] = useState<number | 0>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   /// useSWR
   const { data: dataRP, error: errorRP } = useSWR(
@@ -61,16 +72,22 @@ function Home() {
       console.log(error);
     }
   };
-  /// useEffect
-  React.useEffect(() => {
-    if (dataRP) {
-      setReportProduct(dataRP);
-    }
-  }, [dataRP]);
 
-  React.useEffect(() => {
-    fetchData();
-  }, []);
+  const getExchange = async () => {
+    try {
+      const res: any = await GetExChange();
+      if (res.status === 200) {
+        setExchange(res.data.rate);
+      }
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response) {
+        const errorMessage = e.response.data?.message;
+        toast.error(errorMessage);
+      } else {
+        toast.error("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ");
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +99,85 @@ function Home() {
       fetchData();
     }
   };
+
+  const handleUpdateEchange = async () => {
+    const { value: rate } = await Swal.fire({
+      title: "ອັບເດດ Exchange",
+      input: "text",
+      inputPlaceholder: "ພິມຈຳນວນ...",
+      showCancelButton: true,
+      confirmButtonText: "ບັນທຶກ",
+      cancelButtonText: "ຍົກເລີກ",
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return "ກະລຸນາປ້ອນຈຳນວນ Exchange!";
+        }
+        return null;
+      },
+      didOpen: () => {
+        Swal.getInput()?.focus();
+      },
+    });
+
+    if (rate) {
+      try {
+        const res: any = await PutExChange({ newRate: rate });
+        if (res.status === 200) {
+          toast.success("ອັບເດດອັຕາແລປ່ຽນສຳເລັດ");
+          setExchange(res.data.newRate);
+        }
+      } catch (e) {
+        if (axios.isAxiosError(e) && e.response) {
+          const errorMessage = e.response.data?.message;
+          toast.error(errorMessage);
+        } else {
+          toast.error("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ");
+        }
+      }
+    }
+  };
+
+  const handleResetQty = async () => {
+    Swal.fire({
+      title: "Reset Stock",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "reset",
+      cancelButtonText: "cancel",
+      focusCancel: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setIsLoading(true);
+          const res = await apiResetQty();
+          if (res?.status === 200) {
+            toast.success("ສຳເລັດ");
+            fetchData();
+          } else {
+            console.error("Failed to reset stock:", res?.data?.message);
+          }
+        } catch (error) {
+          console.error("Error reset stock:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    });
+  };
+
+  /// useEffect
+  React.useEffect(() => {
+    if (dataRP) {
+      setReportProduct(dataRP);
+    }
+  }, [dataRP]);
+
+  React.useEffect(() => {
+    fetchData();
+    getExchange();
+  }, []);
 
   return (
     <>
@@ -119,15 +215,30 @@ function Home() {
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  className="bg-blue-500 px-2 py-1 rounded text-white"
-                >
+                <Button type="submit" color="primary" radius="sm">
                   ຄົ້ນຫາ
-                </button>
+                </Button>
               </div>
-              <div>
-                <p>Exchange rate: 4444</p>
+              <div className="flex items-center gap-5">
+                <p className=" capitalize flex items-center gap-2 bg-gradient-to-t from-yellow-700 to-yellow-300 text-white px-2 rounded-lg">
+                  <span className="">Exchange rate:</span>
+                  <span className="text-xl font-bold">{exchange}</span>
+                </p>
+                <Button
+                  color="warning"
+                  radius="sm"
+                  onPress={handleUpdateEchange}
+                >
+                  ອັບເດດ
+                </Button>{" "}
+                <Button
+                  onPress={handleResetQty}
+                  color="success"
+                  radius="sm"
+                  className="text-medium text-white"
+                >
+                  {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
+                </Button>
               </div>
             </form>
             <div className="flex gap-10">
@@ -170,7 +281,7 @@ function Home() {
                         <TableCell>
                           <Tooltip content="ລາຍລະອຽດ" color="success">
                             <Link
-                              href={`/admin/history/detail/`+item.id}
+                              href={`/admin/history/detail/` + item.id}
                               className="text-lg hover:text-green-400 flex justify-center "
                             >
                               <EyeIcon />
@@ -182,23 +293,23 @@ function Home() {
                   </TableBody>
                 </Table>
               </div>
-              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
-                <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
+              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg text-white  font-semibold">
+                <h3 className="border-l-4 border-red-600 text-medium leading-none ps-2 text-blue-500">
                   ລາຍງານໃບບິນ
                 </h3>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-success-500 rounded-lg p-2 ">
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-success-400 from-success-600 rounded-lg p-2 ">
                   <p className="text-end">ຂາຍສຳເລັດ</p>
-                  <p className="text-center text-xl font-semibold">2</p>
+                  <p className="text-center text-3xl font-bold">2</p>
                   <p>ຈຳນວນ: 2</p>
                 </div>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-warning-500 rounded-lg p-2">
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-warning-400 from-warning-600 rounded-lg p-2">
                   <p className="text-end">ຕິດໜີ້</p>
-                  <p className="text-center text-xl font-semibold">2</p>
+                  <p className="text-center text-3xl font-semibold">2</p>
                   <p>ຈຳນວນ: 2</p>
                 </div>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-danger-500 text-white rounded-lg p-2 ">
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-danger-400 from-danger-600 text-white rounded-lg p-2 ">
                   <p className="text-end">ຖືກຍົກເລີກ</p>
-                  <p className="text-center text-xl font-semibold">2</p>
+                  <p className="text-center text-3xl font-semibold">2</p>
                   <p>ຈຳນວນ: 2</p>
                 </div>
               </div>
@@ -210,10 +321,10 @@ function Home() {
                 <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2 text-blue-500">
                   ລາຍງານສິນຄ້າ
                 </h3>
-                <div className="h-32 shadow-md border-2 border-blue-400 rounded-lg p-2 ">
+                <div className="h-32 shadow-md  bg-gradient-to-tl to-cyan-300 from-cyan-600 rounded-lg p-2 ">
                   <p> ຕົ້ນທືນທັງຫມົດ (ກີບ)</p>
 
-                  <p className="flex justify-center text-center text-gray-600 text-xl font-semibold pt-5">
+                  <p className="flex justify-center text-center text-3xl font-semibold pt-5">
                     {/* <LaoCurrentCy /> */}
                     <span>
                       {formattedNumber(
@@ -222,32 +333,32 @@ function Home() {
                     </span>
                   </p>
                 </div>
-                <div className="h-32 shadow-md border-2 border-blue-400 rounded-lg p-2 ">
-                  <p> ຕົ້ນທືນທັງຫມົດ (ບາດ)</p>
-                  <p className="text-center text-gray-600 text-xl font-semibold pt-5">
+                <div className="h-32 shadow-md  bg-gradient-to-tl to-yellow-300 from-yellow-600 rounded-lg p-2 ">
+                  <span>ຕົ້ນທືນທັງຫມົດ (ບາດ)</span>
+                  <p className="text-center text-white text-3xl font-semibold pt-5">
                     {formattedNumber(
                       resportProduct?.warehouse.total_cost_thb || 0
                     )}
                   </p>
                 </div>
-                <div className="flex items-center gap-3 ">
-                  <div className="h-32 shadow-lg flex-1 bg-blue-500 text-white rounded-lg p-2">
-                    <p className="text-center border-b-1">ສິນຄ້າທັງຫມົດ</p>
-                    <p className="text-center text-xl font-semibold pt-5">
+                <div className="flex items-center gap-3 text-white ">
+                  <div className="h-32 shadow-lg flex-1 bg-gradient-to-tl to-blue-400 from-blue-700 rounded-lg p-2">
+                    <p className="text-center border-b-2">ສິນຄ້າທັງຫມົດ</p>
+                    <p className="text-center text-3xl font-semibold pt-5">
                       {resportProduct?.warehouse.total_qty_balance}
                     </p>
                   </div>
-                  <div className="h-32 shadow-lg text-sm flex-1  bg-success-500 rounded-lg p-2">
-                    <p className="text-center border-b-1 pb-1">
+                  <div className="h-32 shadow-lg text-sm flex-1 bg-gradient-to-bl to-success-400 from-success-700 rounded-lg p-2">
+                    <p className="text-center border-b-2 pb-1">
                       ສິນຄ້າເຄື່ອນໄຫວ
                     </p>
-                    <p className="text-center text-xl font-semibold pt-5">
+                    <p className="text-center text-3xl font-semibold pt-5">
                       {resportProduct?.warehouse.active_products_count}
                     </p>
                   </div>
-                  <div className="h-32 shadow-lg bg-danger-500 text-white flex-1 rounded-lg p-2">
-                    <p className="text-center border-b-1">ສິນຄ້າບລັອກ</p>
-                    <p className="text-center text-xl font-semibold pt-5">
+                  <div className="h-32 shadow-lg bg-gradient-to-tr to-red-400 from-red-700 flex-1 rounded-lg p-2">
+                    <p className="text-center border-b-2">ສິນຄ້າບລັອກ</p>
+                    <p className="text-center text-3xl font-semibold pt-5">
                       {resportProduct?.warehouse.blocked_products_count}
                     </p>
                   </div>
