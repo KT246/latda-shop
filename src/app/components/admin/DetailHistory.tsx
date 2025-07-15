@@ -177,7 +177,10 @@ export default function DetailHistory() {
         <h1 className="border-l-4 border-green-500 leading-3 ps-2 mt-10 mb-5">
           ລາຍລະອຽດສິນຄ້າ
         </h1>
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2c383367c82f038ffa4bbc31e64d50a5140dd9a
         <div className=" mt-4">
           <Table
             classNames={{
@@ -212,7 +215,10 @@ export default function DetailHistory() {
             </TableBody>
           </Table>
         </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2c383367c82f038ffa4bbc31e64d50a5140dd9a
         {/* button back */}
         <div className="my-5 flex items-center justify-between">
           <Button onPress={() => window.history.back()} color="warning">

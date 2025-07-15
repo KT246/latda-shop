@@ -6,10 +6,10 @@ export const metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col h-screen">
-      <div className="bg-blue-500 h-[19%]">
+      <div className="bg-blue-500 h-[7%]">
         <Navbar />
       </div>
-      <div className="w-full h-[90%] flex">
+      <div className="w-full h-[93%] flex">
         <div className=" bg-blue-950">
           <Sidebar />
         </div>
