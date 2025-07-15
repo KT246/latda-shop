@@ -123,6 +123,10 @@ export interface ReportSaleDetail {
   saleCompleted: SaleDetail;
   saleDebt: SaleDetail;
   saleCancle: SaleDetail;
+  profit: {
+    total_discount_lak: number;
+    total_profit_lak: number;
+  };
 }
 
 export interface InvoiceDebt {

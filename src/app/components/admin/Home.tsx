@@ -24,7 +24,7 @@ import {
   TableRow,
   TableCell,
   Pagination,
-  getKeyValue,
+  Skeleton,
   Tooltip,
   Select,
   SelectItem,
@@ -220,7 +220,7 @@ function Home() {
                 </Button>
               </div>
               <div className="flex items-center gap-5">
-                <p className=" capitalize flex items-center gap-2 bg-gradient-to-t from-yellow-700 to-yellow-300 text-white px-2 rounded-lg">
+                <p className=" capitalize flex items-center gap-2 bg-gradient-to-br from-yellow-700 to-yellow-400 text-white px-2 rounded-lg">
                   <span className="">Exchange rate:</span>
                   <span className="text-xl font-bold">{exchange}</span>
                 </p>
@@ -229,7 +229,7 @@ function Home() {
                   radius="sm"
                   onPress={handleUpdateEchange}
                 >
-                  ອັບເດດ
+                  {isLoading ? "..." : " ອັບເດດ Rate"}
                 </Button>{" "}
                 <Button
                   onPress={handleResetQty}
@@ -242,6 +242,76 @@ function Home() {
               </div>
             </form>
             <div className="flex gap-10">
+              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg text-white  ">
+                <h3 className="border-l-4 border-red-600 text-medium font-semibold leading-none ps-2 text-blue-500">
+                  ລາຍງານໃບບິນ
+                </h3>
+                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-blue-400 from-blue-600 rounded-lg p-2 ">
+                  <p className="text-end">ຂາຍໄດ້ທັງໝົດ(ບໍ່ລວມບິນຕິດໜີ້)</p>
+                  <p className="text-center  font-bold py-3">
+                    <span className=" text-3xl me-1">
+                      {formattedNumber(
+                        resportSale?.detail.saleCompleted.total ?? 0
+                      )}
+                    </span>
+                    <span>ກີບ</span>
+                  </p>
+                  <p>ຈຳນວນ: {resportSale?.detail.saleCompleted.bill_count}</p>
+                </div>
+                <div className="h-32 flex justify-betwee items-center gap-3 text-white ">
+                  <div className="flex-1 bg-gradient-to-tr  to-green-400 from-green-600 shadow-lg  rounded-lg p-2">
+                    <p className="text-center border-b-2">ກຳໄລ</p>
+                    <p className="text-center  font-bold py-3">
+                      <span className=" text-3xl me-1">
+                        {formattedNumber(
+                          resportSale?.detail.profit.total_profit_lak ?? 0
+                        )}
+                      </span>
+                      <span>ກີບ</span>
+                    </p>
+
+                    <p className="text-[13px]">ຫລັງຫັກຈາກສ່ວນຫລຸດ!</p>
+                  </div>
+                  <div className="flex-1 bg-gradient-to-tr to-red-400 from-red-600 shadow-lg  rounded-lg p-2 pb-7z">
+                    <p className="text-center border-b-2">ສ່ວນຫຼຸດທັງໜົດ</p>
+                    <p className="text-center  font-bold py-3">
+                      <span className=" text-3xl me-1">
+                        {formattedNumber(
+                          resportSale?.detail.profit.total_discount_lak ?? 0
+                        )}
+                      </span>
+                      <span>ກີບ</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="h-32 flex justify-betwee items-center gap-3 text-white ">
+                  <div className="flex-1 bg-gradient-to-tr  to-warning-400 from-warning-600 shadow-lg  rounded-lg p-2">
+                    <p className="text-center border-b-2">ຕິດໜີ້</p>
+                    <p className="text-center  font-bold py-3">
+                      <span className=" text-3xl me-1">
+                        {formattedNumber(
+                          resportSale?.detail.saleDebt.total ?? 0
+                        )}
+                      </span>
+                      <span>ກີບ</span>
+                    </p>
+
+                    <p>ຈຳນວນ: {resportSale?.detail.saleDebt.bill_count}</p>
+                  </div>
+                  <div className="flex-1 bg-gradient-to-tr to-danger-400 from-danger-600 shadow-lg  rounded-lg p-2">
+                    <p className="text-center border-b-2">ຖືກຍົກເລີກ</p>
+                    <p className="text-center  font-bold py-3">
+                      <span className=" text-3xl me-1">
+                        {formattedNumber(
+                          resportSale?.detail.saleCancle.total ?? 0
+                        )}
+                      </span>
+                      <span>ກີບ</span>
+                    </p>
+                    <p>ຈຳນວນ: {resportSale?.detail.saleCancle.bill_count}</p>
+                  </div>
+                </div>
+              </div>
               <div className="w-2/3 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
                 <h3 className="border-l-4 border-red-600 font-semibold leading-none ps-2 text-blue-500">
                   ບິນຕິດຫນີ້
@@ -293,26 +363,6 @@ function Home() {
                   </TableBody>
                 </Table>
               </div>
-              <div className="w-2/6 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg text-white  font-semibold">
-                <h3 className="border-l-4 border-red-600 text-medium leading-none ps-2 text-blue-500">
-                  ລາຍງານໃບບິນ
-                </h3>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-success-400 from-success-600 rounded-lg p-2 ">
-                  <p className="text-end">ຂາຍສຳເລັດ</p>
-                  <p className="text-center text-3xl font-bold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-warning-400 from-warning-600 rounded-lg p-2">
-                  <p className="text-end">ຕິດໜີ້</p>
-                  <p className="text-center text-3xl font-semibold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
-                <div className="h-32 flex flex-col justify-between shadow-lg bg-gradient-to-tr to-danger-400 from-danger-600 text-white rounded-lg p-2 ">
-                  <p className="text-end">ຖືກຍົກເລີກ</p>
-                  <p className="text-center text-3xl font-semibold">2</p>
-                  <p>ຈຳນວນ: 2</p>
-                </div>
-              </div>
             </div>
           </div>
           <div className="mt-5">
@@ -324,21 +374,24 @@ function Home() {
                 <div className="h-32 shadow-md  bg-gradient-to-tl to-cyan-300 from-cyan-600 rounded-lg p-2 ">
                   <p> ຕົ້ນທືນທັງຫມົດ (ກີບ)</p>
 
-                  <p className="flex justify-center text-center text-3xl font-semibold pt-5">
-                    {/* <LaoCurrentCy /> */}
-                    <span>
+                  <p className="text-center  font-bold py-3">
+                    <span className=" text-3xl me-1">
                       {formattedNumber(
                         resportProduct?.warehouse.total_cost_lak || 0
                       )}
                     </span>
+                    <span>ກີບ</span>
                   </p>
                 </div>
                 <div className="h-32 shadow-md  bg-gradient-to-tl to-yellow-300 from-yellow-600 rounded-lg p-2 ">
                   <span>ຕົ້ນທືນທັງຫມົດ (ບາດ)</span>
-                  <p className="text-center text-white text-3xl font-semibold pt-5">
-                    {formattedNumber(
-                      resportProduct?.warehouse.total_cost_thb || 0
-                    )}
+                  <p className="text-center  font-bold py-3 text-white">
+                    <span className=" text-3xl me-1">
+                      {formattedNumber(
+                        resportProduct?.warehouse.total_cost_thb || 0
+                      )}
+                    </span>
+                    <span>ກີບ</span>
                   </p>
                 </div>
                 <div className="flex items-center gap-3 text-white ">

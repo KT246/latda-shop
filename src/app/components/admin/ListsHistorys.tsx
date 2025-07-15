@@ -3,8 +3,12 @@ import React, { useState } from "react";
 import { InvoiceResponse } from "@/app/lib/interface";
 import Link from "next/link";
 
-import { formatDate, formattedNumber, getOneMonthAgo } from "@/app/helpers/funtions";
-import HeaderLinks from "../HeaderLinks";
+import {
+  formatDate,
+  formattedNumber,
+  getOneMonthAgo,
+} from "@/app/helpers/funtions";
+
 import {
   Table,
   TableHeader,
@@ -47,8 +51,8 @@ function ListsHistorys() {
       dateEnd,
       payType
     );
-    console.log(payType)
-    console.log(res)
+    console.log(payType);
+    console.log(res);
     const data = res.data;
     setInvoices(data);
     setTotalPages(data.totalPages);
@@ -207,10 +211,10 @@ function ListsHistorys() {
           <TableColumn>ລະຫັດບິນ</TableColumn>
           <TableColumn>ວັນທີສ້າງ</TableColumn>
           <TableColumn>ລະຫັດຜູ້ຂາຍ</TableColumn>
-          <TableColumn>ອັດຕາແລກປ່ຽນ</TableColumn>
-          <TableColumn>ຈໍານວນສິນຄ້າ</TableColumn>
-          <TableColumn>ສ່ວນຫຼຸດ</TableColumn>
-          <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right">ອັດຕາແລກປ່ຽນ</TableColumn>
+          <TableColumn className="text-right">ຈໍານວນສິນຄ້າ</TableColumn>
+          <TableColumn className="text-right">ສ່ວນຫຼຸດ</TableColumn>
+          <TableColumn className="text-right">ລາຄາລວມ (LAK)</TableColumn>
           <TableColumn>ປະເພດການຈ່າຍ</TableColumn>
           <TableColumn>status</TableColumn>
           <TableColumn className="text-center">action</TableColumn>
@@ -224,16 +228,20 @@ function ListsHistorys() {
               <TableCell>{item.id}</TableCell>
               <TableCell>{formatDate(item.date_create)}</TableCell>
               <TableCell>{item.cashier_id}</TableCell>
-              <TableCell>{item.rate}</TableCell>
-              <TableCell>{item.details.length}</TableCell>
-              <TableCell>{item.m_discount}</TableCell>
-              <TableCell>{formattedNumber(item.total_checkout_lak)}</TableCell>
+              <TableCell className="text-right">{item.rate}</TableCell>
+              <TableCell className="text-right">
+                {item.details.length}
+              </TableCell>
+              <TableCell className="text-right">{item.m_discount}</TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_checkout_lak)}
+              </TableCell>
               <TableCell>
                 {item.pay_type === "cash"
                   ? "ເງິນສົດ"
                   : item.pay_type === "transfer"
-                    ? "ເງິນໂອນ"
-                    : "ຕິດໜີ້"}
+                  ? "ເງິນໂອນ"
+                  : "ຕິດໜີ້"}
               </TableCell>
               <TableCell className="text-white">
                 {item.status === "cancel" ? (

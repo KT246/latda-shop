@@ -348,33 +348,24 @@ export default function ListInvoice() {
                       </span>
                     </Link>
                   </Tooltip>
-                  {item.status !== "" ? (
-                    <>
-                      <Tooltip color="default" content="coppy ບິນ">
-                        <button onClick={handleCanle(item.id)}>
-                          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                            <PrintIcon />
-                          </span>
-                        </button>
-                      </Tooltip>
-                      {item.status === "cancel" ? (
-                        ""
-                      ) : (
-                        <Tooltip content="ຍົກເລີກ" color="danger">
-                          <button onClick={handleCanle(item.id)}>
-                            <span className="text-lg text-red-400 cursor-pointer active:opacity-50 ">
-                              <DeleteIcon />
-                            </span>
-                          </button>
-                        </Tooltip>
-                      )}
-                    </>
+                  {item.status === "cancel" ? (
+                    <Tooltip color="default" content="coppy ບິນ">
+                      <button
+                      // onClick={handleCanle(item.id)}
+                      >
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <PrintIcon />
+                        </span>
+                      </button>
+                    </Tooltip>
                   ) : (
-                    <div className=" ">
-                      <span className="bg-red-300 text-white  font-bold  px-2 rounded">
-                        ບິນຖືກຍົກເລີກ
-                      </span>
-                    </div>
+                    <Tooltip content="ຍົກເລີກ" color="danger">
+                      <button onClick={handleCanle(item.id)}>
+                        <span className="text-lg text-red-400 cursor-pointer active:opacity-50 ">
+                          <DeleteIcon />
+                        </span>
+                      </button>
+                    </Tooltip>
                   )}
                 </div>
               </TableCell>

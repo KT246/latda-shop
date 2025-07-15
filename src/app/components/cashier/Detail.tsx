@@ -167,20 +167,28 @@ export default function Detail() {
           <TableColumn>ຫົວຂໍ້</TableColumn>
           <TableColumn>ຫົວໜ່ວຍ</TableColumn>
           <TableColumn>ໝວດຫມູ່</TableColumn>
-          <TableColumn>ຈໍານວນ</TableColumn>
-          <TableColumn>ລາຄາ (LAK)</TableColumn>
-          <TableColumn>ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right">ຈໍານວນ</TableColumn>
+          <TableColumn className="text-right">ສ່ວນຫຼຸດ</TableColumn>
+          <TableColumn className="text-right">ລາຄາ (LAK)</TableColumn>
+          <TableColumn className="text-right">ລາຄາລວມ (LAK)</TableColumn>
         </TableHeader>
         <TableBody items={invoice?.details ?? []}>
           {(item) => (
             <TableRow key={item.barcode}>
               <TableCell>{item.barcode}</TableCell>
-              <TableCell>{item.title}</TableCell>
-              <TableCell>{item.size}</TableCell>
+              <TableCell>{item.title + item.size}</TableCell>
+              <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
-              <TableCell>{item.qty}</TableCell>
-              <TableCell>{formattedNumber(item.total_unit_lak)}</TableCell>
-              <TableCell>{formattedNumber(item.total_lak)}</TableCell>
+              <TableCell className="text-right">{item.qty}</TableCell>
+              <TableCell className="text-right text-danger">
+                {item.discount}%
+              </TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_unit_lak)}
+              </TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_lak)}
+              </TableCell>
             </TableRow>
           )}
         </TableBody>
