@@ -51,7 +51,6 @@ function ListsProducts() {
   /// funtion
   const fetchData = async () => {
     const res: any = await GetAllProduct(rowsPerPage, page);
-    // console.log(res);
     if (res?.status === 200) {
       setProduct(res.data.products);
       setPages(res.data.totalPages);
@@ -91,6 +90,8 @@ function ListsProducts() {
   React.useEffect(() => {
     if (selectedValue && values) {
       debouncedFiltered(selectedValue, values);
+    } else {
+      fetchData();
     }
   }, [values, debouncedFiltered, selectedValue]);
 
@@ -184,21 +185,6 @@ function ListsProducts() {
             </DropdownMenu>
           </Dropdown>
         </div>
-<<<<<<< HEAD
-=======
-        <div>
-          {/* {user?.path === 0 &&
-           <Button
-            onPress={handleResetQty}
-            color="success"
-            radius="sm"
-            className="text-medium text-white"
-          >
-            {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
-          </Button> } */}
-        </div>
-
->>>>>>> 18e3ff7a85a01c3cc12852558d79438c41ae635a
       </div>
 
       <Table
@@ -263,9 +249,7 @@ function ListsProducts() {
                 )}
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
-              <TableCell>
-                {item.title + " "+ item.size}
-              </TableCell>
+              <TableCell>{item.title + " " + item.size}</TableCell>
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.qty_start}</TableCell>
@@ -273,10 +257,11 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${item.qty_balance <= item.qty_alert
-                    ? "text-red-500"
-                    : "text-black"
-                    }`}
+                  className={`${
+                    item.qty_balance <= item.qty_alert
+                      ? "text-red-500"
+                      : "text-black"
+                  }`}
                 >
                   {item.qty_balance}
                 </span>

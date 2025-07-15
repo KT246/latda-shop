@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button, form, Input, Tooltip } from "@heroui/react";
 
 import { useCartStore } from "@/app/store/cartStore";
-import { formattedNumber } from "@/app/helpers/funtions";
+import { formattedNumber, PlaySound } from "@/app/helpers/funtions";
 import {
   apiRetail,
   apiDecrease,
@@ -56,10 +56,12 @@ const Invoice = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
+    const rawValue = value.replace(/,/g, "");
+    const numberValue = Number(rawValue);
     setFormData((prev) => {
       const updated = {
         ...prev,
-        [name]: Number(value),
+        [name]: numberValue,
       };
       const realTotal = cart?.total_lak || 0;
 
@@ -84,7 +86,8 @@ const Invoice = () => {
         if (res.data.status !== "error") {
           updateCart(res.data);
         } else {
-          toast.error(res.data?.message);
+          PlaySound("warning");
+          SwalNotification(res.data.message, "warning");
         }
       } catch (e) {
         if (axios.isAxiosError(e) && e.response) {
@@ -101,6 +104,9 @@ const Invoice = () => {
         });
         if (res.data.status !== "error") {
           updateCart(res.data);
+        } else {
+          PlaySound("warning");
+          SwalNotification(res.data.message, "warning");
         }
       } catch (error) {
         throw error;
@@ -117,7 +123,7 @@ const Invoice = () => {
     Swal.fire({
       title: "ເຄຍກະຕ່າ",
       text: `ຢືນຢັນການລົບກະຕ່າ ${cartName} ບໍ່?`,
-      icon: "warning",
+      icon: "question",
       showCancelButton: true,
       cancelButtonText: "ຍົກເລີກ",
       confirmButtonText: "ຢືນຢັນ",
@@ -206,10 +212,6 @@ const Invoice = () => {
 
   /// onSubmit
   const handleSubmit = async (key: number) => {
-    if (cart === null) {
-      toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ");
-      return;
-    }
     if (key === 0) {
       Debt("debt");
     } else if (key === 1) {
@@ -224,20 +226,32 @@ const Invoice = () => {
     barcode: string,
     cart_name: number
   ) => {
-    try {
-      const res = await apiDeleteProduct(cashier_id, barcode, cart_name);
-      if (res.data.status !== "error") {
-        updateCart(res.data.details.length > 0 ? res.data : null);
-        toast.success("ລົບສິນຄ້າແລ້ວ");
-      } else {
-        toast.error(res.data?.message);
+    Swal.fire({
+      title: "!ລົບສິນຄ້າ",
+      text: "ຢຶນຢັນລົບສິນຄ້າ: " + barcode + " ບໍ?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "red",
+      confirmButtonText: "ລົບສິນຄ້າ",
+      focusCancel: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await apiDeleteProduct(cashier_id, barcode, cart_name);
+          if (res.data.status !== "error") {
+            updateCart(res.data.details.length > 0 ? res.data : null);
+            SwalNotification(res.data.message, "success");
+          } else {
+            SwalNotification(res.data.message, "warning");
+          }
+        } catch (error) {
+          if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data?.message;
+            toast.error(errorMessage);
+          }
+        }
       }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const errorMessage = error.response.data?.message;
-        toast.error(errorMessage);
-      }
-    }
+    });
   };
 
   /// logic
@@ -355,10 +369,7 @@ const Invoice = () => {
             onPress={() => {
               cart !== null
                 ? setDialog(!dialog)
-                : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
-                    position: "top-center",
-                  });
-              // updateMnCheckOut(cart?.total_lak ?? 0);
+                : SwalNotification("ກະຕ່າບໍ່ມີສິນຄ້າ", "error");
             }}
             color="primary"
             className="flex-1 h-[80px] text-[40px] font-bold"
@@ -378,10 +389,9 @@ const Invoice = () => {
                 <p className="text-lg text-danger">ສ່ວນຫຼຸດຫນ້າຮ້ານ</p>
                 <div className="overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
                   <input
-                    type="number"
-                    min={0}
+                    type="text"
                     name="d_mount"
-                    value={formData.d_mount}
+                    value={formattedNumber(formData.d_mount)}
                     className="w-full h-full outline-none p-1"
                     onChange={handleChange}
                   />
@@ -391,10 +401,9 @@ const Invoice = () => {
                 <div className="flex h-12 rounded">
                   <div className="flex-1 overflow-hidden border-gray-300 hover:border-gray-500 border-2 border-r-0">
                     <input
-                      type="number"
-                      min={0}
+                      type="text"
                       name="money_cutom"
-                      value={formData.money_cutom}
+                      value={formattedNumber(formData.money_cutom)}
                       className="w-full h-full outline-none p-1"
                       onChange={handleChange}
                     />
@@ -466,6 +475,12 @@ const Invoice = () => {
                 radius="none"
                 onPress={() => {
                   setDialog(!dialog);
+                  setFormData({
+                    d_mount: 0,
+                    check_out: 0,
+                    money_cutom: 0,
+                    customer_change: 0,
+                  });
                 }}
               >
                 ຍົກເລີກ

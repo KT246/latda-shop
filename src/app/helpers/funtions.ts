@@ -40,14 +40,23 @@ export const getOneMonthAgo = () => {
   const today = new Date();
   const oneMonthAgo = new Date(today);
 
-  // Lùi lại 1 tháng
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-  // Format yyyy-mm-dd
   const year = oneMonthAgo.getFullYear();
-  const month = String(oneMonthAgo.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-  const day = String(oneMonthAgo.getDate()).padStart(2, '0');
+  const month = String(oneMonthAgo.getMonth() + 1).padStart(2, "0");
+  const day = String(oneMonthAgo.getDate()).padStart(2, "0");
 
   const formattedDate = `${year}-${month}-${day}`;
   return formattedDate;
-}
+};
+
+type SoundType = "success" | "warning";
+
+export const PlaySound = (type: SoundType) => {
+  const sounds: Record<SoundType, string> = {
+    success: "/successed.mp3",
+    warning: "/wrong.mp3",
+  };
+  const audio = new Audio(sounds[type]);
+  audio.play();
+};

@@ -2,7 +2,6 @@
 import { Input, Spinner } from "@heroui/react";
 import React from "react";
 import Highlighter from "react-highlight-words";
-
 import { useCartStore } from "@/app/store/cartStore";
 import Swal, { SweetAlertOptions } from "sweetalert2";
 import {
@@ -15,6 +14,7 @@ import {
 import { SwalNotification } from "@/app/helpers/alers";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { PlaySound } from "@/app/helpers/funtions";
 
 const FindProduct = () => {
   const { cartName, updateCart, searchType, updateSearchType, maxMinqty } =
@@ -36,7 +36,10 @@ const FindProduct = () => {
       if (res.data.status !== "error") {
         updateCart(res.data);
         setBarcode("");
-        PlaySound();
+        PlaySound("success");
+      } else {
+        PlaySound("warning");
+        SwalNotification(res.data.message, "warning");
       }
     } catch (error) {
       SwalNotification("ເກີດຂໍ້ຜິດພາດ", "error");
@@ -97,11 +100,6 @@ const FindProduct = () => {
     FindProductByCode();
   }, []);
 
-  const PlaySound = () => {
-    const audio = new Audio("/successed.mp3");
-    audio.play();
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (barcode !== "") {
@@ -117,7 +115,10 @@ const FindProduct = () => {
         if (res.data.status !== "error") {
           updateCart(res.data);
           setBarcode("");
-          PlaySound();
+          PlaySound("success");
+        } else {
+          PlaySound("warning");
+          SwalNotification(res.data.message, "warning");
         }
       } catch (error) {
         SwalNotification("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ", "error");
@@ -141,7 +142,10 @@ const FindProduct = () => {
       if (res.data.status !== "error") {
         updateCart(res.data);
         setBarcode("");
-        PlaySound();
+        PlaySound("success");
+      } else {
+        PlaySound("warning");
+        SwalNotification(res.data.message, "warning");
       }
     } catch (e) {
       SwalNotification("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ", "error");

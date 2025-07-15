@@ -305,10 +305,10 @@ export default function ListInvoice() {
           <TableColumn>ລະຫັດບິນ</TableColumn>
           <TableColumn> ວັນທີສ້າງ</TableColumn>
           <TableColumn> ລະຫັດຜູ້ຂາຍ</TableColumn>
-          <TableColumn> ອັດຕາແລກປ່ຽນ</TableColumn>
-          <TableColumn> ຈໍານວນສິນຄ້າ</TableColumn>
-          <TableColumn> ສ່ວນຫຼຸດ</TableColumn>
-          <TableColumn> ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right"> ອັດຕາແລກປ່ຽນ</TableColumn>
+          <TableColumn className="text-right"> ຈໍານວນສິນຄ້າ</TableColumn>
+          <TableColumn className="text-right"> ສ່ວນຫຼຸດ</TableColumn>
+          <TableColumn className="text-right"> ລາຄາລວມ (LAK)</TableColumn>
           <TableColumn> ປະເພດການຈ່າຍ</TableColumn>
           <TableColumn> ດຳເນີນການ</TableColumn>
         </TableHeader>
@@ -322,7 +322,7 @@ export default function ListInvoice() {
               <TableCell>{item.id}</TableCell>
               <TableCell>{formatDate(item.date_create ?? "")}</TableCell>
               <TableCell>{item.cashier_id}</TableCell>
-              <TableCell>{item.rate}</TableCell>
+              <TableCell className="text-right">{item.rate}</TableCell>
               <TableCell className="text-right">
                 {(item.details?.length ?? 0) + 1}
               </TableCell>
@@ -332,8 +332,12 @@ export default function ListInvoice() {
               <TableCell className="text-right">
                 {formattedNumber(item.total_checkout_lak ?? 0)}
               </TableCell>
-              <TableCell className="text-center">
-                {item.pay_type === "cash" ? "ເງິນສົດ" : "ເງິນໂອນ"}
+              <TableCell>
+                {item.pay_type === "cash"
+                  ? "ເງິນສົດ"
+                  : item.pay_type === "debt"
+                  ? "ຕິດໜີ້"
+                  : "ເງິນໂອນ"}
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
