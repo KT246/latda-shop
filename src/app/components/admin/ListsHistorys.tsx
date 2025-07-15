@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { InvoiceResponse } from "@/app/lib/interface";
 import Link from "next/link";
 
-import { formatDate, formattedNumber } from "@/app/helpers/funtions";
+import { formatDate, formattedNumber, getOneMonthAgo } from "@/app/helpers/funtions";
 import HeaderLinks from "../HeaderLinks";
 import {
   Table,
@@ -31,22 +31,24 @@ function ListsHistorys() {
   /// useState
   const [idInvoice, setIdInvoice] = React.useState<number | null>(null);
   const [page, setPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState<number | 0>(1);
+  const [totalPages, setTotalPages] = React.useState<number>(1);
   const [invoices, setInvoices] = useState<InvoiceResponse | null>(null);
   const [payType, setPayType] = React.useState("");
-  const [dateStart, setDateStart] = React.useState("2025-06-20");
+  const [dateStart, setDateStart] = React.useState(getOneMonthAgo());
   const [dateEnd, setDateEnd] = React.useState(getTodayDate());
 
   /// paramiter
 
   const fetchData = async () => {
     const res: any = await GetAllInvoices(
-      10,
+      20,
       page,
       dateStart,
       dateEnd,
       payType
     );
+    console.log(payType)
+    console.log(res)
     const data = res.data;
     setInvoices(data);
     setTotalPages(data.totalPages);
@@ -230,8 +232,8 @@ function ListsHistorys() {
                 {item.pay_type === "cash"
                   ? "ເງິນສົດ"
                   : item.pay_type === "transfer"
-                  ? "ເງິນໂອນ"
-                  : "່ຕິດໜີ້"}
+                    ? "ເງິນໂອນ"
+                    : "ຕິດໜີ້"}
               </TableCell>
               <TableCell className="text-white">
                 {item.status === "cancel" ? (

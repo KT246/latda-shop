@@ -5,6 +5,7 @@ import { SwalNotification } from "@/app/helpers/alers";
 import { formattedNumber } from "@/app/helpers/funtions";
 import { toast } from "react-toastify";
 import { addUsers } from "@/app/api/admin.product";
+import { Button } from "@heroui/react";
 function CreateEmployee() {
   const [formData, setFormData] = useState({
     id: "",
@@ -76,11 +77,11 @@ function CreateEmployee() {
   };
 
   return (
-    <div>
-      <h1 className="border-l-4 border-green-500 leading-3 ps-2 ">
-        ສ້າງພະນັກງານ
+    <div className=" ">
+      <h1 className="border-l-4 border-green-500 leading-3 ps-2 my-3">
+        ເພີ່ມພະນັກງານ
       </h1>
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block font-semibold">ຊື່ເຂົ້າລະບົບ</label>
@@ -148,21 +149,23 @@ function CreateEmployee() {
           </div>
         </div>
 
-        <div className="flex justify-between">
-          <button
-            onClick={() => router.back()}
+        <div className="mt-3 flex justify-between">
+          <Button
+            onPress={() => router.back()}
+            color="warning"
             type="button"
-            className="bg-blue-700 text-white px-6 py-2 rounded flex items-center duration-500 hover:bg-red-500"
+            // className=" text-white px-6 py-2 rounded flex items-center duration-500"
           >
             <IoChevronBackOutline />
             ກັບຄືນ
-          </button>
-          <button
+          </Button>
+          <Button
+            color="primary"
             type="submit"
-            className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-green-500"
+            // className="bg-blue-700 text-white px-6 py-2 rounded duration-500 hover:bg-green-500"
           >
-            ສ້າງ
-          </button>
+            ເພີ່ມ
+          </Button>
         </div>
       </form>
     </div>

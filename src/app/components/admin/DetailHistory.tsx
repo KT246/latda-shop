@@ -49,6 +49,7 @@ export default function DetailHistory() {
     if (res.status === 200) {
       const data = res.data.invoices[0];
       setInvoices(data);
+      console.log(data)
     } else {
       console.log("Error fetching invoice data");
     }
@@ -85,7 +86,7 @@ export default function DetailHistory() {
 
         {/* HisDetailHistory bills */}
 
-        <div className="grid grid-cols-7 gap-5 px-6 py-3 my-3 border-1 rounded shadow-lg divide-y-2 divide-blue-500">
+        <div className="bg-white grid grid-cols-7 gap-5 px-6 py-4 my-3 border-1 rounded-lg shadow-lg divide-y-2 divide-blue-500">
           <div className="text-center space-y-3 border-t-2 border-blue-500">
             <p>ລະຫັດບິນ</p>
             <p className="text-gray-500 font-semibold">{invoice?.id}</p>
@@ -176,7 +177,7 @@ export default function DetailHistory() {
         <h1 className="border-l-4 border-green-500 leading-3 ps-2 mt-10">
           ລາຍລະອຽດສິນຄ້າ
         </h1>
-        <div className="p-6">
+        <div className=" mt-4">
           <Table
             classNames={{
               wrapper:
@@ -197,8 +198,8 @@ export default function DetailHistory() {
               {(item) => (
                 <TableRow key={item.barcode}>
                   <TableCell>{item.barcode}</TableCell>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.size}</TableCell>
+                  <TableCell>{item.title}{" "}{item.size}</TableCell>
+                  <TableCell>{item.unit}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell>{item.qty}</TableCell>
                   <TableCell>{formattedNumber(item.total_unit_lak)}</TableCell>

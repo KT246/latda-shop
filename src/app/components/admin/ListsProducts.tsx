@@ -244,7 +244,7 @@ function ListsProducts() {
             />
           </div>
         }
-        className="capitalize"
+        // className="capitalize"
         classNames={{
           wrapper: "min-h-[222px]  ",
           th: "bg-blue-500 text-white font-semibold text-sm",
@@ -291,7 +291,7 @@ function ListsProducts() {
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>
-                {item.title} {item.size}
+                {item.title + " "+ item.size}
               </TableCell>
               <TableCell>{item.unit}</TableCell>
               <TableCell>{item.category}</TableCell>
