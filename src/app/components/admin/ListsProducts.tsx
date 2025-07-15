@@ -184,21 +184,6 @@ function ListsProducts() {
             </DropdownMenu>
           </Dropdown>
         </div>
-<<<<<<< HEAD
-=======
-        <div>
-          {/* {user?.path === 0 &&
-           <Button
-            onPress={handleResetQty}
-            color="success"
-            radius="sm"
-            className="text-medium text-white"
-          >
-            {isLoading ? "..." : " ອັບເດດສະຕັອກ"}
-          </Button> } */}
-        </div>
-
->>>>>>> 18e3ff7a85a01c3cc12852558d79438c41ae635a
       </div>
 
       <Table
