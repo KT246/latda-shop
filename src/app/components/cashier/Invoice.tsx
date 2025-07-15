@@ -243,128 +243,126 @@ const Invoice = () => {
   /// logic
 
   return (
-    <>
-      <div className=" w-full h-full p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
-        <div className="w-full h-[60%]">
-          <div className=" w-full flex justify-center items-center bg-green-200 font-semibold text-sm">
-            <p className="py-1 w-[20%] text-center ">ຊື່ສິນຄ້າ</p>
-            <p className="py-1 w-[20%] text-center ">ຈຳນວນ</p>
-            <p className="py-1 w-[10%] text-center ">ຫນ່ວຍ</p>
-            <p className="py-1 w-[20%] text-center ">ລາຄາ</p>
-            <p className="py-1 w-[20%] text-center ">ລວມ</p>
-            <p className="py-1 w-[] text-center ">ລຶບ</p>
-          </div>
-          <div className="overflow-y-auto h-full pb-10">
-            {cart !== null ? (
-              cart.details?.map((item, index) => {
-                return (
-                  <>
-                    <div
-                      className="w-full flex justify-center items-center text-sm border-b border-slate-200"
-                      key={index}
-                    >
-                      <p className=" w-[20%]">{item.title + item.size}</p>
-                      <p className=" w-[20%] flex justify-center items-center gap-2">
-                        <Tooltip content="ເພີ່ມ" placement="top">
-                          <button
-                            className="hover:text-green-500 duration-300 hover:bg-green-100 rounded-full p-1"
-                            onClick={() => handleAddToCart(item.barcode, 1)}
-                          >
-                            <IoAddCircle size={20} />
-                          </button>
-                        </Tooltip>
-                        <span className="text-center">{item.qty}</span>
-                        <Tooltip content="ລົດ" placement="top">
-                          <button
-                            className="hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
-                            onClick={() => handleAddToCart(item.barcode, 0)}
-                          >
-                            <RiSubtractLine size={20} />
-                          </button>
-                        </Tooltip>
-                      </p>
-                      <p className="w-[10%]">{item.unit}</p>
-                      <p className="w-[20%]">
-                        {formattedNumber(item.retail_lak)} ກີບ
-                      </p>
-                      <p className="w-[20%]">
-                        {formattedNumber(item.total_lak)} ກີບ
-                      </p>
-                      <div className="w-[10%]">
-                        <button
-                          onClick={() =>
-                            handleDeleteProduct(
-                              cart?.cashier_id,
-                              item?.barcode,
-                              cart?.cart_name
-                            )
-                          }
-                          className=" hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
-                        >
-                          <MdDeleteForever size={24} />
-                        </button>
-                      </div>
+    <div>
+      <div className=" w-full h-[100%] p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
+        <div className=" w-full flex justify-center items-center bg-green-200 font-semibold text-sm">
+          <p className="py-1 w-[3%] text-center "></p>
+          <p className="py-1 w-[47%] text-center ">ຊື່ສິນຄ້າ</p>
+          <p className="py-1 w-[15%] text-center ">ຈຳນວນ</p>
+          <p className="py-1 w-[10%] text-center ">ຫນ່ວຍ</p>
+          <p className="py-1 w-[10%] text-center ">ລາຄາ</p>
+          <p className="py-1 w-[10%] text-center ">ລວມ</p>
+          <p className="py-1 w-[5%] text-center "></p>
+        </div>
+        <div className=" overflow-y-scroll h-[350px] mb-5">
+          {cart !== null ? (
+            cart.details?.map((item, index) => {
+              return (
+                <>
+                  <div
+                    className={`py-2 w-full flex justify-center items-center text-sm border-b border-slate-200 ${index % 2 == 0 && 'bg-gray-50'}`}
+                    key={index}
+                  >
+                    <p className="w-[3%] text-sm">{index + 1}</p>
+                    <p className=" w-[47%] text-lg">{item.title + item.size}</p>
+                    <p className=" w-[15%] flex justify-center items-center gap-2">
+                      <button
+                        className="hover:text-green-500 duration-300 hover:bg-green-100 rounded-full p-1"
+                        onClick={() => handleAddToCart(item.barcode, 1)}
+                      >
+                        <IoAddCircle size={20} />
+                      </button>
+                      <span className="text-center">{item.qty}</span>
+                      <button
+                        className="hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
+                        onClick={() => handleAddToCart(item.barcode, 0)}
+                      >
+                        <RiSubtractLine size={20} />
+                      </button>
+                    </p>
+                    <p className="w-[10%] text-center">{item.unit}</p>
+                    <p className="w-[10%] text-center">
+                      {formattedNumber(item.retail_lak)}
+                    </p>
+                    <p className="w-[10%] text-center">
+                      {formattedNumber(item.total_lak)}
+                    </p>
+                    <div className="w-[5%] flex justify-end items-center">
+                      <button
+                        onClick={() =>
+                          handleDeleteProduct(
+                            cart?.cashier_id,
+                            item?.barcode,
+                            cart?.cart_name
+                          )
+                        }
+                        className=" hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
+                      >
+                        <MdDeleteForever size={24} />
+                      </button>
                     </div>
-                    <p ref={cartEndRef} />
-                  </>
-                );
-              })
-            ) : (
-              <p className="h-[45vh] flex items-center justify-center">
-                <span className="text-gray-400">ກະຕ່າຍັງທັນມີສີນຄ້າ</span>
-              </p>
-            )}
-          </div>
+                  </div>
+                  <p ref={cartEndRef} />
+                </>
+              );
+            })
+          ) : (
+            <p className="h-[45vh] flex items-center justify-center">
+              <span className="text-gray-400">ກະຕ່າຍັງທັນມີສີນຄ້າ</span>
+            </p>
+          )}
         </div>
-        <div className="h-[20%]  flex items-center">
-          <div className="w-full">
-            <div className="w-full flex justify-between px-2 bg-blue-100 border-b border-gray-300">
-              <p>ລວມ</p>
-              <p className=" text-[20px] font-bold">
-                {formattedNumber(cart?.total_lak ?? 0)} ກີບ
-              </p>
-            </div>
-            <div className="w-full flex justify-between px-2 bg-blue-100">
-              <p>ສ່ວນຫຼຸດ</p>
-              <p className="text-[20px] font-bold text-red-600">
-                {cart?.m_discount ?? 0}%
-              </p>
-            </div>
-            <div className="w-full flex justify-between items-center p-2 bg-green-200">
-              <p className=" text-[30px] font-bold">ລວມເງິນຕ້ອງຈ່າຍ</p>
-              <p className=" text-[30px] font-bold">
-                <span className="text-red-500 pe-2">
-                  {formattedNumber(cart?.total_lak ?? 0)}
-                </span>
-                ກີບ
-              </p>
+        <div>
+          <div className=" flex items-center">
+            <div className="w-full">
+              <div className="w-full flex justify-between p-2 bg-blue-100 border-b border-gray-300">
+                <p className=" text-sm">ລວມ</p>
+                <p className=" ">
+                  <span className=" text-2xl font-bold">{formattedNumber(cart?.total_lak ?? 0)}</span> <span className=" text-sm">ກີບ</span>
+                </p>
+              </div>
+              <div className="w-full flex justify-between px-2 bg-blue-100">
+                <p className="text-sm">ສ່ວນຫຼຸດ</p>
+                <p className="">
+                  <span className=" text-2xl font-bold text-red-600">{cart?.m_discount ?? 0}</span><span className=" text-sm"> %</span>
+                </p>
+              </div>
+              <div className="w-full flex justify-between items-center p-2 bg-green-100">
+                <p className=" text-lg font-bold">ລວມເງິນຕ້ອງຈ່າຍ</p>
+                <p className="">
+                  <span className="text-green-950 font-bold text-5xl">
+                    {formattedNumber(cart?.total_lak ?? 0)}
+                  </span>
+                  <span className=" text-sm"> ກີບ</span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="h-[20%] flex gap-3 justify-between items-center">
-          <Button
-            radius="sm"
-            onPress={() => handleDeleteCart(cart?.id ?? 0)}
-            className="flex-1  h-[80px] text-gray-100 text-[40px] font-bold"
-            color="warning"
-          >
-            <p className="">ເຄຍກະຕ່າ</p>
-          </Button>
-          <Button
-            radius="sm"
-            onPress={() => {
-              cart !== null
-                ? setDialog(!dialog)
-                : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
+          <div className="mt-2 flex gap-3 justify-between items-center">
+            <Button
+              radius="sm"
+              onPress={() => handleDeleteCart(cart?.id ?? 0)}
+              className="text-gray-100 text-2xl font-bold w-full py-8"
+              color="warning"
+            >
+              <p className="">ເຄຍກະຕ່າ</p>
+            </Button>
+            <Button
+              radius="sm"
+              onPress={() => {
+                cart !== null
+                  ? setDialog(!dialog)
+                  : toast.error("ກະຕ່າບໍ່ມີສິນຄ້າ", {
                     position: "top-center",
                   });
-              // updateMnCheckOut(cart?.total_lak ?? 0);
-            }}
-            color="primary"
-            className="flex-1 h-[80px] text-[40px] font-bold"
-          >
-            ຂາຍ
-          </Button>
+                // updateMnCheckOut(cart?.total_lak ?? 0);
+              }}
+              color="primary"
+              className="text-2xl font-bold w-full py-8"
+            >
+              ຂາຍ
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -475,7 +473,7 @@ const Invoice = () => {
         </div>
       )}
       <PrintBill data={bill} clearData={() => setBill(null)} />
-    </>
+    </div>
   );
 };
 export default Invoice;

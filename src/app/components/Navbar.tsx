@@ -18,10 +18,10 @@ const Navbar = () => {
   return (
     <div className=" h-full flex items-center justify-between px-5">
       <div className="">
-        <h1 className=" text-white text-xl font-bold p-0 m-0">POS ລັດດາ ອາໄຫຼ່</h1>
-        <h1 className="  text-[12px] font-semibold text-gray-100  p-0 m-0">
+        <p className=" text-white text-lg font-bold p-0 m-0">POS ລັດດາ ອາໄຫຼ່</p>
+        <p className="  text-[10px] font-semibold text-gray-100  p-0 m-0">
           Power by SKV-GROUP
-        </h1>
+        </p>
       </div>
       {/* <div className="overflow-hidden whitespace-nowrap">
         <p className="animate-marquee text-medium text-gray-50 pb-1 font-semibold">
