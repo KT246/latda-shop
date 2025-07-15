@@ -5,7 +5,10 @@ import "./globals.css";
 import { HeroUIProvider } from "@heroui/react";
 
 export const metadata = {
-  title: "LATDA Shop",
+  title: "ລັດດາ ອາໄຫຼ່ - SKV group",
+  icons: {
+    icon: "/logolatda.svg", // hoặc .ico, .svg
+  },
 };
 
 export default function RootLayout({
