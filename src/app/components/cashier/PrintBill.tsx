@@ -11,8 +11,7 @@ interface PrintBillProps {
   clearData: () => void;
 }
 
-function PrintBill() {
-  // { data, clearData }: PrintBillProps
+function PrintBill({ data, clearData }: PrintBillProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
@@ -111,24 +110,20 @@ function PrintBill() {
         className=" w-[148mm] h-[210mm] mx-auto border p-5 "
       >
         <div className=" flex justify-between">
-          <Image alt="" src={"/logolatda.webp"} width={100} height={100} />
-          <div className=" w-full text-center text-[14px]">
-            <p className="font-custom font-bold text-[16px]">
-              ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ
-            </p>
-            <p className=" font-custom">
-              ສາຂາ I ບ້ານ ຂາມງອຍ, ໄຊເສດຖາ, ນະຄອນຫລວງວຽງຈັນ
-            </p>
-            <p className=" font-custom ">
-              ສອບຖາມໂທ: 02055448822, 28888728, 0305656856
-            </p>
+          <div>
+            <Image alt="" src={"/QRBCELONE_LAK.svg"} width={100} height={100} />
+          </div>
+          <div className=" w-full text-center text-[16px]">
+            <p className=" font-bold text-[20px]">ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ</p>
+            <p className=" ">ສາຂາ I ບ້ານ ຂາມງອຍ, ໄຊເສດຖາ, ນະຄອນຫລວງວຽງຈັນ</p>
+            <p className="  ">ສອບຖາມໂທ: 02055448822, 28888728, 0305656856</p>
           </div>
           <div>
-            <Image alt="" src={"/logolatda.webp"} width={100} height={100} />
+            <Image alt="" src={"/QRBCELONE_THB.svg"} width={100} height={100} />
           </div>
         </div>
         <div>
-          <p className=" font-custom text-[18px] font-bold my-3 text-center">
+          <p className="  text-[18px] font-bold my-3 text-center">
             ໃບສົ່ງເຄື່ອງ
           </p>
         </div>
@@ -137,20 +132,8 @@ function PrintBill() {
             <table>
               <tbody>
                 <tr>
-                  <td className=" font-custom">ລະຫັດລູກຄ້າ:</td>
-                  <td className=" font-custom">{"64565654645"}</td>
-                </tr>
-                <tr>
-                  <td className=" font-custom">ຊື່ລູກຄ້າ:</td>
-                  <td className=" font-custom">{"fsfsdfs"}</td>
-                </tr>
-                <tr>
-                  <td className=" font-custom">ທີ່ຢູ່:</td>
-                  <td className=" font-custom">{"54546565"}</td>
-                </tr>
-                <tr>
-                  <td className=" font-custom">ເບີໂທ:</td>
-                  <td className=" font-custom">{"55446556"}</td>
+                  <td className=" ">ຊື່ລູກຄ້າ:</td>
+                  <td className=" ">{"fsfsdfs"}</td>
                 </tr>
               </tbody>
             </table>
@@ -159,21 +142,21 @@ function PrintBill() {
             <table>
               <tbody>
                 <tr>
-                  <td className=" font-custom">ເລກທີບິນ:</td>
-                  <td className=" font-custom">{141414}</td>
+                  <td className=" ">ເລກທີບິນ:</td>
+                  <td className=" ">{141414}</td>
                 </tr>
                 <tr>
-                  <td className=" font-custom" colSpan={2}>
+                  <td className=" " colSpan={2}>
                     140101
                   </td>
                 </tr>
                 <tr>
-                  <td className=" font-custom">ການຊຳລະ:</td>
-                  <td className=" font-custom">{"1414"}</td>
+                  <td className=" ">ການຊຳລະ:</td>
+                  <td className=" ">{"1414"}</td>
                 </tr>
                 <tr>
-                  <td className=" font-custom">ອັດຕາແລກປ່ຽນ (ບາດ-ກີບ):</td>
-                  <td className=" font-custom">{"45"}</td>
+                  <td className=" ">ອັດຕາແລກປ່ຽນ (ບາດ-ກີບ):</td>
+                  <td className=" ">{"45"}</td>
                 </tr>
               </tbody>
             </table>
@@ -183,107 +166,77 @@ function PrintBill() {
           <table className="w-full text-[12px]">
             <thead>
               <tr className="">
-                <th className="font-custom border border-black">NO</th>
-                <th className="font-custom border border-black py-2">ລາຍການ</th>
-                <th className="font-custom border border-black">ຈຳນວນ</th>
-                <th className="font-custom border border-black">ຫໜ</th>
-                <th className="font-custom border border-black">ລາຄາ</th>
-                <th className="font-custom border border-black">ສ່ວນຫຼຸດ</th>
-                <th className="font-custom border border-black">ລວມເງິນ</th>
+                <th className=" border border-black">NO</th>
+                <th className=" border border-black py-2">ລາຍການ</th>
+                <th className=" border border-black">ຈຳນວນ</th>
+                <th className=" border border-black">ຫໜ</th>
+                <th className=" border border-black">ລາຄາ</th>
+                <th className=" border border-black">ສ່ວນຫຼຸດ</th>
+                <th className=" border border-black">ລວມເງິນ</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="font-custom border border-black text-center">
-                  1
-                </td>
-                <td className="font-custom border border-black px-1">tay</td>
-                <td className="font-custom text-center border border-black">
-                  20
-                </td>
-                <td className="font-custom text-center border border-black">
-                  cai
-                </td>
-                <td className="font-custom border border-black text-right px-1">
+                <td className=" border border-black text-center">1</td>
+                <td className=" border border-black px-1">tay</td>
+                <td className=" text-center border border-black">20</td>
+                <td className=" text-center border border-black">cai</td>
+                <td className=" border border-black text-right px-1">
                   {"64544545"}
                 </td>
-                <td className="font-custom border border-black text-center px-1">
+                <td className=" border border-black text-center px-1">
                   {"444544"}
                 </td>
-                <td className="font-custom border border-black text-right px-1">
+                <td className=" border border-black text-right px-1">
                   {"544411"}
                 </td>
               </tr>
 
               {/* fhsdgfsjhkdfhjkfdhjbfdshjdfshjfsd */}
               <tr>
-                <td rowSpan={6} colSpan={3} className="font-custom  p-2">
-                  <p className="font-custom">ໝາຍເຫດ:</p>
-                  <p className="font-custom">
+                <td rowSpan={6} colSpan={3} className="  p-2">
+                  <p className="">ໝາຍເຫດ:</p>
+                  <p className="">
                     * ກະລຸນາກວດສິນຄ້າໃຫ້ ລະອຽດ ແລະ ຄົບຖ້ວນຕາມບິນ
                   </p>
-                  <p className="font-custom">
+                  <p className="">
                     * ຖ້າກວດພົບເຄື່ອງແຕກ ຫຼື ບໍ່ຄົບ ໃຫ້ແຈ້ງບໍລິສັດທັນທີ/ຂຽນໃສ່
                     ບິນສົົ່ງ
                   </p>
                 </td>
               </tr>
               <tr>
-                <td
-                  colSpan={2}
-                  className="text-center font-custom border border-black"
-                >
+                <td colSpan={2} className="text-center  border border-black">
                   ລວມເງິນ(LAK)
                 </td>
-                <td
-                  colSpan={2}
-                  className="text-end font-custom border border-black px-1"
-                >
+                <td colSpan={2} className="text-end  border border-black px-1">
                   {"44564545"}
                   {" LAK"}
                 </td>
               </tr>
               <tr>
-                <td
-                  colSpan={2}
-                  className="text-center font-custom border border-black"
-                >
+                <td colSpan={2} className="text-center  border border-black">
                   ລວມເງິນ(THB)
                 </td>
-                <td
-                  colSpan={2}
-                  className="text-end font-custom border border-black px-1"
-                >
+                <td colSpan={2} className="text-end  border border-black px-1">
                   {"655656"}
                   {" THB"}
                 </td>
               </tr>
               <tr>
-                <td
-                  colSpan={2}
-                  className="text-center font-custom border border-black"
-                >
+                <td colSpan={2} className="text-center  border border-black">
                   ລວມມູນຄ່າທັງໝົດ
                 </td>
-                <td
-                  colSpan={2}
-                  className="text-end font-custom border border-black px-1"
-                >
+                <td colSpan={2} className="text-end  border border-black px-1">
                   {"64654564"}
                   {" LAK"}
                 </td>
               </tr>
               <tr>
-                <td
-                  colSpan={2}
-                  className="text-center font-custom border border-black"
-                >
+                <td colSpan={2} className="text-center  border border-black">
                   ສ່ວນຫຼຸດ
                 </td>
-                <td
-                  colSpan={2}
-                  className="text-end font-custom border border-black px-1"
-                >
+                <td colSpan={2} className="text-end  border border-black px-1">
                   {"3555445446"}
                   {" LAK"}
                 </td>
@@ -291,13 +244,13 @@ function PrintBill() {
               <tr>
                 <td
                   colSpan={2}
-                  className="text-center font-bold font-custom border border-black py-3"
+                  className="text-center font-bold  border border-black py-3"
                 >
                   ຈຳນວນເງິນຕ້ອງຈ່າຍ(LAK)
                 </td>
                 <td
                   colSpan={2}
-                  className="text-end font-bold font-custom border border-black px-1"
+                  className="text-end font-bold  border border-black px-1"
                 >
                   {"8844845451"}
                   {" LAK"}
@@ -306,73 +259,13 @@ function PrintBill() {
             </tbody>
           </table>
         </div>
-        <div className=" flex justify-start mt-10">
-          <p className=" w-full font-custom text-[12px] ">
-            ວັນທີ......./......./.......
-          </p>
-          <p className=" w-full font-custom text-[12px] ">
-            ວັນທີ......./......./.......
-          </p>
+        <div className="flex items-center justify-between text-[12px] mt-10">
+          <p className="flex-1 text-center">ວັນທີ......./......./.......</p>
+          <p className="flex-1 text-center">ວັນທີ......./......./.......</p>
         </div>
-        <div className=" w-full mt-2 flex justify-between gap-2">
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ຈ່າຍເງິນ
-            </p>
-          </div>
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ຮັບເງິນ
-            </p>
-          </div>
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ຮັບເຄື່ອງ
-            </p>
-          </div>
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ສົ່ງເຄື່ອງ
-            </p>
-          </div>
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ກວດເຄື່ອງ
-            </p>
-          </div>
-          <div className="w-full">
-            <p className="font-custom text-[14px] text-center font-bold pb-10 border-b border-black">
-              ຜູ້ອະນຸມັດ
-            </p>
-          </div>
-        </div>
-        <div className="mt-10">
-          <table className="w-full">
-            <tbody className="">
-              <tr className=" border">
-                <td className="font-custom text-[12px] text-center py-2">
-                  ບັນຊີ(LAK /ກີບ)
-                </td>
-                <td className="font-custom text-[16px] text-center font-bold">
-                  200-1200-00016217-001
-                </td>
-                <td className="font-custom text-[16px] text-center font-bold">
-                  ນາງ ທອງມາ ຫອມສົມບັດ
-                </td>
-              </tr>
-              <tr className=" border">
-                <td className="font-custom text-[12px] text-center py-2">
-                  ບັນຊີ(THB/ບາດ)
-                </td>
-                <td className="font-custom text-[16px] text-center font-bold">
-                  0-98-12-09-49-74-18
-                </td>
-                <td className="font-custom text-[16px] text-center font-bold">
-                  MISS Thongma HOMSOMBATH
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className=" mt-2 flex items-center justify-between text-[14px] text-center gap-2">
+          <p className="flex-1 font-bold">ຜູ້ຈ່າຍເງິນ</p>
+          <p className="flex-1 font-bold">ຜູ້ຮັບເງິນ</p>
         </div>
       </div>
     </div>
