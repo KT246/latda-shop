@@ -190,7 +190,7 @@ const FindProduct = () => {
 
   return (
     <>
-      <div className=" w-full p-2  rounded-lg shadow-lg bg-white uppercase ">
+      <div className=" w-full p-2  rounded-lg shadow-lg bg-white uppercase border ">
         <form onSubmit={handleSubmit}>
           <Input
             type="text"
@@ -206,7 +206,7 @@ const FindProduct = () => {
           )}
         </form>
       </div>
-      <div className=" w-full mt-5 p-2  rounded-lg shadow-lg bg-white h-[62vh] uppercase">
+      <div className=" w-full mt-2 p-2  rounded-lg shadow-lg bg-white">
         <div className=" flex justify-start gap-2 my-2">
           <span
             onClick={() => {
@@ -218,7 +218,7 @@ const FindProduct = () => {
               searchType === "code"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-gray-500"
-            }  rounded-lg px-2 ease-in-out duration-300 cursor-pointer`}
+            }  rounded-lg p-1 text-sm ease-in-out duration-300 cursor-pointer`}
           >
             code
           </span>
@@ -232,7 +232,7 @@ const FindProduct = () => {
               searchType === "title"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-gray-500"
-            }  rounded-lg px-2 ease-in-out duration-300 cursor-pointer`}
+            }  rounded-lg p-1 text-sm ease-in-out duration-300 cursor-pointer`}
           >
             title
           </span>
@@ -246,7 +246,7 @@ const FindProduct = () => {
               searchType === "page"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-gray-500"
-            }  rounded-lg px-2 ease-in-out duration-300 cursor-pointer`}
+            }  rounded-lg p-1 text-sm ease-in-out duration-300 cursor-pointer`}
           >
             page
           </span>
@@ -260,7 +260,7 @@ const FindProduct = () => {
               searchType === "no"
                 ? "bg-blue-500 text-white"
                 : "bg-gray-300 text-gray-500"
-            }  rounded-lg px-2 ease-in-out duration-300 cursor-pointer`}
+            }  rounded-lg p-1 text-sm ease-in-out duration-300 cursor-pointer`}
           >
             No.
           </span>
@@ -285,13 +285,11 @@ const FindProduct = () => {
             variant="bordered"
           />
         </div>
-        <div className=" w-full mt-2 h-[70%] overflow-auto border">
+        <div className=" w-full mt-2 h-[55vh] overflow-auto border">
           <table className="w-full">
-            <thead className=" sticky top-0 bg-white shadow-lg uppercase">
+            <thead className=" sticky top-0 bg-white shadow-lg  text-sm">
               <tr>
-                <th className="border  border-gray-300 w-[85px]">
-                  ເພີ່ມເຂົ້າກະຕ່າ
-                </th>
+                <th className="border  border-gray-300 "></th>
                 <th className="border  border-gray-300">barcode</th>
                 <th className="border  border-gray-300">ຊື່ສິນຄ້າ</th>
                 <th className="border  border-gray-300">code</th>
@@ -308,15 +306,17 @@ const FindProduct = () => {
                       onDoubleClick={() => {}}
                       className=" hover:bg-blue-100 ease-in-out duration-300"
                     >
-                      <td className="border border-gray-300 w-[85px] px-2">
-                        <button
-                          onClick={() => handleAddToCart(product.barcode)}
-                          className="hover:bg-green-500 bg-green-600 text-white w-full py-1 rounded-md"
-                        >
-                          ເພີ່ມ
-                        </button>
+                      <td className="border border-gray-300 px-2">
+                        {product.qty_balance > 0 && (
+                          <button
+                            onClick={() => handleAddToCart(product.barcode)}
+                            className="hover:bg-green-500 bg-green-600 text-white w-full p-1 rounded-md"
+                          >
+                            +
+                          </button>
+                        )}
                       </td>
-                      <td className="py-2 border  border-gray-300">
+                      <td className="py-2 border  border-gray-300 text-start">
                         <Highlighter
                           highlightClassName="bg-yellow-300"
                           searchWords={[barcode]}
@@ -324,7 +324,7 @@ const FindProduct = () => {
                           textToHighlight={product.barcode}
                         />
                       </td>
-                      <td className="py-2 border  border-gray-300 w-1/4 break-all whitespace-normal">
+                      <td className="py-2 border  border-gray-300  break-all whitespace-normal">
                         {searchType === "title" ? (
                           <Highlighter
                             highlightClassName="bg-yellow-300"

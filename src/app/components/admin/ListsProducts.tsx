@@ -40,7 +40,7 @@ function ListsProducts() {
   const [products, setProduct] = useState<Products[]>([]);
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   /// handles changes
   const selectedValue = React.useMemo(
