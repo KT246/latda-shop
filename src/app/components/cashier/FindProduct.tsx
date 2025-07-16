@@ -200,9 +200,6 @@ const FindProduct = () => {
             color="primary"
             size="md"
             variant="bordered"
-            // classNames={{
-            //   label: "text-#000 font-semibold",
-            // }}
           />
           {message && (
             <span className="ps-2 text-sm mt-2 text-red-500">{message}</span>
@@ -286,9 +283,6 @@ const FindProduct = () => {
             color="primary"
             size="md"
             variant="bordered"
-            classNames={{
-              label: "text-#000",
-            }}
           />
         </div>
         <div className=" w-full mt-2 h-[70%] overflow-auto border">

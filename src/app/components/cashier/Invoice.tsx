@@ -160,7 +160,7 @@ const Invoice = () => {
       const res: any = await apiRetail({
         cart_name: cartName,
         m_discount: formData.d_mount,
-        member_id: "",
+        member_id: name,
         pay_type: pay,
         money_received: formData.money_cutom,
       });
