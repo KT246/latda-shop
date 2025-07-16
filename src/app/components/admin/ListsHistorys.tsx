@@ -45,7 +45,7 @@ function ListsHistorys() {
 
   const fetchData = async () => {
     const res: any = await GetAllInvoices(
-      20,
+      15,
       page,
       dateStart,
       dateEnd,

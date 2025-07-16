@@ -107,7 +107,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
 
       <div
         ref={contentRef}
-        className=" w-[148mm] h-[210mm] mx-auto border p-5 "
+        className=" w-[148mm] h-[210mm] mx-auto border p-5 hidden"
       >
         <div className=" flex justify-between">
           <div>
