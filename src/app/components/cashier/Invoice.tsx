@@ -269,7 +269,7 @@ const Invoice = () => {
   return (
     <div>
       <div className=" w-full h-[100%] p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
-        <div className=" w-full flex justify-center items-center bg-green-200 font-semibold text-sm">
+        <div className=" w-full flex justify-center items-center bg-green-2lg text-sm">
           <p className="py-1 w-[3%] text-center "></p>
           <p className="py-1 w-[47%] text-center ">ຊື່ສິນຄ້າ</p>
           <p className="py-1 w-[15%] text-center ">ຈຳນວນ</p>
@@ -401,7 +401,7 @@ const Invoice = () => {
         <div className=" fixed z-30 bg-black bg-opacity-80   left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
           <div className="bg-gray-100 w-[600px] h-[500px] flex flex-col justify-between rounded-lg overflow-hidden">
             <div className="p-5">
-              <div className="pb-10 space-y-3">
+              <div className="pb-7 space-y-2">
                 <p className="text-lg text-danger">ສ່ວນຫຼຸດຫນ້າຮ້ານ</p>
                 <div className="overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
                   <input
@@ -456,33 +456,34 @@ const Invoice = () => {
               </div>
 
               {/* Tính tiền phải trả và tiền thối */}
-              <div className="pt-10 space-y-3 border-t-2 border-dashed border-primary">
+              <div className="pt-5 border-t-2 border-dashed border-primary">
                 <div className="flex items-center">
-                  <p className="flex-1 text-xl font-semibold">ລາຄາລວມ:</p>
-                  <p className="text-3xl font-bold">
-                    {formattedNumber(cart?.total_lak ?? 0)} ກີບ
+                  <p className="flex-1 text-lg">ລາຄາລວມ:</p>
+                  <p className="text-xl font-bold">
+                    {formattedNumber(cart?.total_lak ?? 0)}{" "}
+                    <span className="text-sm">ກີບ</span>
                   </p>
                 </div>
                 <div className="flex items-center">
-                  <p className="flex-1 text-xl font-semibold">
-                    ສ່ວນຫຼຸດຫນ້າຮ້ານ:
+                  <p className="flex-1 text-lg">ສ່ວນຫຼຸດຫນ້າຮ້ານ:</p>
+                  <p className="text-xl font-bold">
+                    {formattedNumber(formData.d_mount)}{" "}
+                    <span className="text-sm">ກີບ</span>
                   </p>
+                </div>
+                <p className=" border-t-2 border-dashed border-primary  my-3" />
+                <div className="flex items-center">
+                  <p className="flex-1 text-lg">ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ:</p>
                   <p className="text-3xl font-bold">
-                    {formattedNumber(formData.d_mount)} ກີບ
+                    {formattedNumber(formData.check_out)}{" "}
+                    <span className="text-sm">ກີບ</span>
                   </p>
                 </div>
                 <div className="flex items-center">
-                  <p className="flex-1 text-xl font-semibold">
-                    ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ:
-                  </p>
-                  <p className="text-3xl font-bold">
-                    {formattedNumber(formData.check_out)} ກີບ
-                  </p>
-                </div>
-                <div className="flex items-center">
-                  <p className="flex-1 text-xl font-semibold">ເງິນທອນ:</p>
-                  <p className="text-3xl font-bold">
-                    {formattedNumber(formData.customer_change)} ກີບ
+                  <p className="flex-1 text-lg">ເງິນທອນ:</p>
+                  <p className="text-xl font-bold">
+                    {formattedNumber(formData.customer_change)}{" "}
+                    <span className="text-sm">ກີບ</span>
                   </p>
                 </div>
               </div>
