@@ -40,7 +40,6 @@ function PrintBill({ data, clearData }: PrintBillProps) {
         <p>ເບີໂທ: 02055154824</p>
         <p>Whatapp: 02055154824</p>
         <p>Facebook: Latda-shop</p>
-
         {/* {content} */}
         <p className="text-center font-bold my-3">ບິນໄລ່ເງິນ</p>
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
@@ -49,7 +48,6 @@ function PrintBill({ data, clearData }: PrintBillProps) {
           <span>ຈຳນວນ</span>
           <span>ລາຄາ</span>
         </p>
-
         {data?.details?.map((item, index) => (
           <p key={index} className="grid grid-cols-3">
             <span>{item.title}</span>
@@ -59,9 +57,9 @@ function PrintBill({ data, clearData }: PrintBillProps) {
         ))}
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
         <div className="flex">
-          <p className="flex-1 font-semibold">ເງິນຮັບມາ:</p>
+          <p className="flex-1 font-semibold">ລາຄາລວມ:</p>
           <p className="flex-1 text-right">
-            {formattedNumber(data?.money_received ?? 0)} ກີບ
+            {formattedNumber(data?.total_lak ?? 0)} ກີບ
           </p>
         </div>
         <div className="flex">
@@ -71,19 +69,24 @@ function PrintBill({ data, clearData }: PrintBillProps) {
           </p>
         </div>
         <div className="flex">
+          <p className="flex-1 font-semibold">ຈຳນວນເງິນຕ້ອງຊຳລະ:</p>
+          <p className="flex-1 text-right">
+            {formattedNumber(data?.total_checkout_lak ?? 0)} ກີບ
+          </p>
+        </div>
+        <div className="flex">
+          <p className="flex-1 font-semibold">ເງິນຮັບມາ:</p>
+          <p className="flex-1 text-right">
+            {formattedNumber(data?.money_received ?? 0)} ກີບ
+          </p>
+        </div>
+        <div className="flex">
           <p className="flex-1 font-semibold">ເງິນທອນ:</p>
           <p className="flex-1 text-right">
             {formattedNumber(data?.money_cash ?? 0)} ກີບ
           </p>
         </div>
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
-        <div className="flex">
-          <p className="flex-1 font-semibold">ລວມ:</p>
-          <p className="flex-1 text-right">
-            {formattedNumber(data?.total_checkout_lak ?? 0)} ກີບ
-          </p>
-        </div>
-
         {/* {bottom} */}
         <p className="border-dashed border-b-1 border-gray-500 my-2" />
         <div className="text-left pt-2">

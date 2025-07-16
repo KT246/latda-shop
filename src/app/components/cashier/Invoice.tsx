@@ -58,16 +58,25 @@ const Invoice = () => {
     const { name, value } = e.target;
     const rawValue = value.replace(/,/g, "");
     const numberValue = Number(rawValue);
+    const realTotal = cart?.total_lak || 0;
+
+    if (name === "d_mount" && numberValue > realTotal) {
+      Swal.fire({
+        icon: "warning",
+        title: "ສ່ວນຫຼຸດຫນ້າຮ້ານ",
+        text: `ສ່ວນຫຼຸດ (${numberValue.toLocaleString()}) ເກີນເງິນລວມ (${realTotal.toLocaleString()}).`,
+      });
+      return;
+    }
+
     setFormData((prev) => {
       const updated = {
         ...prev,
         [name]: numberValue,
       };
-      const realTotal = cart?.total_lak || 0;
-
-      updated.check_out = Math.max(realTotal - updated.d_mount, 0);
+      updated.check_out = Math.max(realTotal - (updated.d_mount || 0), 0);
       updated.customer_change = Math.max(
-        updated.money_cutom - updated.check_out,
+        (updated.money_cutom || 0) - updated.check_out,
         0
       );
 
@@ -213,6 +222,7 @@ const Invoice = () => {
   /// onSubmit
   const handleSubmit = async (key: number) => {
     if (key === 0) {
+      setFormData((prev) => ({ ...prev, money_cutom: 0 }));
       Debt("debt");
     } else if (key === 1) {
       Cash("cash");
@@ -415,12 +425,27 @@ const Invoice = () => {
                     />
                   </div>
                   <Button
-                    onPress={() =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        money_cutom: formData.check_out,
-                      }))
-                    }
+                    onPress={() => {
+                      setFormData((prev) => {
+                        const updated = {
+                          ...prev,
+                        };
+                        const realTotal = cart?.total_lak || 0;
+
+                        updated.money_cutom = realTotal - updated.d_mount;
+
+                        updated.check_out = Math.max(
+                          realTotal - updated.d_mount,
+                          0
+                        );
+                        updated.customer_change = Math.max(
+                          updated.money_cutom - updated.check_out,
+                          0
+                        );
+
+                        return updated;
+                      });
+                    }}
                     color="primary"
                     radius="none"
                     className="h-full"
@@ -432,6 +457,20 @@ const Invoice = () => {
 
               {/* Tính tiền phải trả và tiền thối */}
               <div className="pt-10 space-y-3 border-t-2 border-dashed border-primary">
+                <div className="flex items-center">
+                  <p className="flex-1 text-xl font-semibold">ລາຄາລວມ:</p>
+                  <p className="text-3xl font-bold">
+                    {formattedNumber(cart?.total_lak ?? 0)} ກີບ
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <p className="flex-1 text-xl font-semibold">
+                    ສ່ວນຫຼຸດຫນ້າຮ້ານ:
+                  </p>
+                  <p className="text-3xl font-bold">
+                    {formattedNumber(formData.d_mount)} ກີບ
+                  </p>
+                </div>
                 <div className="flex items-center">
                   <p className="flex-1 text-xl font-semibold">
                     ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ:
