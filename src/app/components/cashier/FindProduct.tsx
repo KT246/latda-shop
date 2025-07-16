@@ -29,7 +29,7 @@ const FindProduct = () => {
   const alertAddToCart = async (barCode: string, value: number) => {
     try {
       const res = await apiAddToCart({
-        barcode: barCode,
+        barcode: barCode.trim(),
         qty: value,
         cart_name: cartName,
       });
@@ -39,6 +39,7 @@ const FindProduct = () => {
         PlaySound("success");
       } else {
         PlaySound("warning");
+        setBarcode("");
         SwalNotification(res.data.message, "warning");
       }
     } catch (error) {
@@ -118,6 +119,7 @@ const FindProduct = () => {
           PlaySound("success");
         } else {
           PlaySound("warning");
+          setBarcode("");
           SwalNotification(res.data.message, "warning");
         }
       } catch (error) {
@@ -198,9 +200,9 @@ const FindProduct = () => {
             color="primary"
             size="md"
             variant="bordered"
-            classNames={{
-              label: "text-#000 font-semibold",
-            }}
+            // classNames={{
+            //   label: "text-#000 font-semibold",
+            // }}
           />
           {message && (
             <span className="ps-2 text-sm mt-2 text-red-500">{message}</span>
@@ -285,7 +287,7 @@ const FindProduct = () => {
             size="md"
             variant="bordered"
             classNames={{
-              label: "text-#000 font-semibold",
+              label: "text-#000",
             }}
           />
         </div>
