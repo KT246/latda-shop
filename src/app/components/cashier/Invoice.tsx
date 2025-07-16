@@ -278,7 +278,7 @@ const Invoice = () => {
           <p className="py-1 w-[10%] text-center ">ລວມ</p>
           <p className="py-1 w-[5%] text-center "></p>
         </div>
-        <div className=" overflow-y-scroll h-[350px] mb-5">
+        <div className=" overflow-y-scroll h-[50vh] mb-5">
           {cart !== null ? (
             cart.details?.map((item, index) => {
               return (
@@ -371,14 +371,14 @@ const Invoice = () => {
             </div>
           </div>
         </div>
-        <div className="h-[20%] flex gap-3 justify-between items-center">
+        <div className="mt-3 flex gap-3 justify-between items-center">
           <Button
             radius="sm"
             onPress={() => handleDeleteCart(cart?.id ?? 0)}
-            className="flex-1  h-[80px] text-gray-100 text-[40px] font-bold"
+            className="w-[40%] font-bold text-2xl py-8"
             color="warning"
           >
-            <p className="">ເຄຍກະຕ່າ</p>
+            ເຄຍກະຕ່າ
           </Button>
           <Button
             radius="sm"
@@ -388,7 +388,7 @@ const Invoice = () => {
                 : SwalNotification("ກະຕ່າບໍ່ມີສິນຄ້າ", "error");
             }}
             color="primary"
-            className="flex-1 h-[80px] text-[40px] font-bold"
+            className="w-[60%] font-bold text-2xl py-8"
           >
             ຂາຍ
           </Button>
