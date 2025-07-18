@@ -182,7 +182,7 @@ export default function Detail() {
                 {item.discount}%
               </TableCell>
               <TableCell className="text-right">
-                {formattedNumber(item.total_unit_lak)}
+                {formattedNumber(item.retail_lak)}
               </TableCell>
               <TableCell className="text-right">
                 {formattedNumber(item.total_lak)}
