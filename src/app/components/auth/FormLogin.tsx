@@ -12,17 +12,20 @@ export default function FormLogin() {
   const { token, user } = useAuthStore();
   const Login = useAuthStore((state) => state.login);
 
-  if (token) {
-    if (user?.path === 2) {
-      window.location.href = "/cashier";
-    } else if (user?.path === 0) {
-      window.location.href = "/admin";
-    } else if (user?.path === 1) {
-      window.location.href = "/admin/products";
-    } else {
-      router.push("/login");
+  if (typeof window !== "undefined") {
+    if (token) {
+      if (user?.path === 2) {
+        window.location.href = "/cashier";
+      } else if (user?.path === 0) {
+        window.location.href = "/admin";
+      } else if (user?.path === 1) {
+        window.location.href = "/admin/products";
+      } else {
+        router.push("/login");
+      }
     }
   }
+
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
