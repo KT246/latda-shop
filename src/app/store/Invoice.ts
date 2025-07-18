@@ -24,7 +24,7 @@ export const useInvoiceStore = create<InvoiceStoreState>()(
     (set) => ({
       invoices: null,
       invoice: null,
-      size: 10,
+      size: 5,
       date_start: "2025-05-06",
       date_end: currenDate,
       currentPage: 1,

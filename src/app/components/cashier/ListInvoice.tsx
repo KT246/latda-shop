@@ -159,7 +159,7 @@ export default function ListInvoice() {
 
   const handleReset = () => {
     const reset_start_date = date_end;
-    const reset_size = 10;
+    const reset_size = 5;
     const reset_page = 1;
     setIdVoice("");
     updateInvoice(null);

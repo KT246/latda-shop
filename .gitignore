@@ -39,5 +39,3 @@ Thumbs.db
 # If you store images or assets in `public/`, you might not want to ignore this folder, but you can add specific files if needed.
 public/*.log
 public/temp/
-
-

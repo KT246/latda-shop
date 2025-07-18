@@ -228,25 +228,28 @@ function ListsProducts() {
           {(item) => (
             <TableRow key={item.barcode}>
               <TableCell>
-                {item.img_name !== null || item.img_name === "" ? (
-                  <Image
-                    loading="lazy"
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${item.img_name}`}
-                    alt="No Name"
-                    className=""
-                    width={50}
-                    height={100}
-                  />
-                ) : (
-                  <Image
-                    loading="lazy"
-                    src={"/logolatda.webp"}
-                    alt="No Name"
-                    className=""
-                    width={30}
-                    height={30}
-                  />
-                )}
+                <div className="w-7 h-7 overflow-hidden flex justify-center items-center">
+                  {item.img_name !== null || item.img_name === "" ? (
+                    <Image
+                      loading="lazy"
+                      src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${item.img_name}`}
+                      alt="No Name"
+                      className="w-full"
+                      width={20}
+                      height={20}
+                      unoptimized
+                    />
+                  ) : (
+                    <Image
+                      loading="lazy"
+                      src={"/logolatda.webp"}
+                      alt="No Name"
+                      className=""
+                      width={30}
+                      height={30}
+                    />
+                  )}
+                </div>
               </TableCell>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>{item.title + " " + item.size}</TableCell>
@@ -257,11 +260,10 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${
-                    item.qty_balance <= item.qty_alert
+                  className={`${item.qty_balance <= item.qty_alert
                       ? "text-red-500"
                       : "text-black"
-                  }`}
+                    }`}
                 >
                   {item.qty_balance}
                 </span>
