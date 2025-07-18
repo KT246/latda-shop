@@ -14,11 +14,11 @@ export default function FormLogin() {
 
   if (token) {
     if (user?.path === 2) {
-      router.push("/cashier");
+      window.location.href = "/cashier";
     } else if (user?.path === 0) {
-      router.push("/admin");
+      window.location.href = "/admin";
     } else if (user?.path === 1) {
-      router.push("/admin/products");
+      window.location.href = "/admin/products";
     } else {
       router.push("/login");
     }
@@ -32,9 +32,6 @@ export default function FormLogin() {
   const [colorPassword, setColorPassword] = React.useState<
     "default" | "primary"
   >("default");
-
-
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,14 +69,13 @@ export default function FormLogin() {
         Login(token, user);
         toast.success("ສຳເລັດ");
         const path = user?.path;
-        console.log(path)
+        console.log(path);
         if (path === 0) {
           router.push("/admin");
-          return;
         } else if (path === 1) {
           router.push("/admin/products");
         } else if (path === 2) {
-          router.push("/cashier");
+          window.location.href = "/cashier";
         } else {
           router.push("/login");
         }
@@ -117,8 +113,8 @@ export default function FormLogin() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-10 justify-center items-center py-10 w-full"
           >
-            <h3 className=" uppercase text-2xl font-bold leading-none ">
-              latda-shop
+            <h3 className=" text-2xl font-bold leading-none ">
+              ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ
             </h3>
             <p className="text-gray-500 text-sm leading-none">
               ລັອກອິນເຂົ້າໃຊ້ງານ

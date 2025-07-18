@@ -7,11 +7,10 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  // console.log(pathname)
   const router = useRouter();
   const { token, user } = useAuthStore();
   if (!token) {
-    // router.push("/login");
+    router.push("/login");
   }
   if (token) {
     if (user?.path === 2) {

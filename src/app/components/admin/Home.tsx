@@ -258,7 +258,7 @@ function Home() {
                   </p>
                   <p>ຈຳນວນ: {resportSale?.detail.saleCompleted.bill_count}</p>
                 </div>
-                <div className="h-32 flex justify-betwee items-center gap-3 text-white ">
+                <div className="h-32 grid grid-cols-2 justify-betwee items-center gap-3 text-white ">
                   <div className="flex-1 bg-gradient-to-tr  to-green-400 from-green-600 shadow-lg  rounded-lg p-2">
                     <p className="text-center border-b-2">ກຳໄລ</p>
                     <p className="text-center  font-bold py-3">

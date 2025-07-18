@@ -1,7 +1,15 @@
+"use client";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/cashier/Sidebar";
+import useAuthStore from "../store/authStores";
+import { useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { token, user } = useAuthStore();
+  const router = useRouter();
+  if (!token && user?.path !== 2) router.push("/login");
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-blue-500 h-[7%]">

@@ -3,11 +3,7 @@ import React, { useRef, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 
 import { Invoice } from "@/app/lib/interface";
-import {
-  formatDate,
-  formatDateNotime,
-  formattedNumber,
-} from "@/app/helpers/funtions";
+import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 import Image from "next/image";
 
 interface PrintBillProps {
@@ -33,16 +29,11 @@ function PrintBill({ data, clearData }: PrintBillProps) {
   }, [data]);
 
   return (
-    <div
-    // className="hidden"
-    >
-      <div
-        ref={contentRef}
-        className=" w-[148mm] h-[210mm] mx-auto border p-5 hidden"
-      >
+    <div className="hidden">
+      <div ref={contentRef} className=" w-[148mm] h-[210mm] mx-auto border p-5">
         <div className=" flex justify-between">
           <div>
-            <Image alt="" src={"/QRBCELONE_LAK.svg"} width={100} height={100} />
+            <img alt="qrLAK" src={"/qrLAK.png"} width={100} height={100} />
           </div>
           <div className=" w-full text-center text-[16px]">
             <p className=" font-bold text-[20px]">ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ</p>
@@ -51,13 +42,13 @@ function PrintBill({ data, clearData }: PrintBillProps) {
             <p>ສອບຖາມໂທ: 020 98991396</p>
           </div>
           <div>
-            <Image alt="" src={"/QRBCELONE_THB.svg"} width={100} height={100} />
+            <img alt="qrTHB" src={"/qrTHB.png"} width={100} height={100} />
           </div>
         </div>
         <p className="  text-[18px] font-bold my-3 text-center">ໃບສົ່ງເຄື່ອງ</p>
 
         <div className="text-[14px]">
-          <p className=" capitalize">ຊື່ສິນຄ້າ: {data?.member_id}</p>
+          <p className=" capitalize">ຊືລູກຄ້າ: {data?.member_id}</p>
           <p>ເລກບິນ: {data?.id}</p>
           <p>ວັນທີພິມບິນ: {formatDate(data?.date_create)}</p>
           <p>
@@ -68,7 +59,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
               ? "ເງິນສົດ"
               : "ເງິນໂອນ"}
           </p>
-          <p>ອັຕາແລກປ່ຽ່ນ: 660</p>
+          <p>ອັດຕາແລກປ່ຽນ: 660</p>
         </div>
 
         <div className="w-full mt-3">
@@ -108,7 +99,6 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                   </td>
                 </tr>
               ))}
-              {/* fhsdgfsjhkdfhjkfdhjbfdshjdfshjfsd */}
               <tr>
                 <td rowSpan={6} colSpan={3} className="  p-2">
                   <p>ໝາຍເຫດ:</p>

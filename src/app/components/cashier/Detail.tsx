@@ -43,8 +43,6 @@ export default function Detail() {
     }
   };
 
-  console.log(invoice);
-
   useEffect(() => {
     getInvoice();
   }, [id]);

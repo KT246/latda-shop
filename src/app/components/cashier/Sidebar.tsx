@@ -35,7 +35,7 @@ const Sidebar = () => {
             <CiViewList size={20} color="white" />
           </Link>
         </Tooltip>
-
+        {/* 
         <Tooltip content="ຂໍ້ມູນສ່ວນຕົວ">
           <Link
             href={"/cashier/account"}
@@ -43,7 +43,7 @@ const Sidebar = () => {
           >
             <FaRegUserCircle size={20} color="white" />
           </Link>
-        </Tooltip>
+        </Tooltip> */}
       </div>
       <div className="w-full flex justify-center py-5 hover:bg-red-500 duration-300">
         <Tooltip content="ອອກລະບົບ">

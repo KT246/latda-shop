@@ -4,7 +4,7 @@ import PrintBill from "../components/cashier/PrintBill";
 function page() {
   return (
     <div>
-      <PrintBill />
+      <PrintBill data={null} />
     </div>
   );
 }

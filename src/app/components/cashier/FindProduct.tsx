@@ -1,6 +1,6 @@
 "use client";
 import { Input, Spinner } from "@heroui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import Highlighter from "react-highlight-words";
 import { useCartStore } from "@/app/store/cartStore";
 import Swal, { SweetAlertOptions } from "sweetalert2";
@@ -12,9 +12,8 @@ import {
   apiAddToCart,
 } from "@/app/api/products";
 import { SwalNotification } from "@/app/helpers/alers";
-import { toast } from "react-toastify";
-import axios from "axios";
 import { PlaySound } from "@/app/helpers/funtions";
+import useAuthStore from "@/app/store/authStores";
 
 const FindProduct = () => {
   const { cartName, updateCart, searchType, updateSearchType, maxMinqty } =
@@ -80,20 +79,10 @@ const FindProduct = () => {
   /////////////////////////////// End Alert /////////////////////
   React.useEffect(() => {
     if (key.length > 0) {
-      if (searchType === "code") {
-        FindProductByCode();
-      }
-      if (searchType === "title") {
-        FindProductByTitle();
-      }
-      if (searchType === "page") {
-        FindProductByPage();
-      }
-      if (searchType === "no") {
-        FindProductByNo();
-      }
-    } else {
-      setProductsTemp([]);
+      if (searchType === "code") FindProductByCode();
+      if (searchType === "title") FindProductByTitle();
+      if (searchType === "page") FindProductByPage();
+      if (searchType === "no") FindProductByNo();
     }
   }, [key]);
 
