@@ -50,7 +50,7 @@ function Home() {
   const [resportSale, setReportSale] = useState<ReportSaleResponse | null>(
     null
   );
-  const [dateStart, setDateStart] = React.useState("2025-07-01");
+  const [dateStart, setDateStart] = React.useState(getTodayDate());
   const [dateEnd, setDateEnd] = React.useState(getTodayDate());
 
   const [exchange, setExchange] = useState<number | 0>(0);
@@ -258,7 +258,7 @@ function Home() {
                   </p>
                   <p>ຈຳນວນ: {resportSale?.detail.saleCompleted.bill_count}</p>
                 </div>
-                <div className="h-32 grid grid-cols-2 justify-betwee items-center gap-3 text-white ">
+                <div className="h-32 flex justify-between items-center gap-3 text-white ">
                   <div className="flex-1 bg-gradient-to-tr  to-green-400 from-green-600 shadow-lg  rounded-lg p-2">
                     <p className="text-center border-b-2">ກຳໄລ</p>
                     <p className="text-center  font-bold py-3">
@@ -272,7 +272,7 @@ function Home() {
 
                     <p className="text-[13px]">ຫລັງຫັກຈາກສ່ວນຫລຸດ!</p>
                   </div>
-                  <div className="flex-1 bg-gradient-to-tr to-red-400 from-red-600 shadow-lg  rounded-lg p-2 pb-7z">
+                  <div className="flex-1 bg-gradient-to-tr to-red-400 from-red-600 shadow-lg  rounded-lg p-2 pb-7">
                     <p className="text-center border-b-2">ສ່ວນຫຼຸດທັງໜົດ</p>
                     <p className="text-center  font-bold py-3">
                       <span className=" text-3xl me-1">

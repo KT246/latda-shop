@@ -39,7 +39,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
             <p className=" font-bold text-[20px]">ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ</p>
             <p>ບ້ານ ນາໂດນ, ເມືອງ ແລະ, ແຂວງ ສາລະວັນ</p>
             <p>ເສັ້ນທາງເລກທີ 15 (ໃກ້ກັບວິທະຍາໄລຄູສາລະວັນ)</p>
-            <p>ສອບຖາມໂທ: 020 98991396</p>
+            <p>ເບີໂທ: 020 98991396</p>
           </div>
           <div>
             <img alt="qrTHB" src={"/qrTHB.png"} width={100} height={100} />
@@ -48,7 +48,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
         <p className="  text-[18px] font-bold my-3 text-center">ໃບສົ່ງເຄື່ອງ</p>
 
         <div className="text-[14px]">
-          <p className=" capitalize">ຊືລູກຄ້າ: {data?.member_id}</p>
+          <p className=" capitalize">ຊື່ລູກຄ້າ: {data?.member_id}</p>
           <p>ເລກບິນ: {data?.id}</p>
           <p>ວັນທີພິມບິນ: {formatDate(data?.date_create)}</p>
           <p>
@@ -69,7 +69,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                 <th className=" border border-black">NO</th>
                 <th className=" border border-black py-2">ລາຍການ</th>
                 <th className=" border border-black">ຈຳນວນ</th>
-                <th className=" border border-black">ຫໜ</th>
+                <th className=" border border-black">ຫົວໜ່ວຍ</th>
                 <th className=" border border-black">ລາຄາ</th>
                 <th className=" border border-black">ສ່ວນຫຼຸດ</th>
                 <th className=" border border-black">ລວມເງິນ</th>
@@ -89,7 +89,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                     {item?.unit}
                   </td>
                   <td className=" border border-black text-right px-1">
-                    {formattedNumber(item?.total_unit_lak ?? 0)}
+                    {formattedNumber(item?.retail_lak ?? 0)}
                   </td>
                   <td className=" border border-black text-center px-1">
                     {item?.discount} %
@@ -118,7 +118,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
               </tr>
               <tr>
                 <td colSpan={2} className="text-center  border border-black">
-                  ສ່ວນຫຼຸດ
+                  ສ່ວນຫຼຸດໜ້າຮ້ານ
                 </td>
                 <td colSpan={2} className="text-end  border border-black px-1">
                   {formattedNumber(data?.m_discount ?? 0)}
