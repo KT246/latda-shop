@@ -8,7 +8,7 @@ import { useEffect } from "react";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { token, user } = useAuthStore();
   const router = useRouter();
-  if (!token && user?.path !== 2) router.push("/login");
+  if (!token || user?.path !== 2) router.push("/login");
 
   return (
     <div className="flex flex-col h-screen">
