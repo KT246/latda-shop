@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Navbar />
       </div>
       <div className="w-full h-[93%] flex">
-        <div className=" bg-blue-950">
+        <div className=" bg-blue-950 ">
           <Sidebar />
         </div>
         <div className="bg-white w-full h-full p-3">{children}</div>

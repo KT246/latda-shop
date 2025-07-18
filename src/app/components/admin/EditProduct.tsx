@@ -13,7 +13,6 @@ import {
 import { toast } from "react-toastify";
 import { Button } from "@heroui/react";
 import useAuthStore from "@/app/store/authStores";
-import { a } from "framer-motion/client";
 
 interface Product {
   barcode: string;
@@ -193,10 +192,12 @@ function EditProduct() {
 
     try {
       const res: any = await _updateIMG(barcode, form);
+      console.log(res);
       if (res.status === 200) {
         const data = res.data;
-        window.location.reload();
         toast.success(data.message);
+        window.location.reload();
+
       }
     } catch (error) {
       console.log(error);
@@ -417,14 +418,17 @@ function EditProduct() {
               <div
                 className="w-full border-2 border-dotted border-blue-500 cursor-pointer"
               >
-                {IMG && <Image
-                  loading="lazy"
-                  src={process.env.NEXT_PUBLIC_API_URL + "/uploads/" + IMG}
-                  alt="Preview"
-                  className="w-full h-full"
-                  width={100}
-                  height={0}
-                />}
+                {IMG &&
+                  <Image
+                    loading="lazy"
+                    src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${IMG}`}
+                    alt="Preview"
+                    className="w-full h-full"
+                    width={100}
+                    height={0}
+                    unoptimized
+
+                  />}
                 {
                   fileImg && <Image
                     loading="lazy"
