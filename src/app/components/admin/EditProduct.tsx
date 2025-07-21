@@ -97,6 +97,16 @@ function EditProduct() {
     }
   }, [id]);
 
+  React.useEffect(() => {
+    setFormData({
+      ...formData,
+      qty_balance:
+        Number(formData.qty_start) +
+        Number(formData.qty_in) -
+        Number(formData.qty_out),
+    });
+  }, [formData.qty_start, formData.qty_in, formData.qty_out]);
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -197,7 +207,6 @@ function EditProduct() {
         const data = res.data;
         toast.success(data.message);
         window.location.reload();
-
       }
     } catch (error) {
       console.log(error);
@@ -223,7 +232,6 @@ function EditProduct() {
         <div className=" flex gap-5">
           <div className="w-full bg-white border shadow-lg p-3">
             <div className="flex gap-3">
-
               <div className="w-full">
                 <label className="block font-semibold">ຊື່ສິນຄ້າ</label>
                 <input
@@ -232,7 +240,6 @@ function EditProduct() {
                   value={formData.title}
                   onChange={handleChange}
                   required
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
@@ -256,7 +263,6 @@ function EditProduct() {
                   name="unit"
                   value={formData.unit}
                   onChange={handleChange}
-
                   required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -268,7 +274,6 @@ function EditProduct() {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-
                   required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -280,7 +285,6 @@ function EditProduct() {
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
@@ -293,7 +297,6 @@ function EditProduct() {
                   name="use_for"
                   value={formData.use_for}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
@@ -304,15 +307,13 @@ function EditProduct() {
                   name="supplier"
                   value={formData.supplier}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
-
             </div>
             <div className="mt-3 flex gap-3">
               <div className="w-full">
-                <label className="block font-semibold">ຍອດຕົ້ນ</label>
+                <label className="block font-semibold">ຍົກມາ</label>
                 <input
                   type="number"
                   name="qty_start"
@@ -324,7 +325,7 @@ function EditProduct() {
                 />
               </div>
               <div className="w-full">
-                <label className="block font-semibold">ຍອດຍົກມາ</label>
+                <label className="block font-semibold">ຍອດຊື້</label>
                 <input
                   type="number"
                   name="qty_in"
@@ -354,7 +355,7 @@ function EditProduct() {
                   name="qty_balance"
                   value={formData.qty_balance}
                   onChange={handleChange}
-                  readOnly={user?.path !== 0}
+                  readOnly
                   required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -384,7 +385,6 @@ function EditProduct() {
                     className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                   />
                 </div>
-
               </div>
               <div className="mt-3 w-full flex items-center gap-3">
                 <div className="w-full">
@@ -400,7 +400,9 @@ function EditProduct() {
               </div>
               <div className="mt-3 w-full">
                 <div className="w-full">
-                  <label className="block font-semibold">ຈຳນວນແຈ້ງເຕືອນ ສິນຄ້າເຫຼືອນ້ອຍ</label>
+                  <label className="block font-semibold">
+                    ຈຳນວນແຈ້ງເຕືອນ ສິນຄ້າເຫຼືອນ້ອຍ
+                  </label>
                   <input
                     type="number"
                     name="qty_alert"
@@ -415,10 +417,8 @@ function EditProduct() {
 
             <div className="w-full h-full">
               <label className="block font-semibold">ຮູບພາບ</label>
-              <div
-                className="w-full border-2 border-dotted border-blue-500 cursor-pointer"
-              >
-                {IMG &&
+              <div className="w-full border-2 border-dotted border-blue-500 cursor-pointer">
+                {IMG && (
                   <Image
                     loading="lazy"
                     src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${IMG}`}
@@ -427,10 +427,10 @@ function EditProduct() {
                     width={100}
                     height={0}
                     unoptimized
-
-                  />}
-                {
-                  fileImg && <Image
+                  />
+                )}
+                {fileImg && (
+                  <Image
                     loading="lazy"
                     src={URL.createObjectURL(fileImg)}
                     alt="Preview"
@@ -438,8 +438,8 @@ function EditProduct() {
                     width={100}
                     height={0}
                   />
-                }
-                <div className=" mt-3 flex justify-center gap-3"  >
+                )}
+                <div className=" mt-3 flex justify-center gap-3">
                   <input
                     type="file"
                     accept="image/*"
@@ -447,14 +447,16 @@ function EditProduct() {
                     className="hidden"
                     onChange={handleFileChange}
                   />
-                  <Button color="primary" onPress={() => inputRef.current?.click()}>
+                  <Button
+                    color="primary"
+                    onPress={() => inputRef.current?.click()}
+                  >
                     ປ່ຽບຮູບ
                   </Button>
                   <Button color="primary" onPress={handleUpdatIMG}>
                     ອັບເດດຮູບ
                   </Button>
                 </div>
-
               </div>
             </div>
           </div>
@@ -462,22 +464,23 @@ function EditProduct() {
         <div className=" flex gap-5">
           <div className="w-full bg-white border shadow-lg p-3">
             <div className=" flex gap-3">
-              {user?.path === 0 &&
+              {user?.path === 0 && (
                 <div className="w-full">
-                  <label className="block font-semibold">ລາຄາ ຕົ້ນທຶນ (LAK)</label>
+                  <label className="block font-semibold">
+                    ລາຄາ ຕົ້ນທຶນ (LAK)
+                  </label>
                   <input
                     type="number"
                     name="cost_lak"
                     value={formData.cost_lak}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
-
                   />
                   <span className=" block">
                     {formattedNumber(formData.cost_lak)}. ກີບ
                   </span>
                 </div>
-              }
+              )}
               <div className="w-full">
                 <label className="block font-semibold">ຂາຍຍ່ອຍ (LAK)</label>
                 <input
@@ -485,7 +488,6 @@ function EditProduct() {
                   name="retail_lak"
                   value={formData.retail_lak}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
                 <span className=" block">
@@ -493,38 +495,40 @@ function EditProduct() {
                 </span>
               </div>
               <div className="w-full">
-                <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (LAK)</label>
+                <label className="block font-semibold">
+                  ລາຄາຂາຍ​ສົ່ງ (LAK)
+                </label>
                 <input
                   type="number"
                   name="wholesale_lak"
                   value={formData.wholesale_lak}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
                 <span className=" block">
                   {formattedNumber(formData.wholesale_lak)}. ກີບ
                 </span>
               </div>
-
             </div>
 
             <div className="mt-5 flex gap-3">
-              {user?.path === 0 &&
+              {user?.path === 0 && (
                 <div className="w-full">
-                  <label className="block font-semibold">ລາຄາ ຕົ້ນທຶນ (THB)</label>
+                  <label className="block font-semibold">
+                    ລາຄາ ຕົ້ນທຶນ (THB)
+                  </label>
                   <input
                     type="number"
                     name="cost_thb"
                     value={formData.cost_thb}
                     onChange={handleChange}
-
                     className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                   />
                   <span className=" block">
                     {formattedNumber(formData.cost_thb)}. ບາດ
                   </span>
-                </div>}
+                </div>
+              )}
               <div className="w-full">
                 <label className="block font-semibold">ລາຄາຂາຍຍ່ອຍ (THB)</label>
                 <input
@@ -532,7 +536,6 @@ function EditProduct() {
                   name="retail_thb"
                   value={formData.retail_thb}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
                 <span className=" block">
@@ -540,13 +543,14 @@ function EditProduct() {
                 </span>
               </div>
               <div className="w-full">
-                <label className="block font-semibold">ລາຄາຂາຍ​ສົ່ງ (THB)​</label>
+                <label className="block font-semibold">
+                  ລາຄາຂາຍ​ສົ່ງ (THB)​
+                </label>
                 <input
                   type="number"
                   name="wholesale_thb"
                   value={formData.wholesale_thb}
                   onChange={handleChange}
-
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
                 <span className=" block">
@@ -562,7 +566,6 @@ function EditProduct() {
                 type="number"
                 name="discount"
                 value={formData.discount}
-
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
               />
@@ -589,12 +592,7 @@ function EditProduct() {
             <IoChevronBackOutline />
             ກັບຄືນ
           </Button>
-          <Button
-
-            type="submit"
-            color={"primary"}
-            className=" py-2"
-          >
+          <Button type="submit" color={"primary"} className=" py-2">
             ອັບເດດ
           </Button>
         </div>

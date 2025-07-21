@@ -37,7 +37,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
           </div>
           <div className=" w-full text-center text-[16px]">
             <p className=" font-bold text-[20px]">ຮ້ານລັດດາຮຸ່ງຊັບອໍໂຕ</p>
-            <p>ບ້ານ ນາໂດນ, ເມືອງ ແລະ, ແຂວງ ສາລະວັນ</p>
+            <p>ບ້ານ ນາໂດນ ເມືອງ ແລະ ແຂວງ ສາລະວັນ</p>
             <p>ເສັ້ນທາງເລກທີ 15 (ໃກ້ກັບວິທະຍາໄລຄູສາລະວັນ)</p>
             <p>ເບີໂທ: 020 98991396</p>
           </div>

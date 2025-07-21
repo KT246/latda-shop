@@ -94,19 +94,6 @@ export default function FormLogin() {
     }
   };
 
-  // useEffect(() => {
-  //   if (token) {
-  //     const path = user?.path;
-
-  //     if (path === 1) {
-  //       return redirect("/admin");
-  //     }
-  //     if (path === 2) {
-  //       return redirect("/cashier");
-  //     }
-  //   }
-  // }, [token]);
-
   return (
     <div className="grid grid-cols-1 h-screen bg-slate-300 lg:grid-cols-2">
       <div className="bg-[url('/skv.jpg')] bg-cover lg:block hidden" />

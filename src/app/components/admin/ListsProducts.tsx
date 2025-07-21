@@ -260,10 +260,11 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${item.qty_balance <= item.qty_alert
+                  className={`${
+                    item.qty_balance <= item.qty_alert
                       ? "text-red-500"
                       : "text-black"
-                    }`}
+                  }`}
                 >
                   {item.qty_balance}
                 </span>

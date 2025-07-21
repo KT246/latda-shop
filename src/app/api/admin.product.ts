@@ -38,11 +38,7 @@ export const updateStatusInvoice = async (id: number, status: string) => {
 
 /// products
 export const GetAllProduct = async (size: number, page: number) => {
-  try {
-    return await api.get(`/api/admin/products?size=${size}&page=${page}`);
-  } catch (error) {
-    return error;
-  }
+  return await api.get(`/api/admin/products?size=${size}&page=${page}`);
 };
 export const GetProductById = async (bracode: string) => {
   return await api.get(`/api/admin/productid?barcode=${bracode}`);
@@ -55,11 +51,7 @@ export const GetProductByIds = async (key: string, value: string) => {
   }
 };
 export const CreateProducts = async (data: FormData) => {
-  try {
-    return await api.post("/api/admin/product/add", data);
-  } catch (error) {
-    return error;
-  }
+  return await api.post("/api/admin/product/add", data);
 };
 export const _updateIMG = async (bracode: string, data: FormData) => {
   try {
@@ -87,7 +79,7 @@ export const _inCreaseProduct = async (barcode: string, qty: number) => {
   } catch (error) {
     return error;
   }
-}
+};
 
 // {users}
 export const addUsers = async (data: object) => {

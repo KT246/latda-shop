@@ -102,11 +102,10 @@ export interface Products {
 }
 
 export interface Warehouse {
-  total_qty_balance: string;
+  total_count_qty: string;
+  total_count_product: number;
   total_cost_lak: number;
   total_cost_thb: number;
-  active_products_count: string;
-  blocked_products_count: string;
 }
 
 export interface ReportProduct {

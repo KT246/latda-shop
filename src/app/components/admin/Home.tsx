@@ -394,26 +394,20 @@ function Home() {
                     <span>ກີບ</span>
                   </p>
                 </div>
-                <div className="flex items-center gap-3 text-white ">
+                <div className=" text-center flex items-center gap-3 text-white ">
                   <div className="h-32 shadow-lg flex-1 bg-gradient-to-tl to-blue-400 from-blue-700 rounded-lg p-2">
-                    <p className="text-center border-b-2">ສິນຄ້າທັງຫມົດ</p>
-                    <p className="text-center text-3xl font-semibold pt-5">
-                      {resportProduct?.warehouse.total_qty_balance}
+                    <p className=" border-b-2">ສິນຄ້າທັງຫມົດ</p>
+                    <p className=" text-3xl font-semibold pt-5">
+                      {resportProduct?.warehouse.total_count_product}
                     </p>
+                    <p className="mt-2">ລາຍການ</p>
                   </div>
-                  <div className="h-32 shadow-lg text-sm flex-1 bg-gradient-to-bl to-success-400 from-success-700 rounded-lg p-2">
-                    <p className="text-center border-b-2 pb-1">
-                      ສິນຄ້າເຄື່ອນໄຫວ
+                  <div className="h-32 shadow-lg flex-1 bg-gradient-to-tl to-purple-400 from-purple-700 rounded-lg p-2">
+                    <p className=" border-b-2">ຈຳນວນທັງຫມົດ</p>
+                    <p className=" text-3xl font-semibold pt-5">
+                      {resportProduct?.warehouse.total_count_qty}
                     </p>
-                    <p className="text-center text-3xl font-semibold pt-5">
-                      {resportProduct?.warehouse.active_products_count}
-                    </p>
-                  </div>
-                  <div className="h-32 shadow-lg bg-gradient-to-tr to-red-400 from-red-700 flex-1 rounded-lg p-2">
-                    <p className="text-center border-b-2">ສິນຄ້າບລັອກ</p>
-                    <p className="text-center text-3xl font-semibold pt-5">
-                      {resportProduct?.warehouse.blocked_products_count}
-                    </p>
+                    <p className="mt-2">ອັນ</p>
                   </div>
                 </div>
               </div>
