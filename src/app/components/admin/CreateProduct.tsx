@@ -276,7 +276,6 @@ function CreateProduct() {
                   value={formData.unit}
                   onChange={handleChange}
                   disabled={!isNewProduct}
-                  required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>

@@ -250,7 +250,6 @@ function EditProduct() {
                   name="size"
                   value={formData.size}
                   onChange={handleChange}
-                  required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
@@ -319,7 +318,6 @@ function EditProduct() {
                   name="qty_start"
                   value={formData.qty_start}
                   onChange={handleChange}
-                  required
                   readOnly={user?.path !== 0}
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -331,7 +329,6 @@ function EditProduct() {
                   name="qty_in"
                   value={formData.qty_in}
                   onChange={handleChange}
-                  required
                   readOnly={user?.path !== 0}
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -343,7 +340,6 @@ function EditProduct() {
                   name="qty_out"
                   value={formData.qty_out}
                   onChange={handleChange}
-                  required
                   readOnly={user?.path !== 0}
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
@@ -356,7 +352,6 @@ function EditProduct() {
                   value={formData.qty_balance}
                   onChange={handleChange}
                   readOnly
-                  required
                   className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                 />
               </div>
@@ -408,7 +403,6 @@ function EditProduct() {
                     name="qty_alert"
                     value={formData.qty_alert}
                     onChange={handleChange}
-                    required
                     className="w-full p-2 border border-gray-300 rounded focus:border-blue-900 focus:outline-none"
                   />
                 </div>

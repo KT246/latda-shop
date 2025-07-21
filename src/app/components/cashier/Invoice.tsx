@@ -166,6 +166,7 @@ const Invoice = () => {
       });
 
       const data = res.data;
+      console.log(data);
       if (data.status !== "error") {
         updateCart(null);
         setDialog(!dialog);
