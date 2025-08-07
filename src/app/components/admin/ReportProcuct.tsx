@@ -122,7 +122,7 @@ const ReportProcuct = () => {
         </div>
       </div>
 
-      <div className="w-2/3 flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
+      <div className=" flex flex-col gap-3 bg-white p-5 shadow-lg rounded-lg">
         <h3 className="border-l-4 border-red-500 font-semibold leading-none ps-2  text-blue-500">
           ສິນຄ້າໃກ້ຫມົດ
         </h3>
