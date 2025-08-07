@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -18,7 +18,8 @@ import {
   DropdownItem,
   Selection, // <-- Add this import
 } from "@heroui/react";
-
+import Barcode from 'react-barcode'
+import { CiBarcode } from "react-icons/ci";
 import { apiDlPdruct, apiResetQty } from "@/app/api/products";
 import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
 import Image from "next/image";
@@ -29,6 +30,7 @@ import { Products } from "@/app/lib/interface";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import useAuthStore from "@/app/store/authStores";
+import { useReactToPrint } from "react-to-print";
 
 function ListsProducts() {
   const { user } = useAuthStore();
@@ -41,7 +43,9 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-
+  const [barcodeToPrint, setBarcodeToPrint] = React.useState<string>("");
+  const [numToPrint, setNumToPrint] = React.useState<number>(1);
+  const contentRef = useRef<HTMLDivElement>(null);
   /// handles changes
   const selectedValue = React.useMemo(
     () => Array.from(selectedKeys).join(", ").replace(/_/g, ""),
@@ -125,7 +129,42 @@ function ListsProducts() {
       }
     });
   };
-
+  const PrintBarCode = async (barcode: string) => {
+    setBarcodeToPrint(barcode);
+    const { value: num } = await Swal.fire({
+      title: "ພິມບາໂຄດ " + barcode,
+      input: "number",
+      inputPlaceholder: "ພິມຈຳນວນ...",
+      showCancelButton: true,
+      confirmButtonText: "ພິມ",
+      cancelButtonText: "ຍົກເລີກ",
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return "ກະລຸນາປ້ອນຈຳນວນ ບາໂຄດ!";
+        }
+        return null;
+      },
+      didOpen: () => {
+        Swal.getInput()?.focus();
+      },
+    });
+    if (num) {
+      setNumToPrint(num);
+    }
+    setTimeout(() => {
+      handlePrint();
+    }, 1000);
+    // handlePrint();
+  }
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+    documentTitle: "Latda Shop Receipt",
+    onAfterPrint: () => {
+      setBarcodeToPrint("");
+      setNumToPrint(1);
+    },
+  });
   return (
     <div>
       <div className="flex items-center justify-between p-3">
@@ -260,11 +299,10 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${
-                    item.qty_balance <= item.qty_alert
-                      ? "text-red-500"
-                      : "text-black"
-                  }`}
+                  className={`${item.qty_balance <= item.qty_alert
+                    ? "text-red-500"
+                    : "text-black"
+                    }`}
                 >
                   {item.qty_balance}
                 </span>
@@ -274,13 +312,11 @@ function ListsProducts() {
               {/* <TableCell>{item.status}</TableCell> */}
               <TableCell>
                 <div className="relative flex items-center gap-2">
-                  {/* <Tooltip content="ເບິ່ງ">
-                    <Link href={`/admin/products/detail/${item.barcode}`}>
-                      <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                        <EyeIcon />
-                      </span>
-                    </Link>
-                  </Tooltip> */}
+                  <Tooltip content="ພິມບາໂຄດ">
+                    <span onClick={() => PrintBarCode(item.barcode)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <CiBarcode />
+                    </span>
+                  </Tooltip>
                   <Tooltip content="ແກ້ໄຂ">
                     <Link href={`/admin/products/edit/${item.barcode}`}>
                       <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
@@ -304,6 +340,17 @@ function ListsProducts() {
           )}
         </TableBody>
       </Table>
+      <div className=" hidden">
+        <div ref={contentRef} className=" w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white">
+          <div className=" grid grid-cols-6 gap-[2mm]">
+            {Array.from({ length: numToPrint }, (_, index) => (
+              <div key={index} className="w-[32mm] h-[19mm] rounded-xl border flex justify-center items-center">
+                <Barcode width={1} height={20} format="CODE128" value={barcodeToPrint} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
