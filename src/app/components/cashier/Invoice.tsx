@@ -240,6 +240,7 @@ const Invoice = () => {
         toast.warning(data.message);
       }
     } catch (error) {
+      console.log(error);
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message;
         toast.error(errorMessage);

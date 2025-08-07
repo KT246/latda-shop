@@ -202,7 +202,7 @@ function EditProduct() {
 
     try {
       const res: any = await _updateIMG(barcode, form);
-      console.log(res);
+      // console.log(res);
       if (res.status === 200) {
         const data = res.data;
         toast.success(data.message);

@@ -84,7 +84,6 @@ function CreateProduct() {
     const file = e.target.files?.[0];
 
     if (file) {
-      console.log(file);
       setFileImg(file);
       const url = URL.createObjectURL(file);
       setIMG(url);

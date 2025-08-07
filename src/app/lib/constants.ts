@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 import useAuthStore from "../store/authStores";
 
 const { token } = useAuthStore.getState();
-console.log(token);
+// console.log(token);
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,

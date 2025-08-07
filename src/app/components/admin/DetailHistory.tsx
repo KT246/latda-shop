@@ -49,7 +49,7 @@ export default function DetailHistory() {
     if (res.status === 200) {
       const data = res.data.invoices[0];
       setInvoices(data);
-      console.log(data);
+      // console.log(data);
     } else {
       console.log("Error fetching invoice data");
     }
