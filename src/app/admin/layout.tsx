@@ -31,11 +31,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className=" bg-blue-950 w-[200px] fixed top-0 left-0 h-full overflow-y-auto z-20">
         <Sidebar />
       </div>
-      <div className="w-full ms-[200px]">
-        {/* <div className="bg-blue-500 h-[8vh]">
+
+      {/* <div className="bg-blue-500 h-[8vh]">
           <Navbar />
         </div> */}
-        <div className="  bg-gray-100 px-10 min-h-screen pb-10">{children}</div>
+      <div className="w-full ms-[200px]  bg-gray-100 px-10 min-h-screen pb-10">
+        {children}
       </div>
     </div>
   );

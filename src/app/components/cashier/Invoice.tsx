@@ -387,7 +387,7 @@ const Invoice = () => {
           </table>
 
           {/* Body Table Scroll */}
-          <div className="overflow-y-scroll h-[50vh] mb-5 scroll-thin">
+          <div className="overflow-y-scroll h-[60vh] mb-5 scroll-thin">
             <table className="w-full text-sm table-fixed">
               <tbody>
                 {cart !== null && cart.details?.length > 0 ? (

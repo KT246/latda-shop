@@ -214,8 +214,10 @@ function ListsHistorys() {
           <TableColumn>ລະຫັດຜູ້ຂາຍ</TableColumn>
           <TableColumn className="text-right">ອັດຕາແລກປ່ຽນ</TableColumn>
           <TableColumn className="text-right">ຈໍານວນສິນຄ້າ</TableColumn>
-          <TableColumn className="text-right">ສ່ວນຫຼຸດ</TableColumn>
-          <TableColumn className="text-right">ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right">ສ່ວນຫຼຸດ (LAK)</TableColumn>
+          <TableColumn className="text-right">LAK</TableColumn>
+          <TableColumn className="text-right">ສ່ວນຫຼຸດ (THB)</TableColumn>
+          <TableColumn className="text-right">THB</TableColumn>
           <TableColumn>ປະເພດການຈ່າຍ</TableColumn>
           <TableColumn>status</TableColumn>
           <TableColumn className="text-center">action</TableColumn>
@@ -233,9 +235,17 @@ function ListsHistorys() {
               <TableCell className="text-right">
                 {item.details.length}
               </TableCell>
-              <TableCell className="text-right">{item.m_discount}</TableCell>
+              <TableCell className="text-right">
+                {item.m_discount_lak}
+              </TableCell>
               <TableCell className="text-right">
                 {formattedNumber(item.total_checkout_lak)}
+              </TableCell>
+              <TableCell className="text-right">
+                {item.m_discount_thb}
+              </TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_checkout_thb)}
               </TableCell>
               <TableCell>
                 {item.pay_type === "cash"

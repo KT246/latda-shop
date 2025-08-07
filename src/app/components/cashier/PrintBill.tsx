@@ -147,7 +147,7 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                   colSpan={1}
                   className="text-center font-bold  border border-black py-3"
                 >
-                  ຈຳນວນເງິນຕ້ອງຈ່າຍ
+                  ເງິນຕ້ອງຈ່າຍ
                 </td>
                 <td
                   colSpan={1}
@@ -164,13 +164,24 @@ function PrintBill({ data, clearData }: PrintBillProps) {
               </tr>
               <tr>
                 <td colSpan={1} className="text-center  border border-black">
+                  ເງິນຮັບມາ
+                </td>
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.money_received_lak ?? 0)}
+                </td>
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.money_received_thb ?? 0)}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={1} className="text-center  border border-black">
                   ເງິນທອນ
                 </td>
                 <td colSpan={1} className="text-end  border border-black px-1">
-                  {formattedNumber(data?.money_cash ?? 0)}
+                  {formattedNumber(data?.money_cash_lak ?? 0)}
                 </td>
                 <td colSpan={1} className="text-end  border border-black px-1">
-                  {formattedNumber(data?.money_cash ?? 0)}
+                  {formattedNumber(data?.money_cash_thb ?? 0)}
                 </td>
               </tr>
             </tbody>
