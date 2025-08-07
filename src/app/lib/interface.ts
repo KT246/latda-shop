@@ -17,20 +17,17 @@ export interface Details {
   cart_id: number;
   barcode: string;
   title: string;
-  cost_thb: number;
   size: string;
-  use_for: string;
   unit: string;
-  category: string;
+  cost_thb: number;
   cost_lak: number;
   wholesale_thb: number;
   wholesale_lak: number;
   retail_thb: number;
   retail_lak: number;
-  discount: number;
   qty: number;
-  total_unit_lak: number;
   total_lak: number;
+  total_thb: number;
 }
 
 export interface Invoice {
@@ -40,18 +37,23 @@ export interface Invoice {
   cart_type: number;
   total_lak: number;
   total_thb: number;
-  total_unit_lak: number;
-  total_unit_thb: number;
   total_checkout_lak: number;
   total_checkout_thb: number;
   rate: number;
-  m_discount: number;
+
+  m_discount_lak: number;
+  m_discount_thb: number;
+
   pay_type: string;
+  pay_currency: string;
+
   money_received: number;
   money_cash: number;
+
   date_create: string;
   date_payment: string;
   status: string;
+
   details: Details[];
 }
 export interface InvoiceResponse {
@@ -112,51 +114,69 @@ export interface ReportProduct {
   warehouse: Warehouse;
   productalert: Products[];
 }
+// ReportSaleResponse interface for sales report
 
 export interface SaleDetail {
   total: number | null;
   bill_count: number;
 }
 
-export interface ReportSaleDetail {
-  saleCompleted: SaleDetail;
-  saleDebt: SaleDetail;
-  saleCancle: SaleDetail;
+export interface ProfitDetail {
+  total_discount_lak: number;
+  total_profit_lak: number;
+  total_discount_thb?: number;
+  total_profit_thb?: number;
+}
+
+export interface ReportDetail {
   profit: {
-    total_discount_lak: number;
     total_profit_lak: number;
+    total_profit_thb: number;
+  };
+  saleCompleted: {
+    total_sale_complet_lak: number;
+    total_sale_complet_thb: number;
+    bill_count: number;
+  };
+  saleDebt: {
+    total_sale_complet_lak: number;
+    total_sale_complet_thb: number;
+    bill_count: number;
+  };
+  saleCancle: {
+    bill_count: number;
+  };
+  discount: {
+    total_discount_lak: number;
+    total_discount_thb: number;
   };
 }
 
-export interface InvoiceDebt {
+export interface Invoice {
   id: number;
   cashier_id: string;
   member_id: string;
   cart_type: number;
   total_lak: number;
   total_thb: number;
-  total_unit_lak: number;
-  total_unit_thb: number;
   total_checkout_lak: number;
   total_checkout_thb: number;
   rate: number;
-  m_discount: number;
+  m_discount_lak: number;
+  m_discount_thb: number;
   pay_type: string;
+  date_payment: string;
+  pay_currency: string;
   date_create: string;
-  money_received: number;
-  money_cash: number;
+  money_received_lak: number;
+  money_cash_lak: number;
+  money_received_thb: number;
+  money_cash_thb: number;
   status: string;
 }
 
 export interface ReportSaleResponse {
-  detail: ReportSaleDetail;
-  invoice_debt: InvoiceDebt[];
-}
-
-export interface ReportSaleSummary {
-  totalSale: SaleDetail;
-  saleCash: SaleDetail;
-  saleTransfer: SaleDetail;
-  saleDebt: SaleDetail;
-  saleCancle: SaleDetail;
+  detail: ReportDetail;
+  invoice_debt: Invoice[];
+  invoice_cancel: Invoice[];
 }

@@ -9,13 +9,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { token, user } = useAuthStore();
-  if (!token) {
-    router.push("/login");
-  }
+  if (!token) return router.push("/login");
+
   if (token) {
-    if (user?.path === 2) {
-      router.push("/cashier");
-    }
+    if (user?.path === 2) return router.push("/cashier");
+
     if (user?.path === 1) {
       const allowedPaths = ["/admin/products", "/admin/products/create"];
 
@@ -25,11 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const isAllowed =
         allowedPaths.includes(pathname) || isEditProduct || isdetailProduct;
 
-      if (!isAllowed) {
-        // Redirect hoặc chặn quyền truy cập
-        router.push("/admin/products");
-        return;
-      }
+      if (!isAllowed) return router.push("/admin/products");
     }
   }
   return (

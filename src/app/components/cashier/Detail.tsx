@@ -96,11 +96,12 @@ export default function Detail() {
           </p>
         </div>
         <div className="text-center space-y-3">
-          <p>ເງິນທີ່ໄດ້ຮັບ</p>
+          <p>ເງິນຮັບ</p>
           <p className="text-gray-500 text-xl font-semibold">
             {formattedNumber(invoice?.money_received ?? 0)}
           </p>
         </div>
+
         <div className="text-center space-y-3">
           <p>ເງິນທອນ</p>
           <p className="text-gray-500 text-xl font-semibold">
@@ -108,19 +109,29 @@ export default function Detail() {
           </p>
         </div>
         <div className="text-center space-y-3">
-          <p>ລາຄາລວມທັງຫມົດ(LAK)</p>
+          <p>ລາຄາລວມ({invoice?.pay_currency === "LAK" ? "LAK" : "THB"})</p>
           <p className="text-gray-500 text-xl font-semibold">
-            {formattedNumber(invoice?.total_unit_lak ?? 0)}
+            {invoice?.pay_currency === "LAK"
+              ? formattedNumber(invoice?.total_lak ?? 0)
+              : formattedNumber(invoice?.total_thb ?? 0)}
           </p>
         </div>
         <div className="text-center space-y-3">
           <p>ສ່ວນຫຼຸດ</p>
-          <p className="text-gray-500 font-semibold">{invoice?.m_discount}</p>
+          <p className="text-gray-500 font-semibold">
+            {invoice?.pay_currency === "LAK"
+              ? invoice?.m_discount_lak
+              : invoice?.m_discount_thb}
+          </p>
         </div>
         <div className="text-center space-y-3">
-          <p>ລວມຈ່າຍທັງຫມົດ(LAK)</p>
+          <p>
+            ລວມຈ່າຍທັງຫມົດ({invoice?.pay_currency === "LAK" ? "LAK" : "THB"})
+          </p>
           <p className="text-gray-500 text-xl font-semibold">
-            {formattedNumber(invoice?.total_checkout_lak ?? 0)}
+            {invoice?.pay_currency === "LAK"
+              ? formattedNumber(invoice?.total_checkout_lak ?? 0)
+              : formattedNumber(invoice?.total_checkout_thb ?? 0)}
           </p>
         </div>
         <div className="text-center space-y-3">
@@ -162,30 +173,28 @@ export default function Detail() {
       >
         <TableHeader>
           <TableColumn> ບາໂຄດ</TableColumn>
-          <TableColumn>ຫົວຂໍ້</TableColumn>
+          <TableColumn>ຊື່ສິນຄ້າ</TableColumn>
           <TableColumn>ຫົວໜ່ວຍ</TableColumn>
-          <TableColumn>ໝວດຫມູ່</TableColumn>
           <TableColumn className="text-right">ຈໍານວນ</TableColumn>
-          <TableColumn className="text-right">ສ່ວນຫຼຸດ</TableColumn>
           <TableColumn className="text-right">ລາຄາ (LAK)</TableColumn>
+          <TableColumn className="text-right">ລາຄາ (THB)</TableColumn>
           <TableColumn className="text-right">ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right">ລາຄາລວມ (THB)</TableColumn>
         </TableHeader>
         <TableBody items={invoice?.details ?? []}>
           {(item) => (
             <TableRow key={item.barcode}>
               <TableCell>{item.barcode}</TableCell>
               <TableCell>{item.title + item.size}</TableCell>
-              <TableCell>{item.unit}</TableCell>
-              <TableCell>{item.category}</TableCell>
+              <TableCell className="text-right">{item.unit}</TableCell>
               <TableCell className="text-right">{item.qty}</TableCell>
-              <TableCell className="text-right text-danger">
-                {item.discount}%
-              </TableCell>
               <TableCell className="text-right">
                 {formattedNumber(item.retail_lak)}
               </TableCell>
+              <TableCell className="text-right">{item.retail_thb}</TableCell>
+              <TableCell className="text-right">{item.total_lak}</TableCell>
               <TableCell className="text-right">
-                {formattedNumber(item.total_lak)}
+                {formattedNumber(item.total_thb)}
               </TableCell>
             </TableRow>
           )}

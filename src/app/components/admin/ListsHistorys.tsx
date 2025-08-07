@@ -35,7 +35,7 @@ function ListsHistorys() {
   /// useState
   const [idInvoice, setIdInvoice] = React.useState<number | null>(null);
   const [page, setPage] = React.useState(1);
-  const [totalPages, setTotalPages] = React.useState<number>(1);
+  const [totalPages, setTotalPages] = React.useState<number | null>(null);
   const [invoices, setInvoices] = useState<InvoiceResponse | null>(null);
   const [payType, setPayType] = React.useState("");
   const [dateStart, setDateStart] = React.useState(getOneMonthAgo());
@@ -51,9 +51,10 @@ function ListsHistorys() {
       dateEnd,
       payType
     );
-    console.log(payType);
-    console.log(res);
+    // console.log(payType);
+    // console.log(res);
     const data = res.data;
+    // console.log(data);
     setInvoices(data);
     setTotalPages(data.totalPages);
   };
@@ -197,7 +198,7 @@ function ListsHistorys() {
               showShadow
               color="primary"
               page={page}
-              total={totalPages}
+              total={totalPages ?? 0}
               onChange={(page) => setPage(page)}
             />
           </div>

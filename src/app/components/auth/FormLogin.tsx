@@ -36,6 +36,22 @@ export default function FormLogin() {
     "default" | "primary"
   >("default");
 
+  const usernameRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    target: "username" | "password"
+  ) => {
+    if (e.key === "ArrowDown" && target === "username") {
+      e.preventDefault();
+      passwordRef.current?.focus();
+    } else if (e.key === "ArrowUp" && target === "password") {
+      e.preventDefault();
+      usernameRef.current?.focus();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -122,6 +138,8 @@ export default function FormLogin() {
               onChange={(e) => setUsername(e.target.value)}
               onFocus={() => setColorName("primary")}
               onBlur={() => setColorName("default")}
+              ref={usernameRef}
+              onKeyDown={(e) => handleKeyDown(e, "username")}
             />
             <Input
               type="password"
@@ -136,12 +154,15 @@ export default function FormLogin() {
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setColorPassword("primary")}
               onBlur={() => setColorPassword("default")}
+              ref={passwordRef}
+              onKeyDown={(e) => handleKeyDown(e, "password")}
             />
             <Button
               type="submit"
               isLoading={loading}
               disabled={loading}
               color="primary"
+              size="lg"
               className="w-full"
             >
               ລັອກອິນ

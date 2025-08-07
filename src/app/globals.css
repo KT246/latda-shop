@@ -17,6 +17,9 @@ body {
 .scroll-thin::-webkit-scrollbar {
   width: 2px;
 }
+/* .scroll-hide::-webkit-scrollbar {
+  width: ;
+} */
 
 .scroll-thin::-webkit-scrollbar-thumb {
   background-color: rgb(218, 218, 218);

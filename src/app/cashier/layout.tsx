@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   if (!token || user?.path !== 2) router.push("/login");
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen ">
       <div className="bg-blue-500 h-[7%]">
         <Navbar />
       </div>

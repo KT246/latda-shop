@@ -8,11 +8,16 @@ import { Tooltip } from "@heroui/react";
 import { FaRegUserCircle } from "react-icons/fa";
 import useAuthStore from "@/app/store/authStores";
 import { useRouter } from "next/navigation";
+import { useInvoiceStore } from "@/app/store/Invoice";
+import { useCartStore } from "@/app/store/cartStore";
 
 const Sidebar = () => {
   const { logout } = useAuthStore();
+
   const router = useRouter();
   const handleLogout = () => {
+    useCartStore.persist.clearStorage();
+    useInvoiceStore.persist.clearStorage();
     logout();
     router.push("/login");
   };

@@ -8,8 +8,12 @@ interface InvoiceStoreState {
   size: number;
   date_start: string;
   date_end: string;
+  choose: number;
+  updateChoose: (choose: number) => void;
   currentPage: number;
   totalPages: number;
+  exchange: number;
+  updateExchange: (exchange: number) => void;
   updateInvoices: (invoices: InvoiceResponse | null) => void;
   updateInvoice: (invoice: Invoice | null) => void;
   updateSize: (size: number) => void;
@@ -22,6 +26,9 @@ interface InvoiceStoreState {
 export const useInvoiceStore = create<InvoiceStoreState>()(
   persist(
     (set) => ({
+      choose: 0,
+      updateChoose: (choose: number) => set({ choose }),
+      exchange: 0,
       invoices: null,
       invoice: null,
       size: 5,
@@ -36,6 +43,7 @@ export const useInvoiceStore = create<InvoiceStoreState>()(
       updateDateEnd: (date_end: string) => set({ date_end }),
       updateCurrentPage: (currentPage: number) => set({ currentPage }),
       updateTotalPages: (totalPages: number) => set({ totalPages }),
+      updateExchange: (exchange: number) => set({ exchange }),
     }),
     {
       name: "invoice-store",

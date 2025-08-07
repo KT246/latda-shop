@@ -2,12 +2,38 @@
 import React from "react";
 import useAuthStore from "@/app/store/authStores";
 import { useCartStore } from "../store/cartStore";
+import { useInvoiceStore } from "../store/Invoice";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { GetExChange } from "../api/admin.product";
+import { IoPersonCircleSharp } from "react-icons/io5";
 
 const Navbar = () => {
   const [user_name, setUserName] = React.useState<string>("");
   const [idName, setIdName] = React.useState<string>("");
 
+  const [exchange, setExchange] = React.useState<number>(0);
+
+  //// get exchange rate
+
+  const getExchange = async () => {
+    try {
+      const res: any = await GetExChange();
+      if (res.status === 200) {
+        setExchange(res.data.rate);
+      }
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response) {
+        const errorMessage = e.response.data?.message;
+        toast.error(errorMessage);
+      } else {
+        toast.error("ລະບົບບໍ່ສາມາດໃຊ້ແລ້ວ");
+      }
+    }
+  };
+
   React.useEffect(() => {
+    getExchange();
     const user = useAuthStore.getState().user;
     if (user) {
       setUserName(user.username);
@@ -35,9 +61,14 @@ const Navbar = () => {
         </p>
       </div> */}
 
-      <div className=" text-gray-50 font-semibold uppercase">
-        <p className="bg-gray-100 bg-opacity-50 px-2 rounded-sm">{idName}</p>
-        <p className="text-[12px] mt-1">ID: {user_name}</p>
+      <div className=" text-gray-50 font-semibold flex items-center gap-20">
+        <p className="bg-gradient-to-tr from-amber-400 to-orange-500 py-1 px-3 rounded-full">
+          Exange Rate: {exchange}
+        </p>
+        <p className="bg-amber-500 py-1 px-3 rounded-full flex items-center gap-2">
+          <IoPersonCircleSharp />
+          {idName}
+        </p>
       </div>
     </div>
   );

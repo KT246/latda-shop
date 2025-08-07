@@ -77,8 +77,9 @@ const FindProduct = () => {
     });
   };
   /////////////////////////////// End Alert /////////////////////
+  const { token, user } = useAuthStore();
   React.useEffect(() => {
-    if (key.length > 0) {
+    if (token) {
       if (searchType === "code") FindProductByCode();
       if (searchType === "title") FindProductByTitle();
       if (searchType === "page") FindProductByPage();
@@ -87,7 +88,7 @@ const FindProduct = () => {
   }, [key]);
 
   React.useEffect(() => {
-    FindProductByCode();
+    if (token) FindProductByCode();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -146,32 +147,28 @@ const FindProduct = () => {
 
   const FindProductByCode = async () => {
     try {
-      const res = await apiProductByCode(key);
-      setProductsTemp(res.data);
+      setProductsTemp((await apiProductByCode(key)).data);
     } catch (error) {
       throw error;
     }
   };
   const FindProductByTitle = async () => {
     try {
-      const res = await apiProductByTitle(key);
-      setProductsTemp(res.data);
+      setProductsTemp((await apiProductByTitle(key)).data);
     } catch (error) {
       throw error;
     }
   };
   const FindProductByPage = async () => {
     try {
-      const res = await apiProductByPage(key);
-      setProductsTemp(res.data);
+      setProductsTemp((await apiProductByPage(key)).data);
     } catch (error) {
       throw error;
     }
   };
   const FindProductByNo = async () => {
     try {
-      const res = await apiProductByNo(key);
-      setProductsTemp(res.data);
+      setProductsTemp((await apiProductByNo(key)).data);
     } catch (error) {
       throw error;
     }
@@ -274,96 +271,98 @@ const FindProduct = () => {
             variant="bordered"
           />
         </div>
-        <div className=" w-full mt-2 h-[55vh] overflow-auto border">
-          <table className="w-full">
-            <thead className=" sticky top-0 bg-white shadow-lg  text-sm">
+        <div className="w-full mt-2 h-[55vh] overflow-auto border scroll-hide">
+          <table className="w-full table-auto min-w-[800px]">
+            <thead className="sticky top-0 bg-white shadow text-sm z-10">
               <tr>
-                <th className="border  border-gray-300 "></th>
-                <th className="border  border-gray-300">barcode</th>
-                <th className="border  border-gray-300">ຊື່ສິນຄ້າ</th>
-                <th className="border  border-gray-300">code</th>
-                <th className="border  border-gray-300">page</th>
-                <th className="border  border-gray-300">No.</th>
+                <th className="border border-gray-300 w-12"></th>
+                <th className="border border-gray-300 min-w-[120px]">
+                  barcode
+                </th>
+                <th className="border border-gray-300 min-w-[250px]">
+                  ຊື່ສິນຄ້າ
+                </th>
+                <th className="border border-gray-300 min-w-[120px]">code</th>
+                <th className="border border-gray-300 w-[70px]">page</th>
+                <th className="border border-gray-300 w-[70px]">No.</th>
               </tr>
             </thead>
             <tbody>
               {productsTemp.length > 0 ? (
-                productsTemp.map((product: any, index: number) => {
-                  return (
-                    <tr
-                      key={index}
-                      onDoubleClick={() => {}}
-                      className=" hover:bg-blue-100 ease-in-out duration-300"
-                    >
-                      <td className="border border-gray-300 px-2">
-                        {product.qty_balance > 0 && (
-                          <button
-                            onClick={() => handleAddToCart(product.barcode)}
-                            className="hover:bg-green-500 bg-green-600 text-white w-full p-1 rounded-md"
-                          >
-                            +
-                          </button>
-                        )}
-                      </td>
-                      <td className="py-2 border  border-gray-300 text-start">
+                productsTemp.map((product: any, index: number) => (
+                  <tr
+                    key={product.id || index}
+                    onDoubleClick={() => {}}
+                    className="hover:bg-blue-100 transition duration-200"
+                  >
+                    <td className="border border-gray-300 p-1 text-center ">
+                      {product.qty_balance > 0 && (
+                        <button
+                          onClick={() => handleAddToCart(product.barcode)}
+                          className="bg-green-600 hover:bg-green-500 text-white w-full py-1 rounded"
+                        >
+                          +
+                        </button>
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1  text-start">
+                      <Highlighter
+                        highlightClassName="bg-yellow-300"
+                        searchWords={[barcode]}
+                        autoEscape
+                        textToHighlight={product.barcode}
+                      />
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1  whitespace-pre-line break-words">
+                      {searchType === "title" ? (
                         <Highlighter
                           highlightClassName="bg-yellow-300"
-                          searchWords={[barcode]}
-                          autoEscape={true}
-                          textToHighlight={product.barcode}
+                          searchWords={[key]}
+                          autoEscape
+                          textToHighlight={product.title}
                         />
-                      </td>
-                      <td className="py-2 border  border-gray-300  break-all whitespace-normal">
-                        {searchType === "title" ? (
-                          <Highlighter
-                            highlightClassName="bg-yellow-300"
-                            searchWords={[key]}
-                            autoEscape={true}
-                            textToHighlight={product.title}
-                          />
-                        ) : (
-                          product.title
-                        )}
-                      </td>
-                      <td className="py-2 border  border-gray-300">
-                        {searchType === "code" ? (
-                          <Highlighter
-                            highlightClassName="bg-yellow-300"
-                            searchWords={[key]}
-                            autoEscape={true}
-                            textToHighlight={product.code}
-                          />
-                        ) : (
-                          product.code
-                        )}
-                      </td>
-                      <td className="py-2 border  border-gray-300 text-center">
-                        {searchType === "page" ? (
-                          <Highlighter
-                            highlightClassName="bg-yellow-300"
-                            searchWords={[key]}
-                            autoEscape={true}
-                            textToHighlight={product.page}
-                          />
-                        ) : (
-                          product.page
-                        )}
-                      </td>
-                      <td className="py-2 border  border-gray-300 text-center">
-                        {searchType === "no" ? (
-                          <Highlighter
-                            highlightClassName="bg-yellow-300"
-                            searchWords={[key]}
-                            autoEscape={true}
-                            textToHighlight={product.No}
-                          />
-                        ) : (
-                          product.No
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
+                      ) : (
+                        product.title
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1  text-start">
+                      {searchType === "code" ? (
+                        <Highlighter
+                          highlightClassName="bg-yellow-300"
+                          searchWords={[key]}
+                          autoEscape
+                          textToHighlight={product.code}
+                        />
+                      ) : (
+                        product.code
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1  text-center">
+                      {searchType === "page" ? (
+                        <Highlighter
+                          highlightClassName="bg-yellow-300"
+                          searchWords={[key]}
+                          autoEscape
+                          textToHighlight={product.page}
+                        />
+                      ) : (
+                        product.page
+                      )}
+                    </td>
+                    <td className="border border-gray-300 px-2 py-1  text-center">
+                      {searchType === "no" ? (
+                        <Highlighter
+                          highlightClassName="bg-yellow-300"
+                          searchWords={[key]}
+                          autoEscape
+                          textToHighlight={product.No}
+                        />
+                      ) : (
+                        product.No
+                      )}
+                    </td>
+                  </tr>
+                ))
               ) : (
                 <tr>
                   <td colSpan={6}>

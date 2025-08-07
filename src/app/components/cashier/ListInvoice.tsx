@@ -6,7 +6,7 @@ import {
   InvoiceResponse,
   Invoice,
   currenDate,
-  ReportSaleSummary,
+  ReportDetail,
 } from "@/app/lib/interface";
 import Link from "next/link";
 import {
@@ -42,7 +42,8 @@ import Swal from "sweetalert2";
 
 export default function ListInvoice() {
   const [idVoice, setIdVoice] = useState("");
-  const [report, setReport] = useState<ReportSaleSummary | null>(null);
+  const [filter, setFilter] = useState("0");
+  const [report, setReport] = useState<ReportDetail | null>(null);
 
   const {
     updateInvoices,
@@ -74,7 +75,7 @@ export default function ListInvoice() {
     try {
       const res: any = await apiReportSale(currenDate);
       if (res.status === 200) {
-        setReport(res.data);
+        setReport(res.data.detail);
       }
     } catch (error) {
       console.error;
@@ -169,14 +170,32 @@ export default function ListInvoice() {
     updateCurrentPage(reset_page);
     fetchInvoices();
   };
+
+  const invoiceData = {
+    invoices: invoices?.invoices ?? [],
+  };
+
+  const filterInvoices = () => {
+    if (!invoiceData) return [];
+    switch (filter) {
+      case "3":
+        return invoiceData.invoices.filter((inv) => inv.pay_type === "debt");
+      case "4":
+        return invoiceData.invoices.filter((inv) => inv.status === "cancel");
+      default:
+        return invoiceData.invoices;
+    }
+  };
+
   return (
     <div className="px-10">
       {/* header */}
       <div className="flex items-center justify-between gap-5 border-b-2 mb-3 pb-2">
         <div className="flex w-full items-center gap-4">
           <p className="font-semibold text-xl">ໃບບິນ</p>
-          <p className="flex">
-            ອັບເດດລ່າສຸດ: <span>{formatDateNotime(currenDate)}</span>
+          <p className="flex items-center">
+            ອັບເດດລ່າສຸດ:{" "}
+            <span className="ms-1">{formatDateNotime(currenDate)}</span>
           </p>
           <label htmlFor="sizePage">ຈໍານວນລາຍການ</label>
           <input
@@ -223,19 +242,26 @@ export default function ListInvoice() {
           ລາຍງານການຂາຍ
         </p>
 
-        <div className="flex items-center gap-3 shadow-lg p-2 rounded-lg text-center">
-          <div className="font-bold flex-1 bg-gradient-to-tr from-neutral-700 to-neutral-400 p-3 rounded-lg text-white">
-            <p className="text-center text-lg font-semibold border-b-2 ">
-              ຂາຍໄດ້ທັງໝົດ
-            </p>
-            <p className="text-2xl">
-              <span>{formattedNumber(report?.totalSale.total ?? 0)}</span> ກີບ
-            </p>
-            <p className="text-xl">
-              <span>{report?.totalSale.bill_count ?? 0}</span> ບິນ
-            </p>
+        <div className="grid grid-cols-3 gap-3 shadow-lg p-2 rounded-lg">
+          <div className="font-bold flex flex-col flex-1 bg-gradient-to-tr from-neutral-700 to-neutral-400 p-3 rounded-lg text-white">
+            <p className=" border-b-2 text-end">ຂາຍໄດ້ທັງໝົດ</p>
+            <div className="text-center  font-bold py-3 ">
+              <p className=" text-2xl me-1">
+                {formattedNumber(
+                  report?.saleCompleted.total_sale_complet_lak ?? 0
+                )}
+                <span className="text-sm ms-1">LAK</span>
+              </p>
+              <p className=" text-2xl me-1">
+                {formattedNumber(
+                  report?.saleCompleted.total_sale_complet_thb ?? 0
+                )}
+                <span className="text-sm ms-1">THB</span>
+              </p>
+            </div>
+            <p>ຈຳນວນ: {report?.saleCompleted.bill_count ?? 0}</p>
           </div>
-          <div className="font-bold flex-1 bg-gradient-to-tr from-green-700 to-green-400 p-3 rounded-lg text-white">
+          {/* <div className="font-bold flex flex-col flex-1 bg-gradient-to-tr from-green-700 to-green-400 p-3 rounded-lg text-white">
             <p className="text-center text-lg font-semibold border-b-2">
               ເງິນສົດ
             </p>
@@ -243,8 +269,8 @@ export default function ListInvoice() {
               <span>{formattedNumber(report?.saleCash.total ?? 0)}</span> ກີບ
             </p>
             <p className="text-xl">{report?.saleCash.bill_count ?? 0} ບິນ</p>
-          </div>
-          <div className="font-bold flex-1 bg-gradient-to-tr from-blue-700 to-blue-400 p-3 rounded-lg text-white">
+          </div> */}
+          {/* <div className="font-bold flex flex-col flex-1 bg-gradient-to-tr from-blue-700 to-blue-400 p-3 rounded-lg text-white">
             <p className="text-center text-lg font-semibold border-b-2">
               ເງິນໂອນ
             </p>
@@ -254,36 +280,56 @@ export default function ListInvoice() {
             <p className="text-xl">
               {report?.saleTransfer.bill_count ?? 0} ບິນ
             </p>
+          </div> */}
+          <div className="font-bold flex flex-col flex-1 bg-gradient-to-tr from-warning-700 to-warning-400 p-3 rounded-lg text-white">
+            <p className=" border-b-2 text-end">ຕິດໜີ້</p>
+            <div className="text-center  font-bold py-3 ">
+              <p className=" text-2xl me-1">
+                {formattedNumber(report?.saleDebt.total_sale_complet_lak ?? 0)}
+                <span className="text-sm ms-1">LAK</span>
+              </p>
+              <p className=" text-2xl me-1">
+                {formattedNumber(report?.saleDebt.total_sale_complet_thb ?? 0)}
+                <span className="text-sm ms-1">THB</span>
+              </p>
+            </div>
+            <p>ຈຳນວນ: {report?.saleDebt.bill_count ?? 0}</p>
           </div>
-          <div className="font-bold flex-1 bg-gradient-to-tr from-warning-700 to-warning-400 p-3 rounded-lg text-white">
-            <p className="text-center text-lg font-semibold border-b-2">
-              ຕິດໜີ້
+          <div className="font-bold flex flex-col justify-between flex-1 bg-gradient-to-tr from-danger-700 to-danger-400 p-3 rounded-lg text-white">
+            <p className=" border-b-2 text-end"> ຍົກເລີກ</p>
+
+            <p className=" text-2xl text-center">
+              {formattedNumber(report?.saleCancle.bill_count ?? 0)}
             </p>
-            <p className="text-2xl">
-              {formattedNumber(report?.saleDebt.total ?? 0)} ກີບ
-            </p>
-            <p className="text-xl">{report?.saleDebt.bill_count ?? 0} ບິນ</p>
-          </div>
-          <div className="font-bold flex-1 bg-gradient-to-tr from-danger-700 to-danger-400 p-3 rounded-lg text-white">
-            <p className="text-center text-lg font-semibold border-b-2">
-              ຍົກເລີກ
-            </p>
-            <p className="text-2xl">
-              {formattedNumber(report?.saleCancle.total ?? 0)} ກີບ
-            </p>
-            <p className="text-xl">{report?.saleCancle.bill_count ?? 0} ບິນ</p>
+
+            <p>ຈຳນວນ</p>
           </div>
         </div>
       </div>
       {/* table */}
-      <p className="border-l-3 border-blue-500 leading-none ps-1 my-5">
-        ລາຍການບິນ
-      </p>
+      <div className="flex justify-between items-center">
+        <p className="border-l-3 border-blue-500 leading-none ps-1 my-5">
+          ລາຍການບິນ
+        </p>
+        {/* <p>{filter}</p> */}
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border-2 border-gray-300 hover:border-gray-400 rounded-full outline-none px-2 py-1 cursor-pointer"
+        >
+          <option value="0">ທັງຫມົດ</option>
+          {/* <option value="1">ເງິນສົດ</option>
+          <option value="2">ເງິນໂອນ</option> */}
+          <option value="3">ຕິດໜີ້</option>
+          <option value="4">ຍົກເລີກ</option>
+        </select>
+      </div>
       <Table
         selectionMode="single"
         color="primary"
         classNames={{
           th: "bg-blue-500 text-white font-semibold text-sm",
+          wrapper: "shadow-lg ",
         }}
         bottomContent={
           (invoices?.totalPages ?? 0) > 0 ? (
@@ -307,16 +353,13 @@ export default function ListInvoice() {
           <TableColumn> ລະຫັດຜູ້ຂາຍ</TableColumn>
           <TableColumn className="text-right"> ອັດຕາແລກປ່ຽນ</TableColumn>
           <TableColumn className="text-right"> ຈໍານວນສິນຄ້າ</TableColumn>
-          <TableColumn className="text-right"> ສ່ວນຫຼຸດ</TableColumn>
+
           <TableColumn className="text-right"> ລາຄາລວມ (LAK)</TableColumn>
+          <TableColumn className="text-right"> ລາຄາລວມ (THB)</TableColumn>
           <TableColumn> ປະເພດການຈ່າຍ</TableColumn>
           <TableColumn> ດຳເນີນການ</TableColumn>
         </TableHeader>
-        <TableBody
-          loadingContent={<Spinner />}
-          // loadingState={loadingState}
-          items={invoices?.invoices ?? []}
-        >
+        <TableBody items={filterInvoices() ?? []}>
           {(item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
@@ -326,13 +369,14 @@ export default function ListInvoice() {
               <TableCell className="text-right">
                 {(item.details?.length ?? 0) + 1}
               </TableCell>
-              <TableCell className="text-right">
-                {formattedNumber(item.m_discount ?? 0)}
-              </TableCell>
+
               <TableCell className="text-right">
                 {formattedNumber(item.total_checkout_lak ?? 0)}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
+                {formattedNumber(item.total_checkout_thb ?? 0)}
+              </TableCell>
+              <TableCell className="text-center">
                 {item.pay_type === "cash"
                   ? "ເງິນສົດ"
                   : item.pay_type === "debt"

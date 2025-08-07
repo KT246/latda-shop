@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, form, Input, Tooltip } from "@heroui/react";
 
 import { useCartStore } from "@/app/store/cartStore";
@@ -21,16 +21,18 @@ import { IoAddCircle } from "react-icons/io5";
 import { RiSubtractLine } from "react-icons/ri";
 import PrintBill from "./PrintBill";
 const Invoice = () => {
-  const [dialog, setDialog] = useState(false);
-  const [bill, setBill] = useState<any>(null);
-  const [check, setCheck] = useState<boolean>(false);
-  const [memberId, setMemberId] = useState<string | null>("");
+  const [dialog, setDialog] = React.useState(true);
+  const [bill, setBill] = React.useState<any>(null);
+  const [check, setCheck] = React.useState<boolean>(false);
+  const [memberId, setMemberId] = React.useState<string | null>("");
 
   const [formData, setFormData] = React.useState({
     d_mount: 0,
-    check_out: 0,
+    check_out_lak: 0,
+    check_out_thb: 0,
     money_cutom: 0,
     customer_change: 0,
+    pay_currency: "LAK",
   });
 
   const { updateCart, cart, cartName } = useCartStore();
@@ -55,30 +57,77 @@ const Invoice = () => {
   /// hanndle
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     const rawValue = value.replace(/,/g, "");
     const numberValue = Number(rawValue);
-    const realTotal = cart?.total_lak || 0;
+    const realTotalLAK = cart?.total_lak || 0;
+    const realTotaTHB = cart?.total_thb || 0;
 
-    if (name === "d_mount" && numberValue > realTotal) {
-      Swal.fire({
-        icon: "warning",
-        title: "ສ່ວນຫຼຸດຫນ້າຮ້ານ",
-        text: `ສ່ວນຫຼຸດ (${numberValue.toLocaleString()}) ເກີນເງິນລວມ (${realTotal.toLocaleString()}).`,
+    // Nếu là radio → giữ nguyên string
+    if (type === "radio") {
+      setFormData((prev) => {
+        const updated = {
+          ...prev,
+          [name]: value,
+        };
+        updated.d_mount = 0;
+        updated.money_cutom = 0;
+        updated.customer_change = 0;
+        updated.check_out_lak = realTotalLAK;
+        updated.check_out_thb = realTotaTHB;
+        return updated;
       });
       return;
     }
 
+    const isTotal =
+      name === "d_mount" &&
+      ((formData.pay_currency === "LAK" && numberValue > realTotalLAK) ||
+        (formData.pay_currency === "THB" && numberValue > realTotaTHB));
+
+    if (isTotal) {
+      const overValue =
+        formData.pay_currency === "LAK" ? realTotalLAK : realTotaTHB;
+      Swal.fire({
+        icon: "warning",
+        title: "ສ່ວນຫຼຸດຫນ້າຮ້ານ",
+        text: `ສ່ວນຫຼຸດ (${numberValue.toLocaleString()}) ເກີນເງິນລວມ (${overValue.toLocaleString()} ${
+          formData.pay_currency
+        })`,
+      });
+      return;
+    }
+
+    // Trường hợp còn lại (số)
     setFormData((prev) => {
       const updated = {
         ...prev,
         [name]: numberValue,
       };
-      updated.check_out = Math.max(realTotal - (updated.d_mount || 0), 0);
-      updated.customer_change = Math.max(
-        (updated.money_cutom || 0) - updated.check_out,
-        0
-      );
+
+      const payCurrency = updated.pay_currency;
+
+      if (payCurrency === "LAK") {
+        updated.check_out_lak = Math.max(
+          realTotalLAK - (updated.d_mount || 0),
+          0
+        );
+        updated.customer_change = Math.max(
+          (updated.money_cutom || 0) - updated.check_out_lak,
+          0
+        );
+        // updated.money_cutom = updated.check_out_lak;
+      } else {
+        updated.check_out_thb = Math.max(
+          realTotaTHB - (updated.d_mount || 0),
+          0
+        );
+        updated.customer_change = Math.max(
+          (updated.money_cutom || 0) - updated.check_out_thb,
+          0
+        );
+        // updated.money_cutom = updated.check_out_thb;
+      }
 
       return updated;
     });
@@ -156,6 +205,12 @@ const Invoice = () => {
 
   /// Sale
   const Sale = async (pay: string, name: string) => {
+    if (pay === "debt") {
+      if (!name) {
+        await Swal.fire("ຜິດພາດ", "ກະລຸນາປ້ອນຊື່", "error");
+        return null;
+      }
+    }
     try {
       const res: any = await apiRetail({
         cart_name: cartName,
@@ -163,6 +218,7 @@ const Invoice = () => {
         member_id: name,
         pay_type: pay,
         money_received: formData.money_cutom,
+        pay_currency: formData.pay_currency,
       });
 
       const data = res.data;
@@ -173,9 +229,11 @@ const Invoice = () => {
         setBill(data);
         setFormData({
           d_mount: 0,
-          check_out: 0,
+          check_out_lak: 0,
+          check_out_thb: 0,
           money_cutom: 0,
           customer_change: 0,
+          pay_currency: "LAK",
         });
         toast.success(data.message);
       } else {
@@ -188,15 +246,9 @@ const Invoice = () => {
       }
     }
   };
-  const Transfer = (pay: string) => {
-    Sale(pay, "");
-  };
-  const Cash = async (pay: string) => {
-    Sale(pay, "");
-  };
-  const Debt = async (pay: string) => {
-    Swal.fire({
-      title: "ປ້ອນຊື່ຂອງທ່ານ",
+  const promptCustomerName = async (): Promise<string | null> => {
+    const result = await Swal.fire({
+      title: "ປ້ອນຊື່ລູກຄ້າ",
       input: "text",
       inputPlaceholder: "ພິມຊື່...",
       showCancelButton: true,
@@ -208,17 +260,63 @@ const Invoice = () => {
         const input = Swal.getInput();
         if (input) input.focus();
       },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const name = result.value;
-        if (!name) {
-          Swal.fire("ຜິດພາດ", "ກະລຸນາປ້ອນຊື່", "error");
-        } else {
-          Sale(pay, name);
-        }
-      }
     });
+
+    if (result.isConfirmed) {
+      const value = result.value?.trim() ?? "";
+      return value;
+    }
+
+    return null;
   };
+  const Debt = async (pay: string) => {
+    const name = await promptCustomerName();
+    if (name !== null) {
+      Sale(pay, name);
+    }
+  };
+  const Transfer = async (pay: string) => {
+    const name = await promptCustomerName();
+
+    Sale(pay, name ?? "");
+  };
+  const Cash = async (pay: string) => {
+    const name = await promptCustomerName();
+
+    Sale(pay, name ?? "");
+  };
+
+  // const Transfer = (pay: string) => {
+  //   Sale(pay, "");
+  // };
+  // const Cash = async (pay: string) => {
+  //   Sale(pay, "");
+  // };
+  // const Debt = async (pay: string) => {
+  //   Swal.fire({
+  //     title: "ປ້ອນຊື່ລູກຄ້າ",
+  //     input: "text",
+  //     inputPlaceholder: "ພິມຊື່...",
+  //     showCancelButton: true,
+  //     confirmButtonText: "ຂາຍ",
+  //     cancelButtonText: "ຍົກເລີກ",
+  //     icon: "question",
+  //     focusConfirm: true,
+  //     didOpen: () => {
+  //       const input = Swal.getInput();
+  //       if (input) input.focus();
+  //     },
+  //   }).then(async (result) => {
+  //     if (result.isConfirmed) {
+  //       const name = result.value;
+  //       if (!name) {
+  //         Swal.fire("ຜິດພາດ", "ກະລຸນາປ້ອນຊື່", "error");
+  //       } else {
+  //         Sale(pay, name);
+  //       }
+  //     }
+  //   });
+  // };
 
   /// onSubmit
   const handleSubmit = async (key: number) => {
@@ -270,108 +368,139 @@ const Invoice = () => {
   return (
     <div>
       <div className=" w-full h-[100%] p-2 border border-black rounded-lg shadow-lg bg-white shadow-gray-400">
-        <div className=" w-full flex justify-center items-center bg-green-2lg text-sm">
-          <p className="py-1 w-[3%] text-center "></p>
-          <p className="py-1 w-[47%] text-center ">ຊື່ສິນຄ້າ</p>
-          <p className="py-1 w-[15%] text-center ">ຈຳນວນ</p>
-          <p className="py-1 w-[10%] text-center ">ຫນ່ວຍ</p>
-          <p className="py-1 w-[10%] text-center ">ລາຄາ</p>
-          <p className="py-1 w-[10%] text-center ">ລວມ</p>
-          <p className="py-1 w-[5%] text-center "></p>
-        </div>
-        <div className=" overflow-y-scroll h-[50vh] mb-5">
-          {cart !== null ? (
-            cart.details?.map((item, index) => {
-              return (
-                <>
-                  <div
-                    className={`py-2 w-full flex justify-center items-center text-sm border-b border-slate-200 ${
-                      index % 2 == 0 && "bg-gray-50"
-                    }`}
-                    key={index}
-                  >
-                    <p className="w-[3%] text-sm">{index + 1}</p>
-                    <p className=" w-[47%] text-lg">{item.title + item.size}</p>
-                    <p className=" w-[15%] flex justify-center items-center gap-2">
-                      <button
-                        className="hover:text-green-500 duration-300 hover:bg-green-100 rounded-full p-1"
-                        onClick={() => handleAddToCart(item.barcode, 1)}
-                      >
-                        <IoAddCircle size={20} />
-                      </button>
-                      <span className="text-center">{item.qty}</span>
-                      <button
-                        className="hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
-                        onClick={() => handleAddToCart(item.barcode, 0)}
-                      >
-                        <RiSubtractLine size={20} />
-                      </button>
-                    </p>
-                    <p className="w-[10%] text-center">{item.unit}</p>
-                    <p className="w-[10%] text-center">
-                      {formattedNumber(item.retail_lak)}
-                    </p>
-                    <p className="w-[10%] text-center">
-                      {formattedNumber(item.total_lak)}
-                    </p>
-                    <div className="w-[5%] flex justify-end items-center">
-                      <button
-                        onClick={() =>
-                          handleDeleteProduct(
-                            cart?.cashier_id,
-                            item?.barcode,
-                            cart?.cart_name
-                          )
-                        }
-                        className=" hover:text-red-500 duration-300 hover:bg-red-100 rounded-full p-1"
-                      >
-                        <MdDeleteForever size={24} />
-                      </button>
-                    </div>
-                  </div>
-                  <p ref={cartEndRef} />
-                </>
-              );
-            })
-          ) : (
-            <p className="h-[45vh] flex items-center justify-center">
-              <span className="text-gray-400">ກະຕ່າຍັງທັນມີສີນຄ້າ</span>
-            </p>
-          )}
-        </div>
-        <div>
-          <div className=" flex items-center">
-            <div className="w-full">
-              <div className="w-full flex justify-between p-2 bg-blue-100 border-b border-gray-300">
-                <p className=" text-sm">ລວມ</p>
-                <p className=" ">
-                  <span className=" text-2xl font-bold">
-                    {formattedNumber(cart?.total_lak ?? 0)}
-                  </span>{" "}
-                  <span className=" text-sm">ກີບ</span>
-                </p>
-              </div>
-              <div className="w-full flex justify-between px-2 bg-blue-100">
-                <p className="text-sm">ສ່ວນຫຼຸດ</p>
-                <p className="">
-                  <span className=" text-2xl font-bold text-red-600">
-                    {cart?.m_discount ?? 0}
-                  </span>
-                  <span className=" text-sm"> %</span>
-                </p>
-              </div>
-              <div className="w-full flex justify-between items-center p-2 bg-green-100">
-                <p className=" text-lg font-bold">ລວມເງິນຕ້ອງຈ່າຍ</p>
-                <p className="">
-                  <span className="text-green-950 font-bold text-5xl">
-                    {formattedNumber(cart?.total_lak ?? 0)}
-                  </span>
-                  <span className=" text-sm"> ກີບ</span>
-                </p>
-              </div>
-            </div>
+        <div className="w-full overflow-hidden border bg-white">
+          {/* Header Table */}
+          <table className="w-full text-sm table-fixed">
+            <thead>
+              <tr className="bg-green-200">
+                <th className="w-[3%] py-1">#</th>
+                <th className="w-[30%] py-1">ຊື່ສິນຄ້າ</th>
+                <th className="w-[15%] py-1">ຈຳນວນ</th>
+                <th className="w-[10%] py-1">ຫນ່ວຍ</th>
+                <th className="w-[10%] py-1">LAK</th>
+                <th className="w-[10%] py-1">THB</th>
+                <th className="w-[10%] py-1 ">ລວມ LAK</th>
+                <th className="w-[10%] py-1">ລວມ THB</th>
+                <th className="w-[5%] py-1"></th>
+              </tr>
+            </thead>
+          </table>
+
+          {/* Body Table Scroll */}
+          <div className="overflow-y-scroll h-[50vh] mb-5 scroll-thin">
+            <table className="w-full text-sm table-fixed">
+              <tbody>
+                {cart !== null && cart.details?.length > 0 ? (
+                  cart.details.map((item, index) => (
+                    <tr
+                      key={index}
+                      className={`border-b border-gray-200 ${
+                        index % 2 === 0 ? "bg-gray-50" : ""
+                      }`}
+                    >
+                      <td className="w-[3%] text-center text-sm">
+                        {index + 1}
+                      </td>
+                      <td className="w-[30%] text-left text-sm">
+                        {item.title + item.size}
+                      </td>
+                      <td className="w-[15%] text-center">
+                        <div className="flex justify-center items-center gap-2">
+                          <button
+                            className="hover:text-green-500 hover:bg-green-100 rounded-full p-1 duration-300"
+                            onClick={() => handleAddToCart(item.barcode, 1)}
+                          >
+                            <IoAddCircle size={20} />
+                          </button>
+                          <span>{item.qty}</span>
+                          <button
+                            className="hover:text-red-500 hover:bg-red-100 rounded-full p-1 duration-300"
+                            onClick={() => handleAddToCart(item.barcode, 0)}
+                          >
+                            <RiSubtractLine size={20} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="w-[10%] text-center">{item.unit}</td>
+                      <td className="w-[10%] text-center">
+                        {formattedNumber(item.retail_lak)}
+                      </td>
+                      <td className="w-[10%] text-center">
+                        {formattedNumber(item.retail_thb)}
+                      </td>
+                      <td className="w-[10%] text-center border-l-2 border-collapse ">
+                        {formattedNumber(item.total_lak)}
+                      </td>
+                      <td className="w-[10%] text-center">
+                        {formattedNumber(item.total_thb)}
+                      </td>
+
+                      <td className="w-[5%] text-right pr-2">
+                        <button
+                          onClick={() =>
+                            handleDeleteProduct(
+                              cart?.cashier_id,
+                              item?.barcode,
+                              cart?.cart_name
+                            )
+                          }
+                          className="hover:text-red-500 hover:bg-red-100 rounded-full p-1 duration-300"
+                        >
+                          <MdDeleteForever size={24} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={8}>
+                      <div className="h-[45vh] flex items-center justify-center text-gray-400">
+                        ກະຕ່າຍັງທັນມີສີນຄ້າ
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <p ref={cartEndRef} />
           </div>
         </div>
+
+        <div className="w-full rounded-md shadow-md border border-gray-200 bg-white">
+          {/* <div className="grid grid-cols-3 px-4 py-3 bg-blue-50 border-b border-gray-200">
+            <p className="text-sm text-gray-700">ລວມ</p>
+            <p className="text-right space-x-2">
+              <span className="text-xl font-bold text-green-700">
+                {formattedNumber(cart?.total_lak ?? 0)}
+              </span>
+              <span className="text-sm text-gray-500">ກີບ</span>
+            </p>
+
+            <p className="text-right space-x-2">
+              <span className="text-xl font-bold text-orange-600">
+                {formattedNumber(cart?.total_thb ?? 0)}
+              </span>
+              <span className="text-sm text-gray-500">ບາດ</span>
+            </p>
+          </div> */}
+
+          <div className=" grid grid-cols-3 px-4 py-5 bg-green-200">
+            <p className="text-lg font-bold text-green-600">ລວມເງິນຕ້ອງຈ່າຍ</p>
+            <p className="text-right space-x-2">
+              <span className="text-4xl font-extrabold text-green-700">
+                {formattedNumber(cart?.total_lak ?? 0)}
+              </span>
+              <span className="text-sm text-gray-600">ກີບ</span>
+            </p>
+            <p className="text-right space-x-2">
+              <span className="text-4xl font-extrabold text-orange-600">
+                {formattedNumber(cart?.total_thb ?? 0)}
+              </span>
+              <span className="text-sm text-gray-600 ">ບາດ</span>
+            </p>
+          </div>
+        </div>
+
         <div className="mt-3 flex gap-3 justify-between items-center">
           <Button
             radius="sm"
@@ -398,137 +527,215 @@ const Invoice = () => {
 
       {/* Dialog */}
 
-      {dialog && (
-        <div className=" fixed z-30 bg-black bg-opacity-80   left-0 right-0 top-0 bottom-0 flex items-center justify-center h-screen ">
-          <div className="bg-gray-100 w-[600px] h-[500px] flex flex-col justify-between rounded-lg overflow-hidden">
-            <div className="p-5">
-              <div className="pb-7 space-y-2">
-                <p className="text-lg text-danger">ສ່ວນຫຼຸດຫນ້າຮ້ານ</p>
-                <div className="overflow-hidden border-gray-300 hover:border-gray-500 border-2 h-12">
+      {!dialog && (
+        <div className="fixed inset-0 z-30 bg-black/25 flex items-center justify-center">
+          <div className="bg-white w-full max-w-2xl h-auto rounded-lg shadow-lg overflow-hidden flex flex-col justify-between">
+            <div className="p-6 space-y-6">
+              {/* Tiêu đề & Chọn tiền tệ */}
+              <div className="flex items-center justify-end gap-3">
+                <p className="">ສະກຸນເງິນ:</p>
+                <div className="flex gap-6">
+                  {["LAK", "THB"].map((cur) => (
+                    <label
+                      key={cur}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="pay_currency"
+                        value={cur}
+                        checked={formData.pay_currency === cur}
+                        onChange={handleChange}
+                        className="accent-blue-500 w-4 h-4"
+                      />
+                      <span className="text-sm font-medium uppercase">
+                        {cur}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Input giảm giá */}
+              <div className="space-y-1">
+                <label className="text-lg font-medium text-gray-700">
+                  ສ່ວນຫຼຸດຫນ້າຮ້ານ
+                </label>
+                <input
+                  type="text"
+                  name="d_mount"
+                  value={formattedNumber(formData.d_mount)}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+
+              {/* Nhập tiền khách trả */}
+              <div className="space-y-1">
+                <label className="text-lg font-medium text-gray-700">
+                  ເງິນຮັບມາ
+                </label>
+                <div className="flex">
                   <input
                     type="text"
-                    name="d_mount"
-                    value={formattedNumber(formData.d_mount)}
-                    className="w-full h-full outline-none p-1"
+                    name="money_cutom"
+                    value={formattedNumber(formData.money_cutom)}
                     onChange={handleChange}
+                    className="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                </div>
-
-                <p className="text-lg">ເງິນຮັບມາ</p>
-                <div className="flex h-12 rounded">
-                  <div className="flex-1 overflow-hidden border-gray-300 hover:border-gray-500 border-2 border-r-0">
-                    <input
-                      type="text"
-                      name="money_cutom"
-                      value={formattedNumber(formData.money_cutom)}
-                      className="w-full h-full outline-none p-1"
-                      onChange={handleChange}
-                    />
-                  </div>
                   <Button
                     onPress={() => {
                       setFormData((prev) => {
-                        const updated = {
-                          ...prev,
-                        };
-                        const realTotal = cart?.total_lak || 0;
+                        const updated = { ...prev };
+                        const totalLAK = cart?.total_lak || 0;
+                        const totalTHB = cart?.total_thb || 0;
+                        const payCurrency = formData.pay_currency;
 
-                        updated.money_cutom = realTotal - updated.d_mount;
+                        if (payCurrency === "LAK") {
+                          updated.money_cutom = totalLAK - updated.d_mount;
+                          updated.check_out_lak = Math.max(
+                            totalLAK - updated.d_mount,
+                            0
+                          );
+                          updated.check_out_thb = 0;
+                          updated.customer_change = Math.max(
+                            (updated.money_cutom || 0) - updated.check_out_lak,
+                            0
+                          );
+                        } else {
+                          updated.money_cutom = totalTHB - updated.d_mount;
+                          updated.check_out_thb = Math.max(
+                            totalTHB - updated.d_mount,
+                            0
+                          );
+                          updated.check_out_lak = 0;
+                          updated.customer_change = Math.max(
+                            (updated.money_cutom || 0) - updated.check_out_thb,
+                            0
+                          );
+                        }
 
-                        updated.check_out = Math.max(
-                          realTotal - updated.d_mount,
-                          0
-                        );
-                        updated.customer_change = Math.max(
-                          updated.money_cutom - updated.check_out,
-                          0
-                        );
+                        // if (payCurrency === "LAK") {
+                        //   updated.check_out_lak = Math.max(
+                        //     total - updated.d_mount,
+                        //     0
+                        //   );
+                        //   updated.check_out_thb = 0;
+                        // } else {
+                        //   updated.check_out_thb = Math.max(
+                        //     total - updated.d_mount,
+                        //     0
+                        //   );
+                        //   updated.check_out_lak = 0;
+                        // }
+
+                        // Cập nhật chính xác customer_change theo loại tiền tệ
+                        // if (payCurrency === "LAK") {
+                        //   updated.customer_change = Math.max(
+                        //     updated.money_cutom - updated.check_out_lak,
+                        //     0
+                        //   );
+                        // } else {
+                        //   updated.customer_change = Math.max(
+                        //     updated.money_cutom - updated.check_out_thb,
+                        //     0
+                        //   );
+                        // }
 
                         return updated;
                       });
                     }}
                     color="primary"
-                    radius="none"
-                    className="h-full"
+                    className="rounded-none rounded-r px-5"
                   >
                     ພໍດີ
                   </Button>
                 </div>
               </div>
 
-              {/* Tính tiền phải trả và tiền thối */}
-              <div className="pt-5 border-t-2 border-dashed border-primary">
-                <div className="flex items-center">
-                  <p className="flex-1 text-lg">ລາຄາລວມ:</p>
-                  <p className="text-xl font-bold">
-                    {formattedNumber(cart?.total_lak ?? 0)}{" "}
-                    <span className="text-sm">ກີບ</span>
-                  </p>
+              {/* Hiển thị kết quả */}
+              <div className="border-t-2 border-blue-500 border-dashed pt-4 space-y-3">
+                <div className="flex justify-between text-lg">
+                  <span>ລາຄາລວມ:</span>
+                  <span className="font-bold">
+                    {formData.pay_currency === "LAK"
+                      ? formattedNumber(cart?.total_lak ?? 0)
+                      : formattedNumber(cart?.total_thb ?? 0)}
+                    <span className="text-xl ms-2">
+                      {formData.pay_currency === "LAK" ? "ກີບ" : "ບາດ"}
+                    </span>
+                  </span>
                 </div>
-                <div className="flex items-center">
-                  <p className="flex-1 text-lg">ສ່ວນຫຼຸດຫນ້າຮ້ານ:</p>
-                  <p className="text-xl font-bold">
-                    {formattedNumber(formData.d_mount)}{" "}
-                    <span className="text-sm">ກີບ</span>
-                  </p>
+                <div className="flex justify-between text-lg">
+                  <span>ສ່ວນຫຼຸດຫນ້າຮ້ານ:</span>
+                  <span className="font-bold">
+                    {formattedNumber(formData.d_mount)}
+                    <span className="text-xl ms-2">
+                      {formData.pay_currency === "LAK" ? "ກີບ" : "ບາດ"}
+                    </span>
+                  </span>
                 </div>
-                <p className=" border-t-2 border-dashed border-primary  my-3" />
-                <div className="flex items-center">
-                  <p className="flex-1 text-lg">ເງິນທີ່ລູກຄັາຕ້ອງຈ່າຍ:</p>
-                  <p className="text-3xl font-bold">
-                    {formattedNumber(formData.check_out)}{" "}
-                    <span className="text-sm">ກີບ</span>
-                  </p>
+                <div className="flex justify-between text-2xl font-semibold border-t-2 border-blue-500 border-dashed  pt-3">
+                  <span>ຕ້ອງຈ່າຍ:</span>
+                  <span>
+                    {formData.pay_currency === "LAK"
+                      ? formattedNumber(formData.check_out_lak ?? 0)
+                      : formattedNumber(formData.check_out_thb ?? 0)}
+
+                    <span className="text-3xl ms-2">
+                      {formData.pay_currency === "LAK" ? "ກີບ" : "ບາດ"}
+                    </span>
+                  </span>
                 </div>
-                <div className="flex items-center">
-                  <p className="flex-1 text-lg">ເງິນທອນ:</p>
-                  <p className="text-xl font-bold">
-                    {formattedNumber(formData.customer_change)}{" "}
-                    <span className="text-sm">ກີບ</span>
-                  </p>
+                <div className="flex justify-between text-lg">
+                  <span>ເງິນທອນ:</span>
+                  <span className="font-bold">
+                    {formattedNumber(formData.customer_change)}
+                    <span className="text-xl ms-2">
+                      {formData.pay_currency === "LAK" ? "ກີບ" : "ບາດ"}
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Button */}
-            <div className=" flex items-center text-white">
+            {/* Button hành động */}
+            <div className="grid grid-cols-4 bg-gray-200">
               <Button
                 onPress={() => handleSubmit(0)}
                 color="warning"
-                className="w-[20%] p-10 text-xl font-bold text-white"
-                radius="none"
+                className="text-xl py-10 rounded-none"
               >
                 ຕິດໜີ້
               </Button>
               <Button
                 onPress={() => handleSubmit(1)}
                 color="success"
-                className="w-[30%] p-10 text-xl font-bold text-white"
-                radius="none"
+                className="text-xl py-10 rounded-none"
               >
                 ເງິນສົດ
               </Button>
               <Button
                 onPress={() => handleSubmit(2)}
                 color="primary"
-                className="w-[30%] p-10 text-xl font-bold text-white"
-                radius="none"
+                className="text-xl py-10 rounded-none"
               >
                 ເງິນໂອນ
               </Button>
               <Button
-                color="danger"
-                className="w-[20%] p-10 text-xl font-bold text-white"
-                radius="none"
                 onPress={() => {
-                  setDialog(!dialog);
+                  setDialog(true);
                   setFormData({
                     d_mount: 0,
-                    check_out: 0,
+                    check_out_lak: 0,
+                    check_out_thb: 0,
                     money_cutom: 0,
                     customer_change: 0,
+                    pay_currency: "LAK",
                   });
                 }}
+                color="danger"
+                className="text-xl py-10 rounded-none"
               >
                 ຍົກເລີກ
               </Button>
@@ -536,6 +743,36 @@ const Invoice = () => {
           </div>
         </div>
       )}
+
+      {/* <div className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur flex items-center justify-center">
+        <div className="bg-gradient-to-tr from-cyan-800 to-cyan-600 rounded-lg p-6 w-[90%] max-w-md shadow-lg ">
+          <h2 className="text-lg font-bold mb-2 ">
+           Xác nhận xoá
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">
+           
+            Bạn có chắc chắn muốn xoá mục này?
+          </p>
+          <div className="flex justify-end gap-2">
+            <button
+              // onClick={closeAlert}
+              className="px-3 py-1 text-sm rounded border border-gray-300 hover:bg-gray-100"
+            >
+              Hủy
+            </button>
+            <button
+              // onClick={() => {
+              //   if (onConfirm) onConfirm();
+              //   closeAlert();
+              // }}
+              className="px-3 py-1 text-sm rounded bg-red-500 text-white hover:bg-red-600"
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </div> */}
+
       <PrintBill data={bill} clearData={() => setBill(null)} />
     </div>
   );

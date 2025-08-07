@@ -5,6 +5,7 @@ import { useReactToPrint } from "react-to-print";
 import { Invoice } from "@/app/lib/interface";
 import { formatDate, formattedNumber } from "@/app/helpers/funtions";
 import Image from "next/image";
+import { useInvoiceStore } from "@/app/store/Invoice";
 
 interface PrintBillProps {
   data: Invoice;
@@ -13,6 +14,7 @@ interface PrintBillProps {
 
 function PrintBill({ data, clearData }: PrintBillProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const exchange_rate = useInvoiceStore((state) => state.exchange);
 
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
@@ -47,19 +49,24 @@ function PrintBill({ data, clearData }: PrintBillProps) {
         </div>
         <p className="  text-[18px] font-bold my-3 text-center">ໃບສົ່ງເຄື່ອງ</p>
 
-        <div className="text-[14px]">
-          <p className=" capitalize">ຊື່ລູກຄ້າ: {data?.member_id}</p>
-          <p>ເລກບິນ: {data?.id}</p>
-          <p>ວັນທີພິມບິນ: {formatDate(data?.date_create)}</p>
-          <p>
-            ການຊຳລະ:{" "}
-            {data?.pay_type === "debt"
-              ? "ຕິດໜີ້"
-              : data?.pay_type === "cash"
-              ? "ເງິນສົດ"
-              : "ເງິນໂອນ"}
-          </p>
-          <p>ອັດຕາແລກປ່ຽນ: 660</p>
+        <div className="text-[14px] flex justify-between">
+          <div>
+            <p>ເລກບິນ: {data?.id}</p>
+            <p>ວັນທີພິມບິນ: {formatDate(data?.date_create)}</p>
+          </div>
+          <div>
+            <p className=" capitalize">ຊື່ລູກຄ້າ: {data?.member_id}</p>
+            <p>
+              ການຊຳລະ:{" "}
+              {data?.pay_type === "debt"
+                ? "ຕິດໜີ້"
+                : data?.pay_type === "cash"
+                ? "ເງິນສົດ"
+                : "ເງິນໂອນ"}
+            </p>
+            <p>ອັດຕາແລກປ່ຽນ: {formattedNumber(data?.rate)}</p>
+            <p>ສະກຸນເງິນ: {data?.pay_currency === "LAK" ? "ກີບ" : "ບາດ"}</p>
+          </div>
         </div>
 
         <div className="w-full mt-3">
@@ -70,9 +77,10 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                 <th className=" border border-black py-2">ລາຍການ</th>
                 <th className=" border border-black">ຈຳນວນ</th>
                 <th className=" border border-black">ຫົວໜ່ວຍ</th>
-                <th className=" border border-black">ລາຄາ</th>
-                <th className=" border border-black">ສ່ວນຫຼຸດ</th>
-                <th className=" border border-black">ລວມເງິນ</th>
+                <th className=" border border-black">ລາຄາ LAK</th>
+                <th className=" border border-black">ລາຄາ THB</th>
+                <th className=" border border-black">ລວມເງິນ LAK</th>
+                <th className=" border border-black">ລວມເງິນ THB</th>
               </tr>
             </thead>
             <tbody>
@@ -91,16 +99,20 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                   <td className=" border border-black text-right px-1">
                     {formattedNumber(item?.retail_lak ?? 0)}
                   </td>
-                  <td className=" border border-black text-center px-1">
-                    {item?.discount} %
+                  <td className=" border border-black text-right px-1">
+                    {formattedNumber(item?.retail_thb ?? 0)}
                   </td>
+
                   <td className=" border border-black text-right px-1">
                     {formattedNumber(item?.total_lak ?? 0)}
+                  </td>
+                  <td className=" border border-black text-right px-1">
+                    {formattedNumber(item?.total_thb ?? 0)}
                   </td>
                 </tr>
               ))}
               <tr>
-                <td rowSpan={6} colSpan={3} className="  p-2">
+                <td rowSpan={6} colSpan={5} className="  p-2">
                   <p>ໝາຍເຫດ:</p>
                   <p>* ກະລຸນາກວດສິນຄ້າໃຫ້ ລະອຽດ ແລະ ຄົບຖ້ວນຕາມບິນ</p>
                   <p>
@@ -109,40 +121,55 @@ function PrintBill({ data, clearData }: PrintBillProps) {
                 </td>
               </tr>
               <tr>
-                <td colSpan={2} className="text-center  border border-black">
+                <td colSpan={1} className="text-center  border border-black">
                   ລາຄາລວມ
                 </td>
-                <td colSpan={2} className="text-end  border border-black px-1">
+                <td colSpan={1} className="text-end  border border-black px-1">
                   {formattedNumber(data?.total_lak ?? 0)}
+                </td>
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.total_thb ?? 0)}
                 </td>
               </tr>
               <tr>
-                <td colSpan={2} className="text-center  border border-black">
+                <td colSpan={1} className="text-center  border border-black">
                   ສ່ວນຫຼຸດໜ້າຮ້ານ
                 </td>
-                <td colSpan={2} className="text-end  border border-black px-1">
-                  {formattedNumber(data?.m_discount ?? 0)}
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.m_discount_lak ?? 0)}
+                </td>
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.m_discount_thb ?? 0)}
                 </td>
               </tr>
               <tr>
                 <td
-                  colSpan={2}
+                  colSpan={1}
                   className="text-center font-bold  border border-black py-3"
                 >
                   ຈຳນວນເງິນຕ້ອງຈ່າຍ
                 </td>
                 <td
-                  colSpan={2}
+                  colSpan={1}
                   className="text-end font-bold  border border-black px-1"
                 >
                   {formattedNumber(data?.total_checkout_lak ?? 0)}
                 </td>
+                <td
+                  colSpan={1}
+                  className="text-end font-bold  border border-black px-1"
+                >
+                  {formattedNumber(data?.total_checkout_thb ?? 0)}
+                </td>
               </tr>
               <tr>
-                <td colSpan={2} className="text-center  border border-black">
+                <td colSpan={1} className="text-center  border border-black">
                   ເງິນທອນ
                 </td>
-                <td colSpan={2} className="text-end  border border-black px-1">
+                <td colSpan={1} className="text-end  border border-black px-1">
+                  {formattedNumber(data?.money_cash ?? 0)}
+                </td>
+                <td colSpan={1} className="text-end  border border-black px-1">
                   {formattedNumber(data?.money_cash ?? 0)}
                 </td>
               </tr>
