@@ -119,17 +119,22 @@ export default function DetailHistory() {
                 : "ຕິດຫນີ້"}
             </p>
           </div>
+
           <div className="text-center space-y-3">
-            <p>ເງິນຮັບ</p>
+            <p>ເງິນຮັບ({invoice?.pay_currency === "LAK" ? "LAK" : "THB"})</p>
             <p className="text-gray-500 text-xl font-semibold">
-              {formattedNumber(invoice?.money_received ?? 0)}
+              {invoice?.pay_currency === "LAK"
+                ? formattedNumber(invoice?.money_received_lak ?? 0)
+                : formattedNumber(invoice?.money_received_thb ?? 0)}
             </p>
           </div>
 
           <div className="text-center space-y-3">
-            <p>ເງິນທອນ</p>
+            <p>ເງິນທອນ({invoice?.pay_currency === "LAK" ? "LAK" : "THB"})</p>
             <p className="text-gray-500 text-xl font-semibold">
-              {formattedNumber(invoice?.money_cash ?? 0)}
+              {invoice?.pay_currency === "LAK"
+                ? formattedNumber(invoice?.money_cash_lak ?? 0)
+                : formattedNumber(invoice?.m_discount_thb ?? 0)}
             </p>
           </div>
           <div className="text-center space-y-3">
@@ -140,12 +145,13 @@ export default function DetailHistory() {
                 : formattedNumber(invoice?.total_thb ?? 0)}
             </p>
           </div>
+
           <div className="text-center space-y-3">
-            <p>ສ່ວນຫຼຸດ</p>
-            <p className="text-gray-500 font-semibold">
+            <p>ສ່ວນຫຼຸດ({invoice?.pay_currency === "LAK" ? "LAK" : "THB"})</p>
+            <p className="text-gray-500 text-xl font-semibold">
               {invoice?.pay_currency === "LAK"
-                ? invoice?.m_discount_lak
-                : invoice?.m_discount_thb}
+                ? formattedNumber(invoice?.m_discount_lak ?? 0)
+                : formattedNumber(invoice?.m_discount_thb ?? 0)}
             </p>
           </div>
           <div className="text-center space-y-3">

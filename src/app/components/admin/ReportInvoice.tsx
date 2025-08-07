@@ -273,9 +273,9 @@ const ReportInvoice = () => {
               color="success"
               isHeaderSticky
               classNames={{
-                th: "bg-green-500 text-black font-semibold text-sm ",
+                th: "bg-warning-500 text-black font-semibold text-sm ",
                 wrapper:
-                  " max-h-[14rem] overflow-y-auto p-0 rounded-lg shadow-lg scroll-thin border-b-2 text-end border-r-2 border-l-2 border-green-400",
+                  " max-h-[14rem] overflow-y-auto p-0 rounded-lg shadow-lg scroll-thin border-b-2 text-end border-r-2 border-l-2 border-warning-500",
               }}
             >
               <TableHeader>
