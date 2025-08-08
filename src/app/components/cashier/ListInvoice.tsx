@@ -353,7 +353,6 @@ export default function ListInvoice() {
           <TableColumn> ລະຫັດຜູ້ຂາຍ</TableColumn>
           <TableColumn className="text-right"> ອັດຕາແລກປ່ຽນ</TableColumn>
           <TableColumn className="text-right"> ຈໍານວນສິນຄ້າ</TableColumn>
-
           <TableColumn className="text-right"> ລາຄາລວມ (LAK)</TableColumn>
           <TableColumn className="text-right"> ລາຄາລວມ (THB)</TableColumn>
           <TableColumn> ປະເພດການຈ່າຍ</TableColumn>
@@ -367,7 +366,7 @@ export default function ListInvoice() {
               <TableCell>{item.cashier_id}</TableCell>
               <TableCell className="text-right">{item.rate}</TableCell>
               <TableCell className="text-right">
-                {(item.details?.length ?? 0) + 1}
+                {item.details.length ?? 0}
               </TableCell>
 
               <TableCell className="text-right">
