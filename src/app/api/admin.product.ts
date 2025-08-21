@@ -66,7 +66,7 @@ export const _updateIMG = async (bracode: string, data: FormData) => {
 export const _updateProduct = async (bracode: string, data: object) => {
   try {
     return await api.patch(
-      `/api/admin//product/update?barcode=${bracode}`,
+      `/api/admin/product/update?barcode=${bracode}`,
       data
     );
   } catch (error) {
