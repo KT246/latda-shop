@@ -56,11 +56,13 @@ function ListsProducts() {
   );
 
   /// funtion
+  const [imgVersion, setImgVersion] = useState(0);
   const fetchData = async () => {
     const res: any = await GetAllProduct(rowsPerPage, page);
     if (res?.status === 200) {
       setProduct(res.data.products);
       setPages(res.data.totalPages);
+      setImgVersion(Date.now());
     }
   };
 
@@ -274,7 +276,7 @@ function ListsProducts() {
                   {item.img_name !== null || item.img_name === "" ? (
                     <Image
                       loading="lazy"
-                      src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${item.img_name}`}
+                      src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${item.img_name}?v=${imgVersion}`}
                       alt="No Name"
                       className="w-full"
                       width={20}
