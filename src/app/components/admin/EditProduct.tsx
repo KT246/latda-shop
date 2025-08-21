@@ -187,6 +187,7 @@ function EditProduct() {
     }
   };
 
+  const [imgVersion, setImgVersion] = useState(0);
   const handleUpdatIMG = async () => {
     const barcode = product?.barcode;
     if (!barcode) {
@@ -207,7 +208,15 @@ function EditProduct() {
       if (res.status === 200) {
         const data = res.data;
         toast.success(data.message);
-        window.location.reload();
+        // window.location.reload();
+
+        setFileImg(null);
+        // setIMG(null);
+        // setProduct(null);
+
+        // Sau khi upload thành công:
+        setImgVersion(Date.now());
+        fetchData(id as string);
       }
     } catch (error) {
       console.log(error);
@@ -216,6 +225,15 @@ function EditProduct() {
 
   return (
     <div>
+      {/* <Image
+        key={`${IMG}-${imgVersion}`}
+        src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${IMG}?v=${imgVersion}`}
+        alt="Preview"
+        fill
+        sizes="100vw"
+        className="object-contain"
+        priority
+      /> */}
       <form className=" px-4">
         <div className="w-full">
           <label className="block font-semibold">ບາໂຄດ</label>
@@ -411,13 +429,14 @@ function EditProduct() {
             </div>
 
             <div className="w-full h-full">
-              <label className="block font-semibold">ຮູບພາບ</label>
+              <p className="block font-semibold">ຮູບພາບ</p>
               <div className="w-full border-2 border-dotted border-blue-500 cursor-pointer">
                 {IMG && (
                   <Image
                     loading="lazy"
-                    src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${IMG}`}
-                    alt="Preview"
+                    key={`${IMG}-${imgVersion}`}
+                    src={`${process.env.NEXT_PUBLIC_LINK_IMG}/latdashop/${IMG}?v=${imgVersion}`}
+                    alt={IMG}
                     className="w-full h-full"
                     width={100}
                     height={0}
