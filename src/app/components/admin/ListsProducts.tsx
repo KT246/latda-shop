@@ -43,7 +43,7 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  const [barcodeToPrint, setBarcodeToPrint] = React.useState<string>("");
+  const [barcodeToPrint, setBarcodeToPrint] = React.useState<{ barcode: string, title: string }>();
   const [numToPrint, setNumToPrint] = React.useState<number>(1);
   const contentRef = useRef<HTMLDivElement>(null);
   /// handles changes
@@ -129,8 +129,8 @@ function ListsProducts() {
       }
     });
   };
-  const PrintBarCode = async (barcode: string) => {
-    setBarcodeToPrint(barcode);
+  const PrintBarCode = async (barcode: string, title: string) => {
+    setBarcodeToPrint({ barcode: barcode, title: title });
     const { value: num } = await Swal.fire({
       title: "ພິມບາໂຄດ " + barcode,
       input: "number",
@@ -161,7 +161,7 @@ function ListsProducts() {
     contentRef: contentRef,
     documentTitle: "Latda Shop Receipt",
     onAfterPrint: () => {
-      setBarcodeToPrint("");
+      setBarcodeToPrint({ barcode: "", title: "" });
       setNumToPrint(1);
     },
   });
@@ -313,7 +313,7 @@ function ListsProducts() {
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="ພິມບາໂຄດ">
-                    <span onClick={() => PrintBarCode(item.barcode)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                    <span onClick={() => PrintBarCode(item.barcode, item.title)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                       <CiBarcode />
                     </span>
                   </Tooltip>
@@ -340,12 +340,14 @@ function ListsProducts() {
           )}
         </TableBody>
       </Table>
-      <div className=" hidden">
+      <div className="">
         <div ref={contentRef} className=" w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white">
           <div className=" grid grid-cols-6 gap-[2mm]">
             {Array.from({ length: numToPrint }, (_, index) => (
-              <div key={index} className="w-[32mm] h-[19mm] rounded-xl border flex justify-center items-center">
-                <Barcode width={1} height={20} format="CODE128" value={barcodeToPrint} />
+              <div key={index} className="w-[32mm] h-[19mm] rounded-xl flex justify-center items-center">
+                {
+                  barcodeToPrint?.barcode && <Barcode width={1} height={20} format="CODE128" value={barcodeToPrint?.barcode} />
+                }
               </div>
             ))}
           </div>

@@ -180,6 +180,7 @@ function EditProduct() {
           router.push("/admin/products");
           toast.success(data.message);
         }
+        console.log(res);
       } catch (error) {
         console.log(error);
       }
