@@ -18,7 +18,7 @@ import {
   DropdownItem,
   Selection, // <-- Add this import
 } from "@heroui/react";
-import Barcode from 'react-barcode'
+import Barcode from "react-barcode";
 import { CiBarcode } from "react-icons/ci";
 import { apiDlPdruct, apiResetQty } from "@/app/api/products";
 import { GetAllProduct, GetProductByIds } from "@/app/api/admin.product";
@@ -43,7 +43,10 @@ function ListsProducts() {
   const [page, setPage] = React.useState(1);
   const [pages, setPages] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  const [barcodeToPrint, setBarcodeToPrint] = React.useState<{ barcode: string, title: string }>();
+  const [barcodeToPrint, setBarcodeToPrint] = React.useState<{
+    barcode: string;
+    title: string;
+  }>();
   const [numToPrint, setNumToPrint] = React.useState<number>(1);
   const contentRef = useRef<HTMLDivElement>(null);
   /// handles changes
@@ -156,7 +159,7 @@ function ListsProducts() {
       handlePrint();
     }, 1000);
     // handlePrint();
-  }
+  };
   const handlePrint = useReactToPrint({
     contentRef: contentRef,
     documentTitle: "Latda Shop Receipt",
@@ -299,10 +302,11 @@ function ListsProducts() {
               <TableCell>{item.qty_out}</TableCell>
               <TableCell>
                 <span
-                  className={`${item.qty_balance <= item.qty_alert
-                    ? "text-red-500"
-                    : "text-black"
-                    }`}
+                  className={`${
+                    item.qty_balance <= item.qty_alert
+                      ? "text-red-500"
+                      : "text-black"
+                  }`}
                 >
                   {item.qty_balance}
                 </span>
@@ -313,7 +317,10 @@ function ListsProducts() {
               <TableCell>
                 <div className="relative flex items-center gap-2">
                   <Tooltip content="ພິມບາໂຄດ">
-                    <span onClick={() => PrintBarCode(item.barcode, item.title)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                    <span
+                      onClick={() => PrintBarCode(item.barcode, item.title)}
+                      className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                    >
                       <CiBarcode />
                     </span>
                   </Tooltip>
@@ -340,14 +347,28 @@ function ListsProducts() {
           )}
         </TableBody>
       </Table>
-      <div className="">
-        <div ref={contentRef} className=" w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white">
+      <div
+        className="
+      hidden"
+      >
+        <div
+          ref={contentRef}
+          className=" w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white"
+        >
           <div className=" grid grid-cols-6 gap-[2mm]">
             {Array.from({ length: numToPrint }, (_, index) => (
-              <div key={index} className="w-[32mm] h-[19mm] rounded-xl flex justify-center items-center">
-                {
-                  barcodeToPrint?.barcode && <Barcode width={1} height={20} format="CODE128" value={barcodeToPrint?.barcode} />
-                }
+              <div
+                key={index}
+                className="w-[32mm] h-[19mm] rounded-xl flex justify-center items-center"
+              >
+                {barcodeToPrint?.barcode && (
+                  <Barcode
+                    width={1}
+                    height={20}
+                    format="CODE128"
+                    value={barcodeToPrint?.barcode}
+                  />
+                )}
               </div>
             ))}
           </div>
