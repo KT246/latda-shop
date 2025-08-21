@@ -170,6 +170,9 @@ function ListsProducts() {
       setNumToPrint(1);
     },
   });
+
+  const PAGE_SIZE = 78; // 6 cột x 13 hàng
+  const totalPages = Math.ceil(numToPrint / PAGE_SIZE);
   return (
     <div>
       <div className="flex items-center justify-between p-3">
@@ -350,31 +353,39 @@ function ListsProducts() {
         </TableBody>
       </Table>
       <div
-        className="
-      hidden"
+        ref={contentRef}
+        className="hidden print:block" // ẩn trên màn, chỉ hiện khi in
       >
-        <div
-          ref={contentRef}
-          className=" w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white"
-        >
-          <div className=" grid grid-cols-6 gap-[2mm]">
-            {Array.from({ length: numToPrint }, (_, index) => (
-              <div
-                key={index}
-                className="w-[32mm] h-[19mm] rounded-xl flex justify-center items-center"
-              >
-                {barcodeToPrint?.barcode && (
-                  <Barcode
-                    width={1}
-                    height={20}
-                    format="CODE128"
-                    value={barcodeToPrint?.barcode}
-                  />
-                )}
+        {Array.from({ length: totalPages }).map((_, pageIndex) => {
+          const start = pageIndex * PAGE_SIZE;
+          const count = Math.min(PAGE_SIZE, numToPrint - start);
+
+          return (
+            // MỖI TRANG là một container A4 RIÊNG
+            <div
+              key={pageIndex}
+              className="w-[210mm] h-[297mm] py-[14mm] px-[4mm] border bg-white mx-auto mb-4 print:mb-0 [break-after:page]          /* ngắt trang hiện đại */ [page-break-after:always]   /* fallback cũ */"
+            >
+              <div className="grid grid-cols-6 gap-[2mm]">
+                {Array.from({ length: count }).map((__, i) => (
+                  <div
+                    key={start + i}
+                    className="w-[32mm] h-[19mm] rounded-xl flex justify-center items-center"
+                  >
+                    {barcodeToPrint?.barcode && (
+                      <Barcode
+                        width={1}
+                        height={20}
+                        format="CODE128"
+                        value={barcodeToPrint.barcode}
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
